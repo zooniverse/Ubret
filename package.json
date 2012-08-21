@@ -1,0 +1,17 @@
+{
+  "name": "Ubret",
+  "version": "0.0.1",
+  "dependencies": { 
+    "serveup": "~0.0.4",
+    "hem": "git://github.com/kapadia/hem.git",
+    "es5-shimify": "~0.0.1",
+    "json2ify": "~0.0.1",
+    "jqueryify": "~0.0.1",
+    "underscore": "*",
+    "spine": "~1.0.8",
+    "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git"
+  },
+  "devDependencies" : {
+    "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git"
+  }
+}

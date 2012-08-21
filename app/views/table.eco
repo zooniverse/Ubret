@@ -1,0 +1,18 @@
+<table>
+  <thead>
+    <tr>
+      <th>Right Ascension</th>
+      <th>Declination</th>
+      <th>Magnitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for subject in @: %>
+    <tr>
+      <td><%= subject.coords[0] %></td>
+      <td><%= subject.coords[1] %></td>
+      <td><%= subject.metadata.magnitude %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
