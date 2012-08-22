@@ -12,6 +12,7 @@
     "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git"
   },
   "devDependencies" : {
-    "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git"
+    "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git",
+    "rosie"                :  "git://github.com/mconf/rosie.git#b026bbaa39"
   }
 }

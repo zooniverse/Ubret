@@ -1,18 +1,11 @@
 require = window.require
+sinon = require 'sinon'
+console.log sinon
+Factory = require '../factories'
 
 describe 'GalaxyZooSubject', ->
-  GalaxyZooSubject = require('models/GalaxyZooSubject')
-  Api = require('zooniverse/lib/api')
-  Config = require('lib/config')
-  
   beforeEach ->
-    Api.init host: Config.apiHost
+    @galaxyZooSubject = Factory.build('galaxyZooSubject')
 
-  it 'should retrieve a subject through the api', ->
-    subjectFetcher = false
-    GalaxyZooSubject.fetch(10).always -> subjectFetcher = true
-    waitsFor -> subjectFetcher
-    runs ->
-      subjects = GalaxyZooSubject.all()
-      console.log subjects
-      expect(subjects.length).toEqual(10)
+  it 'should be instantiable', ->
+    expect(@galaxyZooSubject).not.toBeNull()
