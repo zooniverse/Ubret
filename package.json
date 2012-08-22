@@ -13,6 +13,6 @@
   },
   "devDependencies" : {
     "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git",
-    "rosie"                :  "git://github.com/mconf/rosie.git#b026bbaa39"
+    "rosie"                :  "git://github.com/edpaget/rosie.git#ee7c31420d"
   }
 }

@@ -1,9 +1,8 @@
 require = window.require
-sinon = require 'sinon'
-console.log sinon
-Factory = require '../factories'
 
 describe 'GalaxyZooSubject', ->
+  Factory = require './lib/factories'
+
   beforeEach ->
     @galaxyZooSubject = Factory.build('galaxyZooSubject')
 
