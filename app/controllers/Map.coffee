@@ -74,8 +74,7 @@ class Map extends BaseController
       circle.bindPopup require('views/map_popup')({subject})
       circle.on 'click', =>
         circle.openPopup()
-        @publish circle.zooinverse_id
-        
+        @publish [ {message: "selected", item_id: circle.zooinverse_id} ]
 
   process: (message) =>
     console.log message
@@ -84,7 +83,6 @@ class Map extends BaseController
   selected: (itemId) ->
     item = _.find @subjects, (subject) ->
       subject.zooniverse_id = itemId
-
     latlng = new L.LatLng(item.coords[0], item.coords[1])
     @map.panTo latlng
     circle = _.find @circles, (circle) ->

@@ -18,5 +18,5 @@ class Table extends BaseController
     @selected = $(e.currentTarget)
     @selected.addClass('selected')
     @publish([ { message: "selected", item_id: @selected.attr('data-id') } ])
-    
+
 module.exports = Table
