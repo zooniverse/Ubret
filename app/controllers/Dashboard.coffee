@@ -20,7 +20,7 @@ class Dashboard extends Spine.Controller
 
   createTool: (className) ->
     @count += 1
-    @append "<div class=\"#{className}\" id=\"#{@count}\"></div>"
+    @append "<div class=\"#{tool}\" id=\"#{@count}\"></div>"
     @addTool new className({el: "##{@count}"})
 
 module.exports = Dashboard
