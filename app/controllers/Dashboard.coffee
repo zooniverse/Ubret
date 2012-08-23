@@ -1,6 +1,7 @@
 Spine = require('spine')
 
 class Dashboard extends Spine.Controller
+  
   constructor: ->
     super
     @render()
@@ -19,8 +20,9 @@ class Dashboard extends Spine.Controller
     @channels.push tool.channel
 
   createTool: (className) ->
+    name = className.name.toLowerCase()
+    @append "<div class='#{name}' id=\"#{@count}\"></div>"
+    @addTool new className({el: "##{@count}", index: @count})
     @count += 1
-    @append "<div class=\"#{tool}\" id=\"#{@count}\"></div>"
-    @addTool new className({el: "##{@count}"})
 
 module.exports = Dashboard

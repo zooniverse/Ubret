@@ -1,1 +1,1 @@
-<div id="sky" style="width:800px;height:500px;text-align:left;"></div>
+<div id="sky-<%= @['index'] %>" style="width:800px;height:500px;text-align:left;"></div>

@@ -1,12 +1,14 @@
 Spine = require('spine')
 
 class Toolbox extends Spine.Controller
-  constructor: ->
-    super
-    @render()
-
+  
   events: 
     'click .tool' : 'selection'
+  
+  constructor: ->
+    console.log 'ToolBox'
+    super
+    @render()
 
   render: =>
     console.log @tools
