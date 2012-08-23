@@ -9,6 +9,7 @@ class Map extends BaseController
   L.Icon.Default.imagePath = 'css/images'
 
   name: "Map"
+  circles: []
   
   constructor: ->
     super
@@ -58,7 +59,9 @@ class Map extends BaseController
     @layer.addTo @map
   
   plotObject: (coords, options) =>
-    L.circle(coords, 500, options).addTo(@map)
+    circle = L.circle(coords, 500, options).addTo(@map)
+    @circles.push circle
+    circle
     
   plotObjects: =>
     options =
@@ -84,5 +87,9 @@ class Map extends BaseController
 
     latlng = new L.LatLng(item.coords[0], item.coords[1])
     @map.panTo latlng
+    circle = _.find @circles, (circle) ->
+      circle.zooniverse_id = itemId
+    circle.openPopup()
+    
   
 module.exports = Map
