@@ -68,8 +68,11 @@ class Map extends BaseController
       coords = subject.coords
       circle = @plotObject coords, options
       circle.zooniverse_id = subject.zooniverse_id
-      console.log subject
       circle.bindPopup require('views/map_popup')({subject})
+      circle.on 'click', =>
+        circle.openPopup()
+        @publish circle.zooinverse_id
+        
 
   process: (message) =>
     console.log message
