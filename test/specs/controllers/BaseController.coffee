@@ -37,3 +37,9 @@ describe 'BaseController', ->
       callback = -> true
       @baseController.subscribe(@baseController.channel, callback)
       expect(@baseController.trigger).toHaveBeenCalledWith('subscribed', @baseController.channel)
+
+  describe "#getDataSource", ->
+    it 'should fetch from the DataSource with the passed params', ->
+      spyOn(GalaxyZooSubject, "fetch")
+      @dashboard.getDataSource GalaxyZooSubject, 10
+      expect(GalaxyZooSubject.fetch).toHaveBeenCalledWith(10)

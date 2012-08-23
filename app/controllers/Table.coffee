@@ -6,12 +6,12 @@ class Table extends BaseController
 
   constructor: ->
     super
-    @render()
 
   name: "Table"
 
   render: =>
-    @html require('views/table')(@subjects)
+    console.log @data
+    @html require('views/table')(@data)
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected

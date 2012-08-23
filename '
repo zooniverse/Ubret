@@ -9,6 +9,11 @@ class Dashboard extends Spine.Controller
   events: 
     submit: 'onSubmit'
 
+  elements: 
+    'select.channel'     : 'channel'
+    'select.sources'     : 'source'
+    'input[name="params"]': 'params'
+
   tools: []
 
   channels: []
@@ -23,7 +28,6 @@ class Dashboard extends Spine.Controller
     @html require('views/dashboard')() if @el.html
 
   addTool: (tool) ->
-    @currentTool = tool.channel
     @tools.push tool
     @channels.push tool.channel
 
@@ -36,16 +40,16 @@ class Dashboard extends Spine.Controller
 
   onSubmit: (e) =>
     e.preventDefault()
-    tool = $('button[type="submit"]').val()
-    source = $('select.channel').find('option:selected').attr('value') || $('select.source').find('option:selected').attr('value')
-    params = $('input[name="params"]').val()
-    @bindTool tool, source, params
+    console.log @channel, @source, @params
+    console.log @channel.find('option:selected').attr('value')
+    console.log @source.find('option:selected').attr('value')
+    console.log @params.val()
 
-  bindTool: (tool, source, params='') ->
+  bindTool: (tool, source, params=null) ->
     receiverTool = _.find @tools, (tool) ->
       tool.channel = tool
     if params
-      receiverTool.getDataSource source, params
+      receiverTool.getDataSource source
     else
       receiverTool.subscribe source, tool.process
       sourceTool = _.find @tools, (tool) ->

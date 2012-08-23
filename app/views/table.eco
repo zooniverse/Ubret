@@ -7,12 +7,14 @@
     </tr>
   </thead>
   <tbody>
+    <% if @.length: %>
     <% for subject in @: %>
     <tr class='subject' data-id=<%= subject.zooniverse_id %>>
       <td><%= subject.coords[0] %></td>
       <td><%= subject.coords[1] %></td>
       <td><%= subject.metadata.magnitude %></td>
     </tr>
+    <% end %>
     <% end %>
   </tbody>
 </table>

@@ -3,6 +3,7 @@ require = window.require
 describe 'Dashboard', ->
   Dashboard = require('controllers/Dashboard')
   BaseController = require('controllers/BaseController')
+  GalaxyZooSubject = require('models/GalaxyZooSubject')
   Factory = require('lib/factories')
 
   beforeEach ->
@@ -33,3 +34,16 @@ describe 'Dashboard', ->
 
     it 'should create a new div for the added Tool', ->
       expect(@dashboard.append).toHaveBeenCalled()
+
+  describe "#bindTool", ->
+    describe "bind to another tool", ->
+      it 'should subcribe the calling tool to another\'s channel', ->
+        spyOn(@tool, 'subscribe')
+        @dashboard.bindTool @tool, 'tool-channel'
+        expect(@tool.subscribte).toHaveBeenCalledWith('tool-channel', @tool.process)
+
+    describe "bind to a data source", ->
+      it 'should call the tool\'s #getDataSource method', -> 
+        spyon(@tool, 'getDataSource')
+        @dashboard.binTool @tool, GalaxyZooSubject, 10
+        expect(@tool.getDataSource).toHaveBeenCalledWith(GalaxyZooSubject, 10)
