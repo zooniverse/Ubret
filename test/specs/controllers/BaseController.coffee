@@ -31,3 +31,9 @@ describe 'BaseController', ->
       @baseController.subscribe(@baseController.channel, callback)
       @baseController.publish([ {message: "The Test"} ])
       expect(callback).toHaveBeenCalled()
+
+    it 'should set off a subscribed event when it subs to a channel', ->
+      spyOn(@baseController, 'trigger')
+      callback = -> true
+      @baseController.subscribe(@baseController.channel, callback)
+      expect(@baseController.trigger).toHaveBeenCalledWith('subscribed', @baseController.channel)

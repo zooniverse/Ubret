@@ -5,7 +5,6 @@ class BaseController extends Spine.Controller
   constructor: ->
     super
     @channel = @name + Math.random()
-    pubSub.publish '/subscribe-able', [ { message: @channel } ]
 
   name: "BaseController"
 
@@ -14,5 +13,6 @@ class BaseController extends Spine.Controller
 
   subscribe: (channel, callback) ->
     pubSub.subscribe(channel, callback)
+    @trigger 'subscribed', channel
     
 module.exports = BaseController

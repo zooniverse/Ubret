@@ -1,22 +1,24 @@
-Spine = require('spine')
+BaseController = require('./BaseController')
+_ = require('underscore/underscore')
 
-class Map extends Spine.Controller
+class Map extends BaseController
   @mapOptions =
     attributionControl: false
     
   # Set the default image path
   L.Icon.Default.imagePath = 'css/images'
-  
+
+  name: "Map"
   
   constructor: ->
     super
-    
+    @subscribe @subChannel, @process
     @html require('views/map')()
     @createSky()
     @plotObjects()
     
   createSky: =>
-    @map = L.map("sky", Map.mapOptions).setView([0, 180], 2)
+    @map = L.map("sky", Map.mapOptions).setView([0, 180], 6)
     @layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg',
       maxZoom: 7
     )
@@ -55,27 +57,29 @@ class Map extends Spine.Controller
 
     @layer.addTo @map
   
-  plotObject: (ra, dec) =>
-    L.marker([ra, dec]).addTo(@map)
+  plotObject: (coords, options) =>
+    L.circle(coords, 500, options).addTo(@map)
     
   plotObjects: =>
     options =
       color: '#0172E6'
     
-    circle = L.circle([0, 0], 500, options).addTo(@map)
-    circle.on('click', ( ->
-      console.log @
-    ))
-    
     for subject in @subjects
       coords = subject.coords
-      circle = L.circle(coords, 500, options).addTo(@map)
+      circle = @plotObject coords, options
       circle.zooniverse_id = subject.zooniverse_id
-      circle.on('click', ( ->
-        $('.subject').removeClass('selected')
-        $("[data-id=#{@.zooniverse_id}]").addClass('selected')
-      ))
-      # circle.bindPopup("ra: #{coords[0]}, dec: #{coords[1]}")
-  
+      console.log subject
+      circle.bindPopup require('views/map_popup')({subject})
+
+  process: (message) =>
+    console.log message
+    @selected message.item_id if message.message == "selected"
+ 
+  selected: (itemId) ->
+    item = _.find @subjects, (subject) ->
+      subject.zooniverse_id = itemId
+
+    latlng = new L.LatLng(item.coords[0], item.coords[1])
+    @map.panTo latlng
   
 module.exports = Map

@@ -1,11 +1,22 @@
-Spine = require('spine')
+BaseController = require("./BaseController")
 
-class Table extends Spine.Controller
+class Table extends BaseController
+  events: 
+    'click .subject' : 'selection'
+
   constructor: ->
     super
-    console.log 'Table'
-    console.log 'subjects', @subjects
+    @render()
+
+  name: "Table"
+
+  render: =>
     @html require('views/table')(@subjects)
-    
+
+  selection: (e) =>
+    @selected.removeClass('selected') if @selected
+    @selected = $(e.currentTarget)
+    @selected.addClass('selected')
+    @publish([ { message: "selected", item_id: @selected.attr('data-id') } ])
     
 module.exports = Table

@@ -13,7 +13,7 @@ class Main extends Spine.Controller
     
     GalaxyZooSubject.fetch(10).onSuccess ->
       @subjects = GalaxyZooSubject.all()
-      new Table({el: "#table", subjects: @subjects}) 
-      new Map({el: "#map", subjects: @subjects})
+      table = new Table({el: "#table", subjects: @subjects}) 
+      map = new Map({el: "#map", subChannel: table.channel, subjects: @subjects})
     
 module.exports = Main
