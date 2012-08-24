@@ -14,12 +14,14 @@ class Map extends BaseController
   constructor: ->
     super
     @subscribe @subChannel, @process
-    @html require('views/map')()
+    
+    @html require('views/map')({index: @index})
+    
     @createSky()
-    @plotObjects()
+    # @plotObjects()
     
   createSky: =>
-    @map = L.map("sky", Map.mapOptions).setView([0, 180], 6)
+    @map = L.map("sky-#{@index}", Map.mapOptions).setView([0, 180], 6)
     @layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg',
       maxZoom: 7
     )

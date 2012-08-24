@@ -23,6 +23,9 @@ class Dashboard extends Spine.Controller
     @channels.push tool.channel
 
   createTool: (className) ->
+    name = className.name.toLowerCase()
+    @append "<div class='#{name}' id=\"#{@count}\"></div>"
+    @addTool new className({el: "##{@count}", index: @count})
     @count += 1
     @append "<div class=\"tool\" id=\"#{@count}\"></div>"
     tool = new className({el: "##{@count}"})
@@ -30,16 +33,5 @@ class Dashboard extends Spine.Controller
     tool.append "<div class=\"bind-select\"></div>"
     bindSelect = new BindSelect { el: ".bind-select", dashboard: @, tool: tool }
     tool.append(bindSelect.html())
-
-  bindTool: (tool, source, params='') ->
-    receiverTool = _.find @tools, (tool) ->
-      tool.channel = tool
-    if params
-      receiverTool.getDataSource source, params
-    else
-      receiverTool.subscribe source, tool.process
-      sourceTool = _.find @tools, (tool) ->
-        tool.channel == source
-      receiverTool.receiveData tool.data
 
 module.exports = Dashboard
