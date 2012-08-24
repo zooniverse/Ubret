@@ -5,7 +5,7 @@ describe 'BaseController', ->
   pubSub = require('node-pubsub')
 
   beforeEach ->
-    @baseController = new BaseController
+    @baseController = new BaseController { channel: 'baseController-0' }
 
   it 'should have a unique channel', ->
     expect(@baseController.channel).toBeDefined()
@@ -40,6 +40,6 @@ describe 'BaseController', ->
 
   describe "#getDataSource", ->
     it 'should fetch from the DataSource with the passed params', ->
-      spyOn(GalaxyZooSubject, "fetch")
-      @dashboard.getDataSource GalaxyZooSubject, 10
+      spyOn(GalaxyZooSubject, "fetch").andCallThrough()
+      @baseController.getDataSource "GalaxyZooSubject", 10
       expect(GalaxyZooSubject.fetch).toHaveBeenCalledWith(10)

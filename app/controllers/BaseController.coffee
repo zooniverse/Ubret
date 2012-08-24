@@ -17,7 +17,7 @@ class BaseController extends Spine.Controller
     
   getDataSource: (source, params) =>
     switch source
-      when source = "GalaxyZooSubject" then dataSource = GalaxyZooSubject
+      when "GalaxyZooSubject" then dataSource = GalaxyZooSubject
     dataSource.fetch(params).onSuccess =>
       @data = dataSource.all()
       @render()

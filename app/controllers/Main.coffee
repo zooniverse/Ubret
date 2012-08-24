@@ -20,8 +20,10 @@ class Main extends Spine.Controller
       
     # Create dashboard
     @dashboard = new Dashboard({el: ".dashboard"})
+    @dashboard.render()
     
     @toolbox = new Toolbox( {el: ".toolbox", tools: [ {name: "Map", desc: "Maps Things"}, {name: "Table", desc: "Tables Things"} ]} )
+    @toolbox.render()
     @toolbox.bind 'add-new-tool', @addTool
 
   addTool: (toolName) =>

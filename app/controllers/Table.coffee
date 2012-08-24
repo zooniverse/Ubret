@@ -15,7 +15,7 @@ class Table extends BaseController
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected
-    @selected = $(e.currentTarget)
+    @selected = @el.find(e.currentTarget)
     @selected.addClass('selected')
     @publish([ { message: "selected", item_id: @selected.attr('data-id') } ])
 
@@ -25,7 +25,7 @@ class Table extends BaseController
 
   select: (itemId) =>
     @selected.removeClass('selected') if @selected
-    @selected = $("tr.subject[data-id='#{itemId}']")
+    @selected = @el.find("tr.subject[data-id='#{itemId}']")
     @selected.addClass('selected')
     @publish([ {message: "selected", item_id: itemId} ])
 

@@ -8,7 +8,6 @@ class Toolbox extends Spine.Controller
   constructor: ->
     console.log 'ToolBox'
     super
-    @render()
 
   render: =>
     console.log @tools
