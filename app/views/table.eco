@@ -10,9 +10,9 @@
     <% if @.length: %>
     <% for subject in @: %>
     <tr class='subject' data-id=<%= subject.zooniverse_id %>>
-      <td><%= subject.coords[0] %></td>
-      <td><%= subject.coords[1] %></td>
-      <td><%= subject.metadata.magnitude %></td>
+      <td><%= subject.ra %></td>
+      <td><%= subject.dec %></td>
+      <td><%= subject.magnitude %></td>
     </tr>
     <% end %>
     <% end %>

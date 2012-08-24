@@ -62,7 +62,7 @@ class Map extends BaseController
     @layer.addTo @map
   
   plotObject: (subject, options) =>
-    coords = [subject.coords[1], subject.coords[0]]
+    coords = [subject.dec, subject.ra]
     circle = L.circle(coords, 500, options).addTo(@map)
     circle.zooniverse_id = subject.zooniverse_id
     circle.bindPopup require('views/map_popup')({subject})
@@ -78,7 +78,7 @@ class Map extends BaseController
     for subject in @data
       @plotObject subject, options
 
-    latlng = new L.LatLng(@data[0].coords[1], @data[0].coords[0])
+    latlng = new L.LatLng(@data[0].dec, @data[0].ra)
     @map.panTo latlng
 
   process: (message) =>
@@ -87,7 +87,7 @@ class Map extends BaseController
   selected: (itemId) ->
     item = _.find @data, (subject) ->
       subject.zooniverse_id = itemId
-    latlng = new L.LatLng(item.coords[1], item.coords[0])
+    latlng = new L.LatLng(item.dec, item.ra)
     @map.panTo latlng
     circle = _.find @circles, (itemCircle) ->
       itemCircle.zooniverse_id == itemId

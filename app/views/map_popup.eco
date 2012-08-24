@@ -1,5 +1,5 @@
 <ul class="popup">
   <li>Subject: <%- @subject.zooniverse_id %></li>
-  <li>Ra: <%- @subject.coords[0] %>, Dec: <%- @subject.coords[1] %></li>
-  <li>Magnitude: <%- @subject.metadata.magnitude %></li>
+  <li>Ra: <%- @subject.ra %>, Dec: <%- @subject.dec %></li>
+  <li>Magnitude: <%- @subject.magnitude %></li>
 </ul>
