@@ -5,7 +5,6 @@ GalaxyZooSubject = require('models/GalaxyZooSubject')
 class BaseController extends Spine.Controller
   constructor: ->
     super
-    @channel = @name + Math.random()
 
   name: "BaseController"
 
@@ -23,7 +22,7 @@ class BaseController extends Spine.Controller
       @data = dataSource.all()
       @render()
 
-  recieveData: (data) =>
+  receiveData: (data) =>
     @data = data
     @render()
 

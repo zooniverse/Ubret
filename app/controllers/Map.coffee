@@ -14,11 +14,12 @@ class Map extends BaseController
   constructor: ->
     super
     @subscribe @subChannel, @process
-    
+    @render()
+
+  render: =>
     @html require('views/map')({index: @index})
-    
     @createSky()
-    # @plotObjects()
+    @plotObjects() if @data
     
   createSky: =>
     @map = L.map("sky-#{@index}", Map.mapOptions).setView([0, 180], 6)
@@ -60,36 +61,36 @@ class Map extends BaseController
 
     @layer.addTo @map
   
-  plotObject: (coords, options) =>
+  plotObject: (subject, options) =>
+    coords = [subject.coords[1], subject.coords[0]]
     circle = L.circle(coords, 500, options).addTo(@map)
+    circle.zooniverse_id = subject.zooniverse_id
+    circle.bindPopup require('views/map_popup')({subject})
+    circle.on 'click', =>
+      circle.openPopup()
+      @publish [ {message: "selected", item_id: circle.zooniverse_id} ]
     @circles.push circle
-    circle
     
   plotObjects: =>
     options =
       color: '#0172E6'
-    
-    for subject in @subjects
-      coords = subject.coords
-      circle = @plotObject coords, options
-      circle.zooniverse_id = subject.zooniverse_id
-      circle.bindPopup require('views/map_popup')({subject})
-      circle.on 'click', =>
-        circle.openPopup()
-        @publish [ {message: "selected", item_id: circle.zooinverse_id} ]
+
+    for subject in @data
+      @plotObject subject, options
+
+    latlng = new L.LatLng(@data[0].coords[1], @data[0].coords[0])
+    @map.panTo latlng
 
   process: (message) =>
-    console.log message
     @selected message.item_id if message.message == "selected"
  
   selected: (itemId) ->
-    item = _.find @subjects, (subject) ->
+    item = _.find @data, (subject) ->
       subject.zooniverse_id = itemId
-    latlng = new L.LatLng(item.coords[0], item.coords[1])
+    latlng = new L.LatLng(item.coords[1], item.coords[0])
     @map.panTo latlng
-    circle = _.find @circles, (circle) ->
-      circle.zooniverse_id = itemId
+    circle = _.find @circles, (itemCircle) ->
+      itemCircle.zooniverse_id == itemId
     circle.openPopup()
-    
   
 module.exports = Map

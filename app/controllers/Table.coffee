@@ -19,4 +19,14 @@ class Table extends BaseController
     @selected.addClass('selected')
     @publish([ { message: "selected", item_id: @selected.attr('data-id') } ])
 
+  process: (message) =>
+    switch message.message
+      when "selected" then @select message.item_id
+
+  select: (itemId) =>
+    @selected.removeClass('selected') if @selected
+    @selected = $("tr.subject[data-id='#{itemId}']")
+    @selected.addClass('selected')
+    @publish([ {message: "selected", item_id: itemId} ])
+
 module.exports = Table

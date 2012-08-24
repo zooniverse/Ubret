@@ -20,5 +20,6 @@ class BindSelect extends Spine.Controller
     params = @params.val()
     source = @channel.find('option:selected').val() or @source.find('option:selected').val()
     @dashboard.bindTool @tool, source, params
+    @el.hide()
 
 module.exports = BindSelect
