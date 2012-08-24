@@ -1,18 +1,16 @@
-<div class="bind-select">
-  <form>
+<form>
   <label> Bind to Tool Channel: <select class="channel">
-      <option value=""></option>
-    <% for channel in @channels: %>
-      <option value="<%- channel %>"><%- channel %></option>
-    <% end %>
+    <option value=""></option>
+  <% for channel in @dashboard.channels: %>
+    <option value="<%- channel %>"><%- channel %></option>
+  <% end %>
   </select></label>
   <label> or Bind to Data Source: <select class="source">
-      <option value=""></option>
-    <% for source in @sources: %>
+    <option value=""></option>
+    <% for source in @dashboard.sources: %>
       <option value="<%- source %>"><%- source %></option>
     <% end %>
-  </select>
+  </select></label>
   <label> Params for Data Source: <input type="text" name="params" /></label>
-  <button value="<%- @currentTool %>" type="submit">Submit</button>
-  </form>
-</div>
+  <button type="submit">Submit</button>
+</form>

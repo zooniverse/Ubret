@@ -1,13 +1,11 @@
 Spine = require('spine')
 _ = require('underscore/underscore')
+BindSelect = require('controllers/BindSelect')
 
 class Dashboard extends Spine.Controller
   constructor: ->
     super
     @render()
-
-  events: 
-    submit: 'onSubmit'
 
   tools: []
 
@@ -15,15 +13,12 @@ class Dashboard extends Spine.Controller
 
   sources: ["GalaxyZooSubject"]
 
-  bindSelect: require('views/bind_select')
-
   count: 0
 
   render: =>
     @html require('views/dashboard')() if @el.html
 
   addTool: (tool) ->
-    @currentTool = tool.channel
     @tools.push tool
     @channels.push tool.channel
 
@@ -32,14 +27,9 @@ class Dashboard extends Spine.Controller
     @append "<div class=\"tool\" id=\"#{@count}\"></div>"
     tool = new className({el: "##{@count}"})
     @addTool tool
-    tool.append @bindSelect(@)
-
-  onSubmit: (e) =>
-    e.preventDefault()
-    tool = $('button[type="submit"]').val()
-    source = $('select.channel').find('option:selected').attr('value') || $('select.source').find('option:selected').attr('value')
-    params = $('input[name="params"]').val()
-    @bindTool tool, source, params
+    tool.append "<div class=\"bind-select\"></div>"
+    bindSelect = new BindSelect { el: ".bind-select", dashboard: @, tool: tool }
+    tool.append(bindSelect.html())
 
   bindTool: (tool, source, params='') ->
     receiverTool = _.find @tools, (tool) ->

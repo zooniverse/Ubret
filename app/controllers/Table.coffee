@@ -6,11 +6,11 @@ class Table extends BaseController
 
   constructor: ->
     super
+    @render()
 
   name: "Table"
 
   render: =>
-    console.log @data
     @html require('views/table')(@data)
 
   selection: (e) =>
