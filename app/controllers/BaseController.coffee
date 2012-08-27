@@ -8,8 +8,6 @@ class BaseController extends Spine.Controller
 
   name: "BaseController"
 
-  data: []
-
   publish: (message) ->
     pubSub.publish(@channel, message, @)
 

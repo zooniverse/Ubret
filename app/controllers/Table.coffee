@@ -11,6 +11,8 @@ class Table extends BaseController
   name: "Table"
 
   keys: []
+
+  data: []
   
   render: =>
     @extractKeys @data[0] unless @keys == []
@@ -27,7 +29,6 @@ class Table extends BaseController
       when "selected" then @select message.item_id
 
   extractKeys: (datum) ->
-    console.log datum
     for key, value of datum
       dataKey = key if typeof(value) != 'function'
       @keys.push dataKey unless dataKey == 'cid' or dataKey == 'id'

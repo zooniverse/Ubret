@@ -27,7 +27,7 @@ class Dashboard extends Spine.Controller
   createTool: (className) ->
     @count += 1
     name = className.name.toLowerCase()
-    @workspace.append "<div class='#{name}' id=\"#{@count}\"></div>" if typeof(@workspace) == 'object'
+    @workspace.append "<div class='#{name} tool' id=\"#{@count}\"></div>" if typeof(@workspace) == 'object'
     tool = new className({el: "##{@count}", index: @count, channel: "#{name}-#{@count}"})
     @addTool tool
     bindSelect = new BindSelect { el: "##{@count} .bind-select", dashboard: @, tool: tool } if typeof(@workspace) == 'object'
