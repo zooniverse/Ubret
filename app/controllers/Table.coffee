@@ -10,8 +10,11 @@ class Table extends BaseController
 
   name: "Table"
 
+  keys: []
+  
   render: =>
-    @html require('views/table')(@data)
+    @extractKeys @data[0] unless @keys == []
+    @html require('views/table')(@)
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected
@@ -22,6 +25,12 @@ class Table extends BaseController
   process: (message) =>
     switch message.message
       when "selected" then @select message.item_id
+
+  extractKeys: (datum) ->
+    console.log datum
+    for key, value of datum
+      dataKey = key if typeof(value) != 'function'
+      @keys.push dataKey unless dataKey == 'cid' or dataKey == 'id'
 
   select: (itemId) =>
     @selected.removeClass('selected') if @selected

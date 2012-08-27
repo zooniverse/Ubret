@@ -1,19 +1,17 @@
 <table>
   <thead>
     <tr>
-      <th>Right Ascension</th>
-      <th>Declination</th>
-      <th>Magnitude</th>
+      <% if @keys.length: %>
+      <% for key in @keys: %>
+        <th><%- key %></th>
+      <% end %>
+      <% end %>
     </tr>
   </thead>
   <tbody>
-    <% if @.length: %>
-    <% for subject in @: %>
-    <tr class='subject' data-id=<%= subject.zooniverse_id %>>
-      <td><%= subject.ra %></td>
-      <td><%= subject.dec %></td>
-      <td><%= subject.magnitude %></td>
-    </tr>
+    <% if @data.length: %>
+    <% for subject in @data: %>
+      <%- require('views/table_row')({subject, @keys}) %>
     <% end %>
     <% end %>
   </tbody>

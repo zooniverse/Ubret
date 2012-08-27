@@ -10,7 +10,6 @@ class Toolbox extends Spine.Controller
     super
 
   render: =>
-    console.log @tools
     @html require('views/toolbox')(@) if @el.html
 
   selection: (e) =>
