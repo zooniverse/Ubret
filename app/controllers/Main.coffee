@@ -2,10 +2,11 @@ Spine = require('spine')
 
 GalaxyZooSubject = require('models/GalaxyZooSubject')
 
-Dashboard = require('controllers/Dashboard')
-Toolbox   = require('controllers/Toolbox')
-Table     = require('controllers/Table')
-Map       = require('controllers/Map')
+Dashboard   = require('controllers/Dashboard')
+Toolbox     = require('controllers/Toolbox')
+Table       = require('controllers/Table')
+Map         = require('controllers/Map')
+Scatterplot = require('controllers/Scatterplot')
 
 class Main extends Spine.Controller
   constructor: ->
@@ -22,7 +23,7 @@ class Main extends Spine.Controller
     @dashboard = new Dashboard({el: ".dashboard"})
     @dashboard.render()
     
-    @toolbox = new Toolbox( {el: ".toolbox", tools: [ {name: "Map", desc: "Maps Things"}, {name: "Table", desc: "Tables Things"} ]} )
+    @toolbox = new Toolbox( {el: ".toolbox", tools: [ {name: "Scatterplot", desc: "Plots things scatteredly" }, {name: "Map", desc: "Maps Things"}, {name: "Table", desc: "Tables Things"} ]} )
     @toolbox.render()
     @toolbox.bind 'add-new-tool', @addTool
 
@@ -30,6 +31,7 @@ class Main extends Spine.Controller
     switch toolName
       when "Map" then @dashboard.createTool Map
       when "Table" then @dashboard.createTool Table
+      when "Scatterplot" then @dashboard.createTool Scatterplot
 
 
 module.exports = Main
