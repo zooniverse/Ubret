@@ -3,7 +3,7 @@
     <tr>
       <% if @keys.length: %>
       <% for key in @keys: %>
-        <th><%- key %></th>
+        <th><%= @prettyKey(key) %></th>
       <% end %>
       <% end %>
     </tr>

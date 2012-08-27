@@ -43,3 +43,13 @@ describe 'BaseController', ->
       spyOn(GalaxyZooSubject, "fetch").andCallThrough()
       @baseController.getDataSource "GalaxyZooSubject", 10
       expect(GalaxyZooSubject.fetch).toHaveBeenCalledWith(10)
+
+  describe "#underscoresToSpaces", ->
+    it 'should convert underscores to spaces', ->
+      string = @baseController.underscoresToSpaces("Test_Me")
+      expect(string).toBe "Test Me"
+
+  describe "#capitalizeWords", ->
+    it 'should capitalize the first letter of each word', ->
+      string = @baseController.capitalizeWords("test me")
+      expect(string).toBe "Test Me"

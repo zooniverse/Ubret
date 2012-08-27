@@ -26,4 +26,14 @@ class BaseController extends Spine.Controller
     @data = data
     @render()
 
+  underscoresToSpaces: (string) ->
+    string.replace "_", " "
+
+  capitalizeWords: (string) ->
+    string.replace /(\b[a-z])/g, (char) ->
+      char.toUpperCase()
+
+  prettyKey: (key) ->
+    @capitalizeWords(@underscoresToSpaces(key))
+
 module.exports = BaseController
