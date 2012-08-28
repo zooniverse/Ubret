@@ -8,6 +8,9 @@ class BaseController extends Spine.Controller
     super
     @settings = new Settings {tool: @}
 
+  events: 
+    'click a.settings-trigger' : 'toggleSettings'
+
   render: =>
     @html require('views/base_controller')()
     @append @settings.render()
@@ -46,5 +49,9 @@ class BaseController extends Spine.Controller
     else
       @subscribe source, @process
       @trigger "request-data-#{@channel}", source
+
+  toggleSettings: (e) =>
+    e.preventDefault()
+    @$el.toggleClass 'settings-active'
 
 module.exports = BaseController

@@ -73,7 +73,7 @@ class Map extends BaseController
   
   plotObject: (subject, options) =>
     coords = [subject.dec, subject.ra]
-    circle = L.circle(coords, 500, options).addTo(@map)
+    circle = L.marker(coords, options).addTo(@map)
     circle.zooniverse_id = subject.zooniverse_id
     circle.bindPopup require('views/map_popup')({subject})
     circle.on 'click', =>
@@ -82,11 +82,8 @@ class Map extends BaseController
     @circles.push circle
     
   plotObjects: =>
-    options =
-      color: '#0172E6'
-
     for subject in @data
-      @plotObject subject, options
+      @plotObject subject
 
     latlng = new L.LatLng(@data[0].dec, @data[0].ra)
     @map.panTo latlng
