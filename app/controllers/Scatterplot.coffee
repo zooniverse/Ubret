@@ -1,4 +1,5 @@
 BaseController = require('controllers/BaseController')
+_ = require('underscore/underscore')
 
 class Scatterplot extends BaseController
   constructor: ->
@@ -14,6 +15,15 @@ class Scatterplot extends BaseController
   createGraph: ->
     @graph = nv.models.scatterChart()
                       .showLegend(false)
+                      .tooltipXContent(null)
+                      .tooltipYContent(null)
+                      .tooltipContent( (series, x, y, object, chart) =>
+                        point = object.point
+                        datum = _.find @data, (datum) ->
+                          datum.zooniverse_id == point.zooniverse_id
+                        @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
+                        require('views/scatterplot_tooltip')({datum})
+                      )
                       .color(d3.scale.category10().range())
 
   receiveData: (data) =>
@@ -45,6 +55,7 @@ class Scatterplot extends BaseController
           y: subject[@yAxisKey] 
           size: options.size 
           shape: options.shape
+          zooniverse_id: subject.zooniverse_id
 
     d3.select("##{@channel} svg")
       .datum(series)
