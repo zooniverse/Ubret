@@ -1,10 +1,16 @@
 Spine = require('spine')
 pubSub = require('node-pubsub')
 GalaxyZooSubject = require('models/GalaxyZooSubject')
+Settings = require('controllers/Settings')
 
 class BaseController extends Spine.Controller
   constructor: ->
     super
+    @settings = new Settings {tool: @}
+
+  render: =>
+    @html require('views/base_controller')()
+    @append @settings.render()
 
   name: "BaseController"
 
@@ -20,11 +26,9 @@ class BaseController extends Spine.Controller
       when "GalaxyZooSubject" then dataSource = GalaxyZooSubject
     dataSource.fetch(params).onSuccess =>
       @data = dataSource.all()
-      @render()
 
   receiveData: (data) =>
     @data = data
-    @render()
 
   underscoresToSpaces: (string) ->
     string.replace "_", " "
@@ -35,5 +39,12 @@ class BaseController extends Spine.Controller
 
   prettyKey: (key) ->
     @capitalizeWords(@underscoresToSpaces(key))
+
+  bindTool: (source, params='') ->
+    if params
+      @getDataSource source, params
+    else
+      @subscribe source, @process
+      @trigger "request-data-#{@channel}", source
 
 module.exports = BaseController

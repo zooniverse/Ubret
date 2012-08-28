@@ -1,9 +1,8 @@
 Spine = require('spine')
 
-class BindSelect extends Spine.Controller
+class Settings extends Spine.Controller
   constructor: ->
     super
-    @html @template(@)
 
   events:
     submit: 'onSubmit'
@@ -13,13 +12,18 @@ class BindSelect extends Spine.Controller
     'select.source'        : 'source'
     'input[name="params"]' : 'params'
 
-  template: require('views/bind_select')
+  className: "settings"
+
+  template: require('views/settings')
+
+  render: =>
+    @html @template(@)
     
   onSubmit: (e) =>
     e.preventDefault()
     params = @params.val()
     source = @channel.find('option:selected').val() or @source.find('option:selected').val()
-    @dashboard.bindTool @tool, source, params
+    @tool.bindTool source, params
     @el.hide()
 
-module.exports = BindSelect
+module.exports = Settings

@@ -14,10 +14,20 @@ class Map extends BaseController
   constructor: ->
     super
     @subscribe @subChannel, @process
-    @render()
 
   render: =>
-    @html require('views/map')({index: @index})
+    super
+    @append require('views/map')({index: @index})
+
+  receiveData: (data) =>
+    super
+    @initMap()
+
+  getDataSource: (source, params) ->
+    super.always =>
+      @initMap()
+
+  initMap: =>
     @createSky()
     @plotObjects() if @data
     

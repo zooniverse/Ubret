@@ -1,13 +1,15 @@
 <form>
   <label> Bind to Tool Channel: <select class="channel">
     <option value=""></option>
-  <% for channel in @dashboard.channels: %>
+  <% if @tool.channels: %>
+  <% for channel in @tool.channels: %>
     <option value="<%- channel %>"><%- channel %></option>
+  <% end %>
   <% end %>
   </select></label>
   <label> or Bind to Data Source: <select class="source">
     <option value=""></option>
-    <% for source in @dashboard.sources: %>
+    <% for source in @tool.sources: %>
       <option value="<%- source %>"><%- source %></option>
     <% end %>
   </select></label>

@@ -16,4 +16,3 @@
     <% end %>
   </tbody>
 </table>
-<div class="bind-select"></div>

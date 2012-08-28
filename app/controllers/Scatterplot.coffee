@@ -6,13 +6,27 @@ class Scatterplot extends BaseController
     @xAxisKey = 'ra'
     @yAxisKey = 'dec'
     @createGraph()
-    @render()
+
+  name: "Scatterplot"
 
   template: require('views/scatterplot')
 
   createGraph: ->
     @graph = nv.models.scatterChart()
+                      .showLegend(false)
                       .color(d3.scale.category10().range())
+
+  receiveData: (data) =>
+    super
+    @initGraph()
+
+  getDataSource: (source, params) ->
+    super.always =>
+      @initGraph()
+
+  initGraph: =>
+    @addAxis()
+    @addData() 
 
   addData: (options) ->
     options =
@@ -23,6 +37,7 @@ class Scatterplot extends BaseController
       key: "Group"
       values: []
     ]
+
     if @data
       for subject in @data
         series[0].values.push
@@ -52,10 +67,7 @@ class Scatterplot extends BaseController
       .tickFormat d3.format(options.yAxisFormat)
 
   render: =>
-    @html @template(@)
-    @addAxis()
-    @addData() 
-    
-    
+    super
+    @append @template(@)
     
 module.exports = Scatterplot

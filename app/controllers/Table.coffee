@@ -6,17 +6,25 @@ class Table extends BaseController
 
   constructor: ->
     super
-    @render()
 
   name: "Table"
 
   keys: []
 
   data: []
+
+  getDataSource: =>
+    super.always =>
+      @render()
+
+  receiveData: =>
+    super
+    @render()
   
   render: =>
+    super
     @extractKeys @data[0] unless @keys == []
-    @html require('views/table')(@)
+    @append require('views/table')(@)
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected

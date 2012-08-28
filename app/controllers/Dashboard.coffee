@@ -1,6 +1,5 @@
 Spine = require('spine')
 _ = require('underscore/underscore')
-BindSelect = require('controllers/BindSelect')
 
 class Dashboard extends Spine.Controller
   constructor: ->
@@ -18,25 +17,27 @@ class Dashboard extends Spine.Controller
   count: 0
 
   render: =>
-    @html require('views/dashboard')() if @el.html
+    @html require('views/dashboard')()
 
   addTool: (tool) ->
     @tools.push tool
     @channels.push tool.channel
+    tool.render()
+    @workspace.append tool.el
 
   createTool: (className) ->
     @count += 1
     name = className.name.toLowerCase()
-    @workspace.append "<div class='#{name} tool' id=\"#{@count}\"></div>" if typeof(@workspace) == 'object'
-    tool = new className({el: "##{@count}", index: @count, channel: "#{name}-#{@count}"})
-    @addTool tool
-    bindSelect = new BindSelect { el: "##{@count} .bind-select", dashboard: @, tool: tool } if typeof(@workspace) == 'object'
 
-  bindTool: (tool, source, params='') ->
-    if params
-      tool.getDataSource source, params
-    else
-      tool.subscribe source, tool.process
+    tool = new className
+      className: "#{name} tool" 
+      index: @count
+      channel: "#{name}-#{@count}"
+      sources: @sources
+      channels: @channels
+
+    @addTool tool
+    tool.bind "request-data-#{tool.channel}", (source) =>
       sourceTool = _.find @tools, (sTool) ->
         sTool.channel == source
       tool.receiveData sourceTool.data
