@@ -26,15 +26,7 @@ class Scatterplot extends BaseController
                       )
                       .color(d3.scale.category10().range())
 
-  receiveData: (data) =>
-    super
-    @initGraph()
-
-  getDataSource: (source, params) ->
-    super.always =>
-      @initGraph()
-
-  initGraph: =>
+  init: =>
     @addAxis()
     @addData() 
 

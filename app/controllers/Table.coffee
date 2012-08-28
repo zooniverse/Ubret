@@ -13,12 +13,7 @@ class Table extends BaseController
 
   data: []
 
-  getDataSource: =>
-    super.always =>
-      @render()
-
-  receiveData: =>
-    super
+  init: =>
     @render()
   
   render: =>

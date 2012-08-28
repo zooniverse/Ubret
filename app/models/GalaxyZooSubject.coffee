@@ -13,8 +13,9 @@ class GalaxyZooSubject extends Spine.Model
     fetcher = Api.get @url(limit: count), @fromJSON 
 
   @fromJSON: (json) =>
+    @lastFetch = new Array
     for result in json
-      @create
+      item = @create
         images: result.location
         magnitdue: result.metadata.magnitude
         ra: result.coords[0]
@@ -23,5 +24,6 @@ class GalaxyZooSubject extends Spine.Model
         petrosian_radius: result.metadata.petrorad_r
         survey: result.metadata.survey
         survey_id: result.metadata.sdss_id or result.metadata.hubble_id
+      @lastFetch.push item
 
 module.exports = GalaxyZooSubject

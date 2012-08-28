@@ -28,10 +28,11 @@ class BaseController extends Spine.Controller
     switch source
       when "GalaxyZooSubject" then dataSource = GalaxyZooSubject
     dataSource.fetch(params).onSuccess =>
-      @data = dataSource.all()
+      receiveData dataSource.lastFetch
 
   receiveData: (data) =>
     @data = data
+    @init
 
   underscoresToSpaces: (string) ->
     string.replace "_", " "
