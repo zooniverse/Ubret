@@ -1,4 +1,3 @@
-Spine = require('spine')
 pubSub = require('node-pubsub')
 GalaxyZooSubject = require('models/GalaxyZooSubject')
 Settings = require('controllers/Settings')
