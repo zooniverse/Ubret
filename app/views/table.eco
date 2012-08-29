@@ -1,7 +1,7 @@
 <table>
   <thead>
     <tr>
-      <% if @keys.length: %>
+      <% if @keys.length and @data.length: %>
       <% for key in @keys: %>
         <th><%= @prettyKey(key) %></th>
       <% end %>

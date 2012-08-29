@@ -13,10 +13,6 @@ class BaseController extends Spine.Controller
   constructor: ->
     super
 
-  render: =>
-    @html require('views/base_controller')()
-    @append @settings.render()
-
   publish: (message) ->
     pubSub.publish(@channel, message, @)
 

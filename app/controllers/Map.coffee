@@ -16,8 +16,7 @@ class Map extends BaseController
     @subscribe @subChannel, @process
 
   render: =>
-    super
-    @append require('views/map')({index: @index})
+    @html require('views/map')({index: @index})
 
   start: =>
     @createSky()

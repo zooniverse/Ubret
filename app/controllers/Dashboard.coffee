@@ -1,4 +1,5 @@
-_     = require('underscore/underscore')
+_      = require('underscore/underscore')
+ToolWindow = require('controllers/ToolWindow')
 
 class Dashboard extends Spine.Controller
   constructor: ->
@@ -18,8 +19,7 @@ class Dashboard extends Spine.Controller
   addTool: (tool) ->
     @tools.push tool
     @channels.push tool.channel
-    tool.render()
-    @workspace.append tool.el
+    @createWindow(tool)
 
   createTool: (className) ->
     @count += 1
@@ -37,5 +37,10 @@ class Dashboard extends Spine.Controller
       sourceTool = _.find @tools, (sTool) ->
         sTool.channel == source
       tool.receiveData sourceTool.data
+
+  createWindow: (tool) ->
+    window = new ToolWindow {tool: tool}
+    window.render()
+    @workspace.append window.el
 
 module.exports = Dashboard

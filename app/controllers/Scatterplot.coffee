@@ -70,7 +70,6 @@ class Scatterplot extends BaseController
       .tickFormat d3.format(options.yAxisFormat)
 
   render: =>
-    super
-    @append @template(@)
+    @html @template(@)
     
 module.exports = Scatterplot

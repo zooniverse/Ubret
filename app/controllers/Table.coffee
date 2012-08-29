@@ -6,11 +6,9 @@ class Table extends BaseController
 
   constructor: ->
     super
-    console.log @keys
+    @keys = new Array
 
   name: "Table"
-
-  keys: []
 
   data: []
 
@@ -19,6 +17,7 @@ class Table extends BaseController
   
   render: =>
     @extractKeys @data[0] unless @keys == []
+    console.log @keys
     @html require('views/table')(@)
 
   selection: (e) =>
