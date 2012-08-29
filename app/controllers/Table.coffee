@@ -6,6 +6,7 @@ class Table extends BaseController
 
   constructor: ->
     super
+    console.log @keys
 
   name: "Table"
 
@@ -13,13 +14,12 @@ class Table extends BaseController
 
   data: []
 
-  init: =>
+  start: =>
     @render()
   
   render: =>
-    super
     @extractKeys @data[0] unless @keys == []
-    @append require('views/table')(@)
+    @html require('views/table')(@)
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected

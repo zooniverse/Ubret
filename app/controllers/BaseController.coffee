@@ -6,7 +6,6 @@ Settings = require('controllers/Settings')
 class BaseController extends Spine.Controller
   constructor: ->
     super
-    @settings = new Settings {tool: @}
 
   events: 
     'click a.settings-trigger' : 'toggleSettings'
@@ -28,11 +27,11 @@ class BaseController extends Spine.Controller
     switch source
       when "GalaxyZooSubject" then dataSource = GalaxyZooSubject
     dataSource.fetch(params).onSuccess =>
-      receiveData dataSource.lastFetch
+      @receiveData dataSource.lastFetch
 
-  receiveData: (data) =>
+  receiveData: (data) ->
     @data = data
-    @init
+    @start()
 
   underscoresToSpaces: (string) ->
     string.replace "_", " "

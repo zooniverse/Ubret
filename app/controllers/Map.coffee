@@ -19,7 +19,7 @@ class Map extends BaseController
     super
     @append require('views/map')({index: @index})
 
-  init: =>
+  start: =>
     @createSky()
     @plotObjects() if @data
     
