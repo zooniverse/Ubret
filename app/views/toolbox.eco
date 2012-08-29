@@ -1,6 +1,5 @@
 <% for tool in @tools: %>
   <div class="tool" data-id="<%- tool.name %>">
-    <img src="<%- tool.icon or "images/place-holder-icon.png" %>" height="64" width="64" alt="<%- tool.description %>" />
     <button type="button" name="<%- tool.name %>"><%- tool.name %></button>
   </div>
 <% end %>

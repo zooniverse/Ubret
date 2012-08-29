@@ -5,7 +5,7 @@ class Map extends BaseController
   @mapOptions =
     attributionControl: false
     
-  # Set the default image path
+  # Set the default image path for Leaflet
   L.Icon.Default.imagePath = 'css/images'
 
   name: "Map"

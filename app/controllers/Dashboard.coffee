@@ -1,5 +1,4 @@
-Spine = require('spine')
-_ = require('underscore/underscore')
+_     = require('underscore/underscore')
 
 class Dashboard extends Spine.Controller
   constructor: ->
