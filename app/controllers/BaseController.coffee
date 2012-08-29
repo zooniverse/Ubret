@@ -1,20 +1,21 @@
-Spine = require('spine')
 pubSub = require('node-pubsub')
 GalaxyZooSubject = require('models/GalaxyZooSubject')
+SkyServerSubject = require('models/SkyServerSubject')
 Settings = require('controllers/Settings')
 
 class BaseController extends Spine.Controller
+  
+  events:
+    'click a.settings-trigger' : 'toggleSettings'
+  
+  name: 'BaseController'
+  
   constructor: ->
     super
-
-  events: 
-    'click a.settings-trigger' : 'toggleSettings'
 
   render: =>
     @html require('views/base_controller')()
     @append @settings.render()
-
-  name: "BaseController"
 
   publish: (message) ->
     pubSub.publish(@channel, message, @)
@@ -25,7 +26,11 @@ class BaseController extends Spine.Controller
     
   getDataSource: (source, params) =>
     switch source
-      when "GalaxyZooSubject" then dataSource = GalaxyZooSubject
+      when 'GalaxyZooSubject'
+        dataSource = GalaxyZooSubject
+      when 'SkyServerSubject'
+        dataSource = SkyServerSubject
+    
     dataSource.fetch(params).onSuccess =>
       @receiveData dataSource.lastFetch
 

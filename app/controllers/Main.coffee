@@ -1,5 +1,3 @@
-Spine = require('spine')
-
 GalaxyZooSubject = require('models/GalaxyZooSubject')
 
 Dashboard   = require('controllers/Dashboard')

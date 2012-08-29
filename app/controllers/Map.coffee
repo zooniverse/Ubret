@@ -5,14 +5,14 @@ class Map extends BaseController
   @mapOptions =
     attributionControl: false
     
-  # Set the default image path
+  # Set the default image path for Leaflet
   L.Icon.Default.imagePath = 'css/images'
 
   name: "Map"
-  circles: []
   
   constructor: ->
     super
+    @circles = []
     @subscribe @subChannel, @process
 
   render: =>
@@ -65,8 +65,10 @@ class Map extends BaseController
   
   plotObject: (subject, options) =>
     coords = [subject.dec, subject.ra]
-    circle = L.marker(coords, options).addTo(@map)
+    circle = new L.marker(coords, options)
     circle.zooniverse_id = subject.zooniverse_id
+    
+    circle.addTo(@map)
     circle.bindPopup require('views/map_popup')({subject})
     circle.on 'click', =>
       circle.openPopup()
@@ -74,22 +76,19 @@ class Map extends BaseController
     @circles.push circle
     
   plotObjects: =>
-    for subject in @data
-      @plotObject subject
+    @plotObject subject for subject in @data
 
     latlng = new L.LatLng(@data[0].dec, @data[0].ra)
     @map.panTo latlng
 
   process: (message) =>
-    @selected message.item_id if message.message == "selected"
+    @selected message.item_id if message.message is "selected"
  
-  selected: (itemId) ->
+  selected: (itemId) =>
     item = _.find @data, (subject) ->
       subject.zooniverse_id = itemId
     latlng = new L.LatLng(item.dec, item.ra)
-    @map.panTo latlng
-    circle = _.find @circles, (itemCircle) ->
-      itemCircle.zooniverse_id == itemId
+    circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
     circle.openPopup()
   
 module.exports = Map

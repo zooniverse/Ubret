@@ -1,4 +1,3 @@
-Spine = require('spine')
 
 class Settings extends Spine.Controller
   constructor: ->

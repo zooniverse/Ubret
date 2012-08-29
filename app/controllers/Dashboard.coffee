@@ -1,5 +1,4 @@
-Spine = require('spine')
-_ = require('underscore/underscore')
+_     = require('underscore/underscore')
 
 class Dashboard extends Spine.Controller
   constructor: ->
@@ -9,11 +8,8 @@ class Dashboard extends Spine.Controller
     '.tools': 'workspace'
 
   tools: []
-
   channels: []
-
-  sources: ["GalaxyZooSubject"]
-
+  sources: ["GalaxyZooSubject", "SkyServerSubject"]
   count: 0
 
   render: =>

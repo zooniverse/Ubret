@@ -1,4 +1,3 @@
-Spine = require('spine')
 
 class SubjectViewer extends Spine.Controller
   constructor: ->

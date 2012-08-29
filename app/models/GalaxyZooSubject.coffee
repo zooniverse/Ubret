@@ -6,8 +6,8 @@ class GalaxyZooSubject extends Spine.Model
   @url: (params) -> @withParams "/projects/galaxy_zoo/groups/50251c3b516bcb6ecb000002/subjects", params
 
   @withParams: (url = '', params) ->
-        url += '?' + $.param(params) if params
-        url
+    url += '?' + $.param(params) if params
+    url
 
   @fetch: (count = 1) ->
     fetcher = Api.get @url(limit: count), @fromJSON 
