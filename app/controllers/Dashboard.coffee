@@ -41,6 +41,7 @@ class Dashboard extends Spine.Controller
   createWindow: (tool) ->
     window = new ToolWindow {tool: tool}
     window.render()
+    window.el.toggleClass 'settings-active'
     @workspace.append window.el
 
 module.exports = Dashboard

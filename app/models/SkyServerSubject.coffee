@@ -1,6 +1,6 @@
 
 class SkyServerSubject extends Spine.Model
-  @configure 'SkyServerSubject', 'metadata'
+  @configure 'SkyServerSubject', 'ra', 'dec', 'zooniverse_id'
   
   @fetch: (count = 1) ->
     params =
@@ -9,9 +9,18 @@ class SkyServerSubject extends Spine.Model
       data:
         count: count
       callback: 'givemegalaxies'
-      success: (data) =>
-        console.log object['objID'], object['ra'], object['dec'] for object in data
+      success: @fromJSON
     
     $.ajax(params)
+
+  @fromJSON: (json) =>
+    @lastFetch = new Array
+    for result in json
+      item = @create
+        ra: result.ra
+        dec: result.dec
+        zooniverse_id: result.objID
+      @lastFetch.push item
+        
   
 module.exports = SkyServerSubject

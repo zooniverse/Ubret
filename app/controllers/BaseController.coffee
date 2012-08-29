@@ -5,9 +5,6 @@ Settings = require('controllers/Settings')
 
 class BaseController extends Spine.Controller
   
-  events:
-    'click a.settings-trigger' : 'toggleSettings'
-  
   name: 'BaseController'
   
   constructor: ->
@@ -26,8 +23,8 @@ class BaseController extends Spine.Controller
         dataSource = GalaxyZooSubject
       when 'SkyServerSubject'
         dataSource = SkyServerSubject
-    
-    dataSource.fetch(params).onSuccess =>
+
+    dataSource.fetch(params).always =>
       @receiveData dataSource.lastFetch
 
   receiveData: (data) ->
@@ -50,9 +47,5 @@ class BaseController extends Spine.Controller
     else
       @subscribe source, @process
       @trigger "request-data-#{@channel}", source
-
-  toggleSettings: (e) =>
-    e.preventDefault()
-    @$el.toggleClass 'settings-active'
 
 module.exports = BaseController

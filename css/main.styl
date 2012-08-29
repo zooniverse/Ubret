@@ -2,21 +2,49 @@
   width 100%
 
   .dashboard
-    width 80%
     margin-bottom 140px
 
     .tools
       padding 10px
 
-      .tool
-        padding 10px
-        float left
+      .window
+        width: 800px
+        position: relative
+        padding: 10px
+        padding-top: 20px
+        border: 1px $black solid
 
-        .bind-select
-          z-index 999
-        
-        .settings-trigger
-          font-weight 700
+        .settings
+          visibility: hidden 
+
+        .tool
+          visibility: visible
+
+        .window-controls
+          position: absolute
+          display: inline
+          visibility: hidden
+          top: 0
+          left: 0
+
+          ul
+            display: inline
+
+            li
+              display: inline
+              padding-right: 20px
+
+
+      .window:hover .window-controls
+        visibility: visible
+
+      .window.settings-active
+
+        .settings
+          visibility: visible
+
+        .tool
+          visibility: hidden
 
   .toolbox
     border-top 1px $black solid

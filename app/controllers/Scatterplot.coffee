@@ -17,14 +17,17 @@ class Scatterplot extends BaseController
                       .showLegend(false)
                       .tooltipXContent(null)
                       .tooltipYContent(null)
-                      .tooltipContent( (series, x, y, object, chart) =>
-                        point = object.point
-                        datum = _.find @data, (datum) ->
-                          datum.zooniverse_id == point.zooniverse_id
-                        @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
-                        require('views/scatterplot_tooltip')({datum})
-                      )
+                      .tooltipContent(@tooltipDisplay)
                       .color(d3.scale.category10().range())
+
+  tooltipDisplay: (series, x, y, object, chart) =>
+    point = object.point
+    datum = _.find @data, (datum) ->
+      datum.zooniverse_id == point.zooniverse_id
+    @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
+    xAxis = @xAxisKey
+    yAxis = @yAxisKey
+    require('views/scatterplot_tooltip')({datum, xAxis, yAxis})
 
   start: =>
     @addAxis()

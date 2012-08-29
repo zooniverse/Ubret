@@ -1,4 +1,3 @@
-<div class="settings-button"><a class="settings-trigger">Settings</a></div>
 <form>
   <label>Bind to Tool Channel: <select class="channel">
     <option value=""></option>
