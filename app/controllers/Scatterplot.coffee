@@ -19,6 +19,7 @@ class Scatterplot extends BaseController
                       .tooltipYContent(null)
                       .tooltipContent(@tooltipDisplay)
                       .color(d3.scale.category10().range())
+    @graph.scatter.id(@channel)
 
   tooltipDisplay: (series, x, y, object, chart) =>
     point = object.point
@@ -38,14 +39,14 @@ class Scatterplot extends BaseController
       size: 1
       shape: 'circle'
 
-    series = [
+    @series = [
       key: "Group"
       values: []
     ]
 
     if @data
       for subject in @data
-        series[0].values.push
+        @series[0].values.push
           x: subject[@xAxisKey]
           y: subject[@yAxisKey] 
           size: options.size 
@@ -53,7 +54,7 @@ class Scatterplot extends BaseController
           zooniverse_id: subject.zooniverse_id
 
     d3.select("##{@channel} svg")
-      .datum(series)
+      .datum(@series)
       .transition().duration(500)
       .call(@graph)
 
@@ -74,5 +75,18 @@ class Scatterplot extends BaseController
 
   render: =>
     @html @template(@)
-    
+
+  process: (message) =>
+    switch message.message
+      when 'selected' then @select message.item_id
+
+  select: (itemId) =>
+    d3.select(@point).classed("hover", false)
+    item = _.find @series[0].values, (value) ->
+      value.zooniverse_id == itemId
+    itemIndex = _.indexOf @series[0].values, item
+    @point = ".nv-chart-#{@channel} .nv-series-0 .nv-point-#{itemIndex}"
+    d3.select(@point).classed("hover", true)
+    @publish [ {messsage: "selected", item_id: itemId} ]
+      
 module.exports = Scatterplot

@@ -10,7 +10,6 @@ SubjectViewer = require('controllers/SubjectViewer')
 class Main extends Spine.Controller
   constructor: ->
     super
-    console.log 'Main'
     @append require('views/main')()
     
     # Create dashboard

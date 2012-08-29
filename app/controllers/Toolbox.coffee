@@ -5,7 +5,6 @@ class Toolbox extends Spine.Controller
     'click .tool' : 'selection'
   
   constructor: ->
-    console.log 'ToolBox'
     super
 
   render: =>

@@ -23,7 +23,7 @@ class Settings extends Spine.Controller
     e.preventDefault()
     params = @params.val()
     source = @channel.find('option:selected').val() or @source.find('option:selected').val()
-    @tool.bindTool source, params
     @$el.parent().toggleClass 'settings-active'
+    @tool.bindTool source, params
 
 module.exports = Settings
