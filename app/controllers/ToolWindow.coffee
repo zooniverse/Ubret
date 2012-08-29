@@ -5,8 +5,10 @@ class ToolWindow extends Spine.Controller
   className: "window"
 
   events: 
-    'click .close-window'   : 'closeWindow'
-    'click .toggle-settings': 'toggleSettings'
+    'click .close-window'    : 'closeWindow'
+    'mousedown .window-controls' : 'startDrag'
+    'mouseup'   : 'endDrag'
+    'click .toggle-settings' : 'toggleSettings'
 
   constructor: ->
     super
@@ -24,19 +26,32 @@ class ToolWindow extends Spine.Controller
     <div class="window-controls">
       <ul>
         <li><a class="close-window">X</a></li>
-        <li>#{@tool.channel}</li>
+        <li><a class="move-window">#{@tool.channel}</a></li>
         <li><a class="toggle-settings">settings</a></li>
       </ul>
     </div>
     """
 
   toggleSettings: (e) =>
-    e.preventDefault()
     @$el.toggleClass 'settings-active'
 
   closeWindow: (e) =>
-    e.preventDefault()
     @trigger 'remove-tool', @tool
     @release()
+
+  startDrag: (e) =>
+    @$el.attr 'unselectable', 'on'
+    elWidth = @$el.outerWidth()
+    elHeight = @$el.outerHeight()
+    @dragging = true
+    @$el.on 'mousemove', (e) =>
+      if @dragging
+        @$el.offset
+          top: e.pageY - elHeight / 2
+          left: e.pageX - elWidth / 2
+
+  endDrag: (e) =>
+    @$el.removeAttr 'unselectable'
+    @dragging = false
 
 module.exports = ToolWindow
