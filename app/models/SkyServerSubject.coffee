@@ -5,15 +5,13 @@ class SkyServerSubject extends Spine.Model
   @fetch: (count = 1) ->
     params =
       dataType: 'jsonp',
-      url: "http://skyserver.herokuapp.com/skyserver.json"
+      url: "http://skyserver.herokuapp.com/skyserver/random.json"
       data:
-        number: count
-        test:   'blah'
+        count: count
       callback: 'givemegalaxies'
       success: (data) =>
-        console.log data
-        
-    console.log 'here'
+        console.log object['objID'], object['ra'], object['dec'] for object in data
+    
     $.ajax(params)
   
 module.exports = SkyServerSubject
