@@ -8,21 +8,22 @@
       padding 10px
 
       .window
-        width: 800px
         position: relative
         padding: 10px
         padding-top: 20px
-        border: 1px $black solid
+        margin: 10px
+        border: 1px $gray1 solid
+        box-shadow(2px 2px 2px $gray3)
+        display: inline-block
 
         .settings
-          visibility: hidden 
+          display: none
 
         .tool
-          visibility: visible
+          display: block 
 
         .window-controls
           position: absolute
-          display: inline
           visibility: hidden
           top: 0
           left: 0
@@ -41,10 +42,10 @@
       .window.settings-active
 
         .settings
-          visibility: visible
+          display: block
 
         .tool
-          visibility: hidden
+          display: none
 
   .toolbox
     border-top 1px $black solid

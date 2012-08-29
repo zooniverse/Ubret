@@ -48,4 +48,10 @@ class BaseController extends Spine.Controller
       @subscribe source, @process
       @trigger "request-data-#{@channel}", source
 
+  extractKeys: (datum) ->
+    undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id']
+    for key, value of datum
+      dataKey = key if typeof(value) != 'function'
+      @keys.push dataKey unless dataKey in undesiredKeys
+
 module.exports = BaseController

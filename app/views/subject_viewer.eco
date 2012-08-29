@@ -1,0 +1,11 @@
+<% if @subject: %>
+<ul>
+  <li>id: <%- @subject.zooniverse_id %></li>
+  <li><img src="<%- @subject.image.src %>" /></li>
+  <% for key in @keys: %>
+  <li><%- key %>: <%- @subject[key] %></li>
+  <% end %>
+</ul>
+<% end %>
+<a class="next">next</a>
+<a class="back">back</a>
