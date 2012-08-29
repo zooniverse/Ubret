@@ -43,5 +43,10 @@ class Dashboard extends Spine.Controller
     window.render()
     window.el.toggleClass 'settings-active'
     @workspace.append window.el
+    window.bind 'remove-tool', @removeTool
+
+  removeTool: (tool) =>
+    @tools = _.without @tools, tool
+    @channels = _.without @channels, tool.channel
 
 module.exports = Dashboard

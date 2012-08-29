@@ -5,7 +5,7 @@ class ToolWindow extends Spine.Controller
   className: "window"
 
   events: 
-    'click .close-window'   : 'release'
+    'click .close-window'   : 'closeWindow'
     'click .toggle-settings': 'toggleSettings'
 
   constructor: ->
@@ -32,7 +32,11 @@ class ToolWindow extends Spine.Controller
 
   toggleSettings: (e) =>
     e.preventDefault()
-    console.log 'here'
     @$el.toggleClass 'settings-active'
+
+  closeWindow: (e) =>
+    e.preventDefault()
+    @trigger 'remove-tool', @tool
+    @release()
 
 module.exports = ToolWindow
