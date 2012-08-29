@@ -75,7 +75,6 @@ class Map extends BaseController
     coords = [subject.dec, subject.ra]
     circle = new L.marker(coords, options)
     circle.zooniverse_id = subject.zooniverse_id
-    circle.index = @index
     
     circle.addTo(@map)
     circle.bindPopup require('views/map_popup')({subject})
