@@ -4,6 +4,7 @@ _ = require('underscore/underscore')
 class Scatterplot extends BaseController
   constructor: ->
     super
+    
     @xAxisKey = 'ra'
     @yAxisKey = 'dec'
     @createGraph()
@@ -31,8 +32,32 @@ class Scatterplot extends BaseController
     require('views/scatterplot_tooltip')({datum, xAxis, yAxis})
 
   start: =>
-    @addAxis()
     @addData() 
+    @addFieldsToAxes()
+    @addAxis()
+
+  addFieldsToAxes: ->
+    attrs = @data[0].constructor.attributes
+    options = ""
+    for attr in attrs
+      options += "<option value='#{attr}'>#{attr}</option>"
+    
+    $("##{@channel}").append("
+      <select class='x-axis'>
+        #{options}
+      </select>
+      <select class='y-axis'>
+        #{options}
+      </select>
+    ")
+    
+    $("##{@channel} .x-axis").change (e) =>
+      @xAxisKey = e.currentTarget.value
+      @addData()
+      
+    $("##{@channel} .y-axis").change (e) =>
+      @yAxisKey = e.currentTarget.value
+      @addData()
 
   addData: (options) ->
     options =
