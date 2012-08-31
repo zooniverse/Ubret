@@ -2,6 +2,7 @@ require = window.require
 
 describe 'BaseController', ->
   BaseController = require('controllers/BaseController')
+  GalaxyZooSubject = require('models/GalaxyZooSubject')
   pubSub = require('node-pubsub')
 
   beforeEach ->
@@ -53,3 +54,36 @@ describe 'BaseController', ->
     it 'should capitalize the first letter of each word', ->
       string = @baseController.capitalizeWords("test me")
       expect(string).toBe "Test Me"
+
+  describe "#bindbaseController", ->
+    describe "bind to another baseController", ->
+      it 'should subcribe the calling baseController to another\'s channel', ->
+        spyOn(@baseController, 'subscribe')
+        @baseController.bindTool 'baseController-channel'
+        expect(@baseController.subscribe).toHaveBeenCalledWith('baseController-channel', @baseController.process)
+
+    describe "bind to a data source", ->
+      it 'should call the baseController\'s #getDataSource method', -> 
+        spyOn(@baseController, 'getDataSource')
+        @baseController.bindTool "GalaxyZooSubject", 10
+        expect(@baseController.getDataSource).toHaveBeenCalledWith("GalaxyZooSubject", 10)
+
+  describe "#parseFilter", ->
+    beforeEach ->
+      @outFunc = new Function("item",  "(item['u'] < 8.999)")
+
+    describe "string is in English", ->
+      it 'should produce a function from a given filter string', ->
+        inString = "u is less than 8.999"
+        expect(@baseController.parseFilter(inString).toString()).toBe @outFunc.toString()
+
+    describe "string has mathematical symbols", ->
+      it 'should produce a function from a given filter string', ->
+        inString = "u < 8.999"
+        expect(@baseController.parseFilter(inString).toString()).toBe @outFunc.toString()
+
+    describe "string has multiple predicates", ->
+      it 'should produce a function from a given filter string', ->
+        inString = "u < 8.999 and g > 9.283"
+        outFunc = new Function("item", "(item['u'] < 8.999) && (item['g'] > 9.283)")
+        expect(@baseController.parseFilter(inString).toString()).toBe outFunc.toString()

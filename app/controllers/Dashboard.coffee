@@ -33,7 +33,7 @@ class Dashboard extends Spine.Controller
       channels: @channels
 
     @addTool tool
-    tool.bind "request-data-#{tool.channel}", (source) =>
+    tool.bind "subscribed", (source) =>
       sourceTool = _.find @tools, (sTool) ->
         sTool.channel == source
       tool.receiveData sourceTool.data

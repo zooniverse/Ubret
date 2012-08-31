@@ -1,10 +1,10 @@
 require = window.require
 
 describe 'GalaxyZooSubject', ->
-  Factory = require './lib/factories'
+  GalaxyZooSubject = require('models/GalaxyZooSubject')
 
   beforeEach ->
-    @galaxyZooSubject = Factory.build('galaxyZooSubject')
+    @galazyZooSubject = GalaxyZooSubject.create()
 
   it 'should be instantiable', ->
     expect(@galaxyZooSubject).not.toBeNull()

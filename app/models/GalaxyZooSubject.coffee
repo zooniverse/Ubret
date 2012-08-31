@@ -1,7 +1,11 @@
 Api = require('zooniverse/lib/api')
+Spine = require('spine')
 
 class GalaxyZooSubject extends Spine.Model
   @configure 'GalaxyZooSubject', "image", "magnitude", "ra", "dec",  "zooniverse_id", "petrosian_radius", "survey", "survey_id"
+
+  constructor: ->
+    super
 
   @url: (params) -> @withParams "/projects/galaxy_zoo/groups/50251c3b516bcb6ecb000002/subjects", params
 

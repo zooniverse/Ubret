@@ -11,6 +11,8 @@ class Scatterplot extends BaseController
 
   name: "Scatterplot"
 
+  keys: []
+
   template: require('views/scatterplot')
 
   createGraph: ->
@@ -37,10 +39,10 @@ class Scatterplot extends BaseController
     @addAxis()
 
   addFieldsToAxes: ->
-    attrs = @data[0].constructor.attributes
+    @extractKeys @data[0]
     options = ""
-    for attr in attrs
-      options += "<option value='#{attr}'>#{attr}</option>"
+    for key in @keys
+      options += "<option value='#{key}'>#{@prettyKey(key)}</option>"
     
     $("##{@channel}").append("
       <select class='x-axis'>
@@ -116,6 +118,6 @@ class Scatterplot extends BaseController
     itemIndex = _.indexOf @series[0].values, item
     @point = ".nv-chart-#{@channel} .nv-series-0 .nv-point-#{itemIndex}"
     d3.select(@point).classed("hover", true)
-    @publish [ {messsage: "selected", item_id: itemId} ]
+    @publish [ {message: "selected", item_id: itemId} ]
       
 module.exports = Scatterplot

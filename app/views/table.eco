@@ -1,17 +1,21 @@
+<form>
+  <label>Filter Data: <input type="text" name="filter" /></label>
+  <button type="submit">Filter</button>
+</form>
 <table>
   <thead>
     <tr>
-      <th>Zooniverse ID</th>
       <% if @keys.length and @data.length: %>
+        <th>Zooniverse ID <a class="delete">X</a></th>
       <% for key in @keys: %>
-        <th><%= @prettyKey(key) %></th>
+        <th><%= @prettyKey(key) %> <a class="delete">X</a></th>
       <% end %>
       <% end %>
     </tr>
   </thead>
   <tbody>
-    <% if @data.length: %>
-    <% for subject in @data: %>
+    <% if @filteredData.length: %>
+    <% for subject in @filteredData: %>
       <%- require('views/table_row')({subject, @keys}) %>
     <% end %>
     <% end %>

@@ -1,8 +1,13 @@
 BaseController = require("./BaseController")
 
 class Table extends BaseController
+  elements: 
+    'input[name="filter"]' : 'filter'
+
   events: 
     'click .subject' : 'selection'
+    'click .delete'  : 'removeColumn'
+    submit: 'onSubmit'
 
   constructor: ->
     super
@@ -11,12 +16,16 @@ class Table extends BaseController
 
   data: []
 
+  filters: []
+
   start: =>
     @render()
   
   render: =>
     @keys = new Array
     @extractKeys @data[0]
+    @filterData()
+    console.log @filteredData
     @html require('views/table')(@)
 
   selection: (e) =>
@@ -34,5 +43,16 @@ class Table extends BaseController
     @selected = @el.find("tr.subject[data-id='#{itemId}']")
     @selected.addClass('selected')
     @publish([ {message: "selected", item_id: itemId} ])
+
+  removeColumn: (e) =>
+    target = $(e.currentTarget)
+    index = target.closest('th').prevAll('th').length
+    target.parents('table').find('tr').each ->
+      $(@).find("td:eq(#{index}), th:eq(#{index})").remove()
+
+  onSubmit: (e) =>
+    e.preventDefault()
+    @filters.push @parseFilter @filter.val()
+    @render()
 
 module.exports = Table

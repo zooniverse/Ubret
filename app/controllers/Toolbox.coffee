@@ -11,9 +11,8 @@ class Toolbox extends Spine.Controller
     @html require('views/toolbox')(@) if @el.html
 
   selection: (e) =>
-    if e
-      e.preventDefault()
-      selected = $(e.currentTarget).attr('data-id')
+    e.preventDefault()
+    selected = $(e.currentTarget).attr('data-id')
     @trigger 'add-new-tool', selected
     
 module.exports = Toolbox

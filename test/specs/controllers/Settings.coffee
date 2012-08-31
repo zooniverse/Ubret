@@ -1,7 +1,7 @@
 require = window.require
 
 describe 'BindSelect', ->
-  BindSelect = require('controllers/BindSelect')
+  Settings = require('controllers/Settings')
   
   it 'can noop', ->
     
