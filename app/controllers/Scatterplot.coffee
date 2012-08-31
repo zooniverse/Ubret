@@ -53,10 +53,14 @@ class Scatterplot extends BaseController
     
     $("##{@channel} .x-axis").change (e) =>
       @xAxisKey = e.currentTarget.value
+      @graph.xAxis
+        .axisLabel(@xAxisKey)
       @addData()
       
     $("##{@channel} .y-axis").change (e) =>
       @yAxisKey = e.currentTarget.value
+      @graph.yAxis
+        .axisLabel(@yAxisKey)
       @addData()
 
   addData: (options) ->
