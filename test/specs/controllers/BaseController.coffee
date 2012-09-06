@@ -50,6 +50,10 @@ describe 'BaseController', ->
       string = @baseController.underscoresToSpaces("Test_Me")
       expect(string).toBe "Test Me"
 
+    it 'should convert multiple underscores to spaces', ->
+      string = @baseController.underscoresToSpaces("Test_Me_Out")
+      expect(string).toBe "Test Me Out"
+
   describe "#capitalizeWords", ->
     it 'should capitalize the first letter of each word', ->
       string = @baseController.capitalizeWords("test me")

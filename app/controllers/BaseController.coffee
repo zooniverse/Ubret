@@ -39,7 +39,7 @@ class BaseController extends Spine.Controller
     @start()
 
   underscoresToSpaces: (string) ->
-    string.replace "_", " "
+    string.replace /_/g, " "
 
   capitalizeWords: (string) ->
     string.replace /(\b[a-z])/g, (char) ->
@@ -49,7 +49,7 @@ class BaseController extends Spine.Controller
     @capitalizeWords(@underscoresToSpaces(key))
 
   spacesToUnderscores: (string) ->
-    string.replace " ", "_"
+    string.replace /\s/g, "_"
 
   lowercaseWords: (string) ->
     string.replace /(\b[A-Z])/g, (char) ->

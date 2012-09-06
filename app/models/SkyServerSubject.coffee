@@ -1,7 +1,7 @@
 Spine = require('spine')
 
 class SkyServerSubject extends Spine.Model
-  @configure 'SkyServerSubject', 'objID', 'specObjID', 'ra', 'dec', 'raErr', 'decErr', 'b', 'l', 'mjd', 'type', 'u', 'g', 'r', 'i', 'z', 'err_u', 'err_g', 'err_r', 'err_i', 'err_z', 'petroR90_u', 'petroR90_g', 'petroR90_r', 'petroR90_i', 'petroR90_z', 'extinction_u', 'extinction_g', 'extinction_r', 'extinction_i', 'extinction_z', 'fracDeV_u', 'fracDeV_g', 'fracDeV_r', 'fracDeV_i', 'fracDeV_z', 'zooniverse_id'
+  @configure 'SkyServerSubject', 'objID', 'specObjID', 'ra', 'dec', 'raErr', 'decErr', 'b', 'l', 'mjd', 'type', 'u_band_magnitude', 'g_band_magnitude', 'r_band_magnitude', 'i_band_magnitude', 'z_band_magnitude', 'err_in_u_band_magnitude', 'err_in_g_band_magnitude', 'err_in_r_band_magnitude', 'err_in_i_band_magnitude', 'err_in_z_band_magnitude', 'petrosian_radius_u', 'petrosian_radius_g', 'petrosian_radius_r', 'petrosian_radius_i', 'petrosian_radius_z', 'extinction_u', 'extinction_g', 'extinction_r', 'extinction_i', 'extinction_z', 'fracDeV_u', 'fracDeV_g', 'fracDeV_r', 'fracDeV_i', 'fracDeV_z', 'zooniverse_id'
   
   @fetch: (count = 1) ->
     count = parseInt count
@@ -32,21 +32,21 @@ class SkyServerSubject extends Spine.Model
           l: result.l
           mjd: result.mjd
           type: result.type
-          u: result.u
-          g: result.g
-          r: result.r
-          i: result.i
-          z: result.z
-          err_u: result.err_u
-          err_g: result.err_g
-          err_r: result.err_r
-          err_i: result.err_i
-          err_z: result.err_z
-          petroR90_u: result.petroR90_u
-          petroR90_g: result.petroR90_g
-          petroR90_r: result.petroR90_r
-          petroR90_i: result.petroR90_i
-          petroR90_z: result.petroR90_z
+          u_band_magnitude: result.u
+          g_band_magnitude: result.g
+          r_band_magnitude: result.r
+          i_band_magnitude: result.i
+          z_band_magnitude: result.z
+          err_in_u_band_magnitude: result.err_u
+          err_in_g_band_magnitude: result.err_g
+          err_in_r_band_magnitude: result.err_r
+          err_in_i_band_magnitude: result.err_i
+          err_in_z_band_magnitude: result.err_z
+          petrosian_radius_u: result.petroR90_u
+          petrosian_radius_g: result.petroR90_g
+          petrosian_radius_r: result.petroR90_r
+          petrosian_radius_i: result.petroR90_i
+          petrosian_radius_z: result.petroR90_z
           extinction_u: result.extinction_u
           extinction_g: result.extinction_g
           extinction_r: result.extinction_r
