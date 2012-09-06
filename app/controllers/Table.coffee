@@ -1,4 +1,5 @@
 BaseController = require("./BaseController")
+_ = require ("underscore/underscore")
 
 class Table extends BaseController
   elements: 
@@ -14,10 +15,6 @@ class Table extends BaseController
 
   name: "Table"
 
-  data: []
-
-  filters: []
-
   start: =>
     @render()
   
@@ -25,8 +22,8 @@ class Table extends BaseController
     @keys = new Array
     @extractKeys @data[0]
     @filterData()
-    console.log @filteredData
     @html require('views/table')(@)
+    
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected
@@ -37,6 +34,7 @@ class Table extends BaseController
   process: (message) =>
     switch message.message
       when "selected" then @select message.item_id
+      when "filter" then @addFilter message.filter
 
   select: (itemId) =>
     @selected.removeClass('selected') if @selected
@@ -52,7 +50,49 @@ class Table extends BaseController
 
   onSubmit: (e) =>
     e.preventDefault()
-    @filters.push @parseFilter @filter.val()
-    @render()
+    @addFilter @parseFilter @filter.val()
+
+  parseFilter: (string) =>
+    tokens = string.split " "
+    filter = @processFilterArray tokens
+    filter = "return" + filter.join " "
+    filterFunc = new Function( "item", filter )
+    return filterFunc
+
+  processFilterArray: (tokens, filters=[]) =>
+    nextOr = _.indexOf tokens, "or"
+    nextAnd = _.indexOf tokens, "and"
+    if ((nextOr < nextAnd) or (nextAnd == -1)) and (nextOr != -1)
+      predicate = tokens.splice(0, nextOr)
+      filters.push @parsePredicate predicate
+      filters.push "||"
+    else if ((nextAnd < nextOr) or (nextOr == -1)) and (nextAnd != -1)
+      predicate = tokens.splice(0, nextAnd)
+      filters.push @parsePredicate predicate
+      filters.push "&&"
+    else
+      predicate = tokens 
+      filters.push @parsePredicate predicate
+    unless predicate == tokens
+      @processFilterArray tokens.splice(1), filters 
+    else
+      return filters
+
+  parsePredicate: (predicate) ->
+    field = _.first predicate
+    limiter = _.last predicate
+    comparison = _.find predicate, (item) ->
+      item in ['equal', 'equals', 'greater', 'less', 'not', '=', '>', '<', '!=']
+
+    switch comparison
+      when 'equal' then operator = '=='
+      when 'equals' then operator = '=='
+      when 'greater' then operator = '>'
+      when 'less' then operator = '<'
+      when 'not' then operator = '!='
+      when '=' then operator = '=='
+      else operator = comparison
+
+    return "(item['#{@uglifyKey(field)}'] #{operator} #{parseFloat(limiter)})"
 
 module.exports = Table

@@ -13,6 +13,9 @@ class BaseController extends Spine.Controller
   
   constructor: ->
     super
+    @data = new Array
+    @filters = new Array
+    @filteredData = new Array
 
   publish: (message) ->
     pubSub.publish(@channel, message, @)
@@ -49,7 +52,7 @@ class BaseController extends Spine.Controller
     string.replace " ", "_"
 
   lowercaseWords: (string) ->
-    string.replace /(\b[a-z])/g, (char) ->
+    string.replace /(\b[A-Z])/g, (char) ->
       char.toLowerCase()
 
   uglifyKey: (key) ->
@@ -67,50 +70,15 @@ class BaseController extends Spine.Controller
       dataKey = key if typeof(value) != 'function'
       @keys.push dataKey unless dataKey in undesiredKeys
 
-  parseFilter: (string) =>
-    tokens = string.split " "
-    filter = @processFilterArray tokens
-    filter = "return" + filter.join " "
-    filterFunc = new Function( "item", filter )
-
-  processFilterArray: (tokens, filters=[]) =>
-    nextOr = _.indexOf tokens, "or"
-    nextAnd = _.indexOf tokens, "and"
-    if ((nextOr < nextAnd) or (nextAnd == -1)) and (nextOr != -1)
-      predicate = tokens.splice(0, nextOr)
-      filters.push @parsePredicate predicate
-      filters.push "||"
-    else if ((nextAnd < nextOr) or (nextOr == -1)) and (nextAnd != -1)
-      predicate = tokens.splice(0, nextAnd)
-      filters.push @parsePredicate predicate
-      filters.push "&&"
-    else
-      predicate = tokens 
-      filters.push @parsePredicate predicate
-    unless predicate == tokens
-      @processFilterArray tokens.splice(1), filters 
-    else
-      return filters
-
-  parsePredicate: (predicate) ->
-    field = _.first predicate
-    limiter = _.last predicate
-    comparison = _.find predicate, (item) ->
-      item in ['equals', 'greater', 'less', 'not', '=', '>', '<', '!=']
-
-    switch comparison
-      when 'equals' then operator = '==='
-      when 'greater' then operator = '>'
-      when 'less' then operator = '<'
-      when 'not' then operator = '!=='
-      when '=' then operator = '==='
-      else operator = comparison
-
-    return "(item['#{@uglifyKey(field)}'] #{operator} #{parseFloat(limiter)})"
-
   filterData: =>
     @filteredData = @data
     for func in @filters
       @filteredData = _.filter @data, func
+
+  addFilter: (filter) =>
+    @filters.push filter
+    @publish [ {message: 'filter', filter: filter} ]
+    @start()
+
 
 module.exports = BaseController

@@ -67,23 +67,3 @@ describe 'BaseController', ->
         spyOn(@baseController, 'getDataSource')
         @baseController.bindTool "GalaxyZooSubject", 10
         expect(@baseController.getDataSource).toHaveBeenCalledWith("GalaxyZooSubject", 10)
-
-  describe "#parseFilter", ->
-    beforeEach ->
-      @outFunc = new Function("item",  "(item['u'] < 8.999)")
-
-    describe "string is in English", ->
-      it 'should produce a function from a given filter string', ->
-        inString = "u is less than 8.999"
-        expect(@baseController.parseFilter(inString).toString()).toBe @outFunc.toString()
-
-    describe "string has mathematical symbols", ->
-      it 'should produce a function from a given filter string', ->
-        inString = "u < 8.999"
-        expect(@baseController.parseFilter(inString).toString()).toBe @outFunc.toString()
-
-    describe "string has multiple predicates", ->
-      it 'should produce a function from a given filter string', ->
-        inString = "u < 8.999 and g > 9.283"
-        outFunc = new Function("item", "(item['u'] < 8.999) && (item['g'] > 9.283)")
-        expect(@baseController.parseFilter(inString).toString()).toBe outFunc.toString()

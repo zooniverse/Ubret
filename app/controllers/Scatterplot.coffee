@@ -34,6 +34,7 @@ class Scatterplot extends BaseController
     require('views/scatterplot_tooltip')({datum, xAxis, yAxis})
 
   start: =>
+    @filterData()
     @addData() 
     @addFieldsToAxes()
     @addAxis()
@@ -44,7 +45,7 @@ class Scatterplot extends BaseController
     for key in @keys
       options += "<option value='#{key}'>#{@prettyKey(key)}</option>"
     
-    $("##{@channel}").append("
+    @el.find('.axis_controls').html("
       <select class='x-axis'>
         #{options}
       </select>
@@ -75,8 +76,8 @@ class Scatterplot extends BaseController
       values: []
     ]
 
-    if @data
-      for subject in @data
+    if @filteredData
+      for subject in @filteredData
         @series[0].values.push
           x: subject[@xAxisKey]
           y: subject[@yAxisKey] 
@@ -110,6 +111,7 @@ class Scatterplot extends BaseController
   process: (message) =>
     switch message.message
       when 'selected' then @select message.item_id
+      when 'filter' then @addFilter message.filter
 
   select: (itemId) =>
     d3.select(@point).classed("hover", false)

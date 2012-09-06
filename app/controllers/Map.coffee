@@ -19,7 +19,7 @@ class Map extends BaseController
     @html require('views/map')({index: @index})
 
   start: =>
-    @createSky()
+    @createSky() unless @map
     @plotObjects() if @data
     
   createSky: =>
@@ -75,13 +75,18 @@ class Map extends BaseController
     @circles.push circle
     
   plotObjects: =>
-    @plotObject subject for subject in @data
+    @map.removeLayer(marker) for marker in @circles
+    @circles = new Array
+    @filterData()
+    @plotObject subject for subject in @filteredData
 
     latlng = new L.LatLng(@data[0].dec, @data[0].ra)
     @map.panTo latlng
 
   process: (message) =>
-    @selected message.item_id if message.message is "selected"
+    switch message.message
+      when "selected" then @selected message.item_id
+      when "filter" then @addFilter message.filter
  
   selected: (itemId) =>
     item = _.find @data, (subject) ->

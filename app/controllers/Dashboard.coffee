@@ -36,7 +36,7 @@ class Dashboard extends Spine.Controller
     tool.bind "subscribed", (source) =>
       sourceTool = _.find @tools, (sTool) ->
         sTool.channel == source
-      tool.receiveData sourceTool.data
+      tool.receiveData sourceTool.filteredData
 
   createWindow: (tool) ->
     window = new ToolWindow {tool: tool}
