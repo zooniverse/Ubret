@@ -1,5 +1,0 @@
-<% for tool in @tools: %>
-  <div class="tool" data-id="<%- tool.name %>">
-    <button type="button" name="<%- tool.name %>"><%- tool.name %></button>
-  </div>
-<% end %>
