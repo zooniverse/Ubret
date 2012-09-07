@@ -1,6 +1,6 @@
 module.exports = require './ubret'
 
-exports.GalaxyZooSubject = require './models/GalazyZooSubject'
+exports.GalaxyZooSubject = require './models/GalaxyZooSubject'
 exports.SkyServerSubject = require './models/SkyServerSubject'
 
 exports.Map = require './controllers/Map'
