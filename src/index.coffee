@@ -1,4 +1,4 @@
-module.exports = require './lib/ubret'
+module.exports = require './ubret'
 
 exports.GalaxyZooSubject = require './models/GalazyZooSubject'
 exports.SkyServerSubject = require './models/SkyServerSubject'
