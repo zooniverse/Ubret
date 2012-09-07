@@ -1,6 +1,13 @@
 {
   "name": "Ubret",
   "version": "0.0.1",
+  "private": true,
+  "author" : "zooniverse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zooniverse/Ubret.git"
+  },
+  "main" : "./lib/index.js",
   "dependencies": { 
     "serveup": "~0.0.4",
     "hem": "git://github.com/kapadia/hem.git",
