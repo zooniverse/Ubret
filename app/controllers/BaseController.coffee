@@ -16,6 +16,7 @@ class BaseController extends Spine.Controller
     @data = new Array
     @filters = new Array
     @filteredData = new Array
+    @filtersText = new Array
 
   publish: (message) ->
     pubSub.publish(@channel, message, @)
@@ -73,12 +74,24 @@ class BaseController extends Spine.Controller
   filterData: =>
     @filteredData = @data
     for func in @filters
-      @filteredData = _.filter @data, func
+      @filteredData = _.filter @filteredData, func
 
   addFilter: (filter) =>
     @filters.push filter
     @publish [ {message: 'filter', filter: filter} ]
     @start()
 
+  removeFilter: (e) ->
+    index = $(e.currentTarget).index()
+    @filtersText = _.without @filtersText, @filtersText.splice(index,1)
+    @filters = _.without @filters, @filters.splice(index,1)
+    @publish [ {message: 'unfilter', index: index} ]
+    @start()
+
+  process: (message) =>
+    switch message.message
+      when "selected" then @select message.item_id
+      when "filter" then @addFilter message.filter
+      when "unfilter" then @removeFilter message.index
 
 module.exports = BaseController

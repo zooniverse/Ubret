@@ -2,6 +2,13 @@
   <label>Filter Data: <input type="text" name="filter" /></label>
   <button type="submit">Filter</button>
 </form>
+<ul class="filters">
+<% if @filters.length: %>
+  <% for filter in @filtersText: %>
+    <li><%- filter %> <div class="remove_filter">X</div></li>
+  <% end %>
+<% end %>
+</ul>
 <table>
   <thead>
     <tr>

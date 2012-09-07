@@ -8,6 +8,7 @@ class Table extends BaseController
   events: 
     'click .subject' : 'selection'
     'click .delete'  : 'removeColumn'
+    'click .remove_filter' : 'removeFilter'
     submit: 'onSubmit'
 
   constructor: ->
@@ -50,6 +51,7 @@ class Table extends BaseController
 
   onSubmit: (e) =>
     e.preventDefault()
+    @filtersText.push @filter.val()
     @addFilter @parseFilter @filter.val()
 
   parseFilter: (string) =>
@@ -100,5 +102,14 @@ class Table extends BaseController
       else operator = comparison
 
     return "(item['#{@uglifyKey(field)}'] #{operator} #{parseFloat(limiter)})"
+
+  removeFilter: (e) ->
+    index = $(e.currentTarget).index()
+    @filtersText = _.without @filtersText, @filtersText.splice(index,1)
+    @filters = _.without @filters, @filters.splice(index,1)
+    @publish [ {message: 'unfilter', old: index} ]
+    @start()
+
+
 
 module.exports = Table
