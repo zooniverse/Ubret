@@ -4,8 +4,8 @@
 </form>
 <ul class="filters">
 <% if @filters.length: %>
-  <% for filter in @filtersText: %>
-    <li><%- filter %> <div class="remove_filter">X</div></li>
+  <% for filter in @filters: %>
+    <li><%- filter.text %> <div data-id="<%- filter.id %>" class="remove_filter">X</div></li>
   <% end %>
 <% end %>
 </ul>

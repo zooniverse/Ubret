@@ -108,11 +108,6 @@ class Scatterplot extends BaseController
   render: =>
     @html @template(@)
 
-  process: (message) =>
-    switch message.message
-      when 'selected' then @select message.item_id
-      when 'filter' then @addFilter message.filter
-
   select: (itemId) =>
     d3.select(@point).classed("hover", false)
     item = _.find @series[0].values, (value) ->

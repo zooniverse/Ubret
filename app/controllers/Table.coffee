@@ -8,7 +8,7 @@ class Table extends BaseController
   events: 
     'click .subject' : 'selection'
     'click .delete'  : 'removeColumn'
-    'click .remove_filter' : 'removeFilter'
+    'click .remove_filter' : 'onRemoveFilter'
     submit: 'onSubmit'
 
   constructor: ->
@@ -24,18 +24,12 @@ class Table extends BaseController
     @extractKeys @data[0]
     @filterData()
     @html require('views/table')(@)
-    
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected
     @selected = @el.find(e.currentTarget)
     @selected.addClass('selected')
     @publish([ { message: "selected", item_id: @selected.attr('data-id') } ])
-
-  process: (message) =>
-    switch message.message
-      when "selected" then @select message.item_id
-      when "filter" then @addFilter message.filter
 
   select: (itemId) =>
     @selected.removeClass('selected') if @selected
@@ -49,9 +43,15 @@ class Table extends BaseController
     target.parents('table').find('tr').each ->
       $(@).find("td:eq(#{index}), th:eq(#{index})").remove()
 
+  onRemoveFilter: (e) =>
+    filter = (filter for filter in @filters when filter.id is $(e.currentTarget).data('id'))
+      # filter = _.find @filters, (e) ->
+
+      # filter.id == $(e.currentTarget).data('id') in fil
+    @removeFilter filter
+    
   onSubmit: (e) =>
     e.preventDefault()
-    @filtersText.push @filter.val()
     @addFilter @parseFilter @filter.val()
 
   parseFilter: (string) =>
@@ -59,7 +59,8 @@ class Table extends BaseController
     filter = @processFilterArray tokens
     filter = "return" + filter.join " "
     filterFunc = new Function( "item", filter )
-    return filterFunc
+    filterID = _.uniqueId "filter_"
+    return {id: filterID, text: string, func: filterFunc}
 
   processFilterArray: (tokens, filters=[]) =>
     nextOr = _.indexOf tokens, "or"
@@ -103,12 +104,6 @@ class Table extends BaseController
 
     return "(item['#{@uglifyKey(field)}'] #{operator} #{parseFloat(limiter)})"
 
-  removeFilter: (e) ->
-    index = $(e.currentTarget).index()
-    @filtersText = _.without @filtersText, @filtersText.splice(index,1)
-    @filters = _.without @filters, @filters.splice(index,1)
-    @publish [ {message: 'unfilter', old: index} ]
-    @start()
 
 
 

@@ -34,11 +34,6 @@ class SubjectViewer extends BaseController
       @count = @filteredData.length - 1
     @render()
 
-  process: (message) =>
-    switch message.message
-      when "selected" then @select message.item_id
-      when "filter" then @addFilter message.filter
-
   select: (itemId) =>
     subject = _.find @filteredData, (datum) ->
       datum.zooniverse_id == itemId

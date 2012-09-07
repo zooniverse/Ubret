@@ -82,11 +82,6 @@ class Map extends BaseController
 
     latlng = new L.LatLng(@data[0].dec, @data[0].ra)
     @map.panTo latlng
-
-  process: (message) =>
-    switch message.message
-      when "selected" then @selected message.item_id
-      when "filter" then @addFilter message.filter
  
   selected: (itemId) =>
     item = _.find @data, (subject) ->
