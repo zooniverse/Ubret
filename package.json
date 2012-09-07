@@ -10,6 +10,7 @@
     "underscore": "*",
     "spine": "~1.0.8",
     "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git",
+    "eco" : "*",
     "node-pubsub" : "*"
   },
   "devDependencies" : {
