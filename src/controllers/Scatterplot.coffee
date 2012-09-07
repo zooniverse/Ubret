@@ -29,7 +29,7 @@ class Scatterplot extends BaseController
     @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
     xAxis = @xAxisKey
     yAxis = @yAxisKey
-    require('views/scatterplot_tooltip')({datum, xAxis, yAxis})
+    @requireTemplate('views/scatterplot_tooltip', {datum, xAxis, yAxis})
 
   start: =>
     @filterData()

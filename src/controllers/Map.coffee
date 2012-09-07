@@ -68,7 +68,7 @@ class Map extends BaseController
     circle.zooniverse_id = subject.zooniverse_id
     
     circle.addTo(@map)
-    circle.bindPopup require('views/map_popup')({subject})
+    circle.bindPopup @requireTemplate('views/map_popup', {subject})
     circle.on 'click', =>
       circle.openPopup()
       @publish [ {message: "selected", item_id: circle.zooniverse_id} ]
