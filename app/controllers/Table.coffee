@@ -84,12 +84,12 @@ class Table extends BaseController
   parsePredicate: (predicate) ->
     limiter = _.last predicate
     comparison = _.find predicate, (item) ->
-      item in ['equal', 'equals', 'greater', 'less', 'not', '=', '>', '<', '!=']
+      item in ['equal', 'equals', 'greater', 'less', 'not', '=', '>', '<', '!=', '<=', '>=']
 
     isIndex = _.indexOf predicate, "is"
     comparisonIndex = _.indexOf predicate, comparison
 
-    fieldEnd = if isIndex > comparisonIndex then isIndex else comparisonIndex
+    fieldEnd = if isIndex < comparisonIndex then isIndex else comparisonIndex
 
     field = predicate.splice(0, fieldEnd).join " "
 
