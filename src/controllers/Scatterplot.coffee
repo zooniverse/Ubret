@@ -13,8 +13,6 @@ class Scatterplot extends BaseController
 
   keys: []
 
-  template: require('views/scatterplot')
-
   createGraph: ->
     @graph = nv.models.scatterChart()
                       .showLegend(false)
@@ -106,7 +104,7 @@ class Scatterplot extends BaseController
       .tickFormat d3.format(options.yAxisFormat)
 
   render: =>
-    @html @template(@)
+    @html @requireTemplate('views/scatterplot', @)
 
   select: (itemId) =>
     d3.select(@point).classed("hover", false)

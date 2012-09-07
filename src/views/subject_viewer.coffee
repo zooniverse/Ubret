@@ -1,3 +1,5 @@
+module.exports = """
+
 <% if @subject: %>
 <ul>
   <li>id: <%- @subject.zooniverse_id %></li>
@@ -11,3 +13,5 @@
 <% end %>
 <a class="next">next</a>
 <a class="back">back</a>
+
+"""

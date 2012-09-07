@@ -1,3 +1,5 @@
+module.exports = """
+
 <form>
   <label>Filter Data: <input type="text" name="filter" /></label>
   <button type="submit">Filter</button>
@@ -23,8 +25,10 @@
   <tbody>
     <% if @filteredData.length: %>
     <% for subject in @filteredData: %>
-      <%- require('views/table_row')({subject, @keys}) %>
+      <%- @requireTemplate('views/table_row', {subject, @keys}) %>
     <% end %>
     <% end %>
   </tbody>
 </table>
+
+"""

@@ -1,3 +1,5 @@
+module.exports = """
+
 <tr class='subject' data-id=<%= @subject.zooniverse_id %>>
   <td><%- @subject.zooniverse_id %></td>
   <% if @keys.length: %>
@@ -6,3 +8,5 @@
   <% end %>
   <% end %>
 </tr>
+
+"""
