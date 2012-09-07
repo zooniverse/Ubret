@@ -3,10 +3,8 @@ pubSub = require('node-pubsub')
 _ = require('underscore/underscore')
 eco = require('eco')
 
-GalaxyZooSubject = require('models/GalaxyZooSubject')
-SkyServerSubject = require('models/SkyServerSubject')
-
-Settings = require('controllers/Settings')
+GalaxyZooSubject = require('../models/GalaxyZooSubject')
+SkyServerSubject = require('../models/SkyServerSubject')
 
 class BaseController extends Spine.Controller
   
