@@ -1,4 +1,4 @@
-BaseController = require('controllers/BaseController')
+BaseController = require('./BaseController')
 _ = require('underscore/underscore')
 
 class SubjectViewer extends BaseController
