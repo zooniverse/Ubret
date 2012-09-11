@@ -23,7 +23,7 @@ class Table extends BaseController
     @keys = new Array
     @extractKeys @data[0]
     @filterData()
-    @html require('views/table')(@)
+    @html require('../views/table')(@)
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected

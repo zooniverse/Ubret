@@ -29,7 +29,7 @@ class Scatterplot extends BaseController
     @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
     xAxis = @xAxisKey
     yAxis = @yAxisKey
-    require('views/scatterplot_tooltip')({datum, xAxis, yAxis})
+    require('../views/scatterplot_tooltip')({datum, xAxis, yAxis})
 
   start: =>
     @filterData()
@@ -104,7 +104,7 @@ class Scatterplot extends BaseController
       .tickFormat d3.format(options.yAxisFormat)
 
   render: =>
-    @html require('views/scatterplot')(@)
+    @html require('../views/scatterplot')(@)
 
   select: (itemId) =>
     d3.select(@point).classed("hover", false)
