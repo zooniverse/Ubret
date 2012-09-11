@@ -23,7 +23,7 @@
   <tbody>
     <% if @filteredData.length: %>
     <% for subject in @filteredData: %>
-      <%- require('./views/table_row')({subject, @keys}) %>
+      <%- @tableRow({subject, @keys}) %>
     <% end %>
     <% end %>
   </tbody>

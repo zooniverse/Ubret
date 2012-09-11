@@ -25,6 +25,8 @@ class Table extends BaseController
     @filterData()
     @html require('../views/table')(@)
 
+  tableRow: require('../view/table_row')
+
   selection: (e) =>
     @selected.removeClass('selected') if @selected
     @selected = @el.find(e.currentTarget)
