@@ -20,12 +20,11 @@
     "underscore": "*",
     "spine": "~1.0.8",
     "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git",
-    "eco" : "*",
     "node-pubsub" : "*"
   },
   "devDependencies" : {
     "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git",
     "sinon"                :  "*",
-    "rosie"                :  "git://github.com/mconf/rosie.git#b026bbaa39"
+    "eco" : "*"
   }
 }

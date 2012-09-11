@@ -1,7 +1,6 @@
 {
   "dependencies": [
     "node-pubsub",
-    "rosie",
     "underscore",
     "zooniverse",
     "es5-shimify", 
