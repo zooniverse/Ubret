@@ -1,7 +1,6 @@
 Spine = require('spine')
 pubSub = require('node-pubsub')
 _ = require('underscore/underscore')
-eco = require('eco')
 
 GalaxyZooSubject = require('../models/GalaxyZooSubject')
 SkyServerSubject = require('../models/SkyServerSubject')
@@ -89,8 +88,5 @@ class BaseController extends Spine.Controller
       when "selected" then @select message.item_id
       when "filter" then @addFilter message.filter
       when "unfilter" then @removeFilter message.filter
-
-  requireTemplate: (modulePath, context) ->
-    eco require(modulePath), context
 
 module.exports = BaseController
