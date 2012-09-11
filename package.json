@@ -8,6 +8,9 @@
     "url": "https://github.com/zooniverse/Ubret.git"
   },
   "main" : "./lib/index.js",
+  "bin" : {
+    "compile-eco": "./bin/compile-eco"
+  },
   "dependencies": { 
     "serveup": "~0.0.4",
     "hem": "git://github.com/kapadia/hem.git",

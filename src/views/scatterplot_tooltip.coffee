@@ -1,9 +1,0 @@
-module.exports = """
-
-<ul>
-  <li>id: <%- @datum.zooniverse_id %></li>
-  <li><%- @xAxis %>: <%- @datum[@xAxis] %></li>
-  <li><%- @yAxis %>: <%- @datum[@yAxis] %></li>
-</ul>
-
-"""
