@@ -23,7 +23,7 @@ class Histogram extends BaseController
     formatCount = d3.format ",.of"
 
     values = _.map (@filteredData), (datum) =>
-      datum[@variable] 
+      parseFloat datum[@variable]
 
     data = d3.layout.histogram()(values)
     
