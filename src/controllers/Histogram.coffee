@@ -36,7 +36,7 @@ class Histogram extends BaseController
 
     x = d3.scale.linear()
       .domain([Math.floor(d3.min(values)), Math.ceil(d3.max(values))])
-      .range([width, 0])
+      .range([0, width])
 
     xAxis = d3.svg.axis()
       .scale(x)
