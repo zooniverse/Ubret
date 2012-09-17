@@ -1,4 +1,4 @@
-BaseController = require './controllers/BaseController'
+BaseController = require './BaseController'
 _ = require 'underscore/underscore'
 
 class Histogram extends Spine.Controller
@@ -9,9 +9,13 @@ class Histogram extends Spine.Controller
     @width = 640
     @height = 480
 
-    @createGraph()
+    @start()
 
   createGraph: =>
+    if !@data
+      @append "<p>No Data</p>"
+      return
+
     margin = {top: 10, right: 30, bottom: 30, left: 30}
     width = @width - margin.left - margin.right
     height = @height - margin.top - margin.bottom
@@ -74,7 +78,7 @@ class Histogram extends Spine.Controller
       .call(yAxis)
 
   render: =>
-    @html require('./views/histogram')(@channel)
+    @html require('../views/histogram')(@channel)
 
   start: =>
     @filterData
