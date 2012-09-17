@@ -1,7 +1,7 @@
 BaseController = require './BaseController'
 _ = require 'underscore/underscore'
 
-class Histogram extends Spine.Controller
+class Histogram extends BaseController
 
   constructor: ->
     super
