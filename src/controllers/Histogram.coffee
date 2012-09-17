@@ -81,7 +81,7 @@ class Histogram extends BaseController
     @html require('../views/histogram')(@channel)
 
   start: =>
-    @filterData
-    @createGraph
+    @filterData()
+    @createGraph()
 
 module.exports = Histogram
