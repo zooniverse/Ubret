@@ -1,0 +1,5 @@
+<div class="histogram">
+  <div id="<%- @ %>">
+    <svg></svg>
+  </div>
+</div>
