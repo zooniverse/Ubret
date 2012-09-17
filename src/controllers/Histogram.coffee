@@ -5,7 +5,7 @@ class Histogram extends BaseController
 
   constructor: ->
     super
-    @variable = 'dec'
+    @variable = 'extinction_u'
     @width = 640
     @height = 480
 
@@ -74,7 +74,7 @@ class Histogram extends BaseController
 
     svg.append('g')
       .attr('class', "y axis")
-      .attr('transform', "translate(0, #{width})")
+      .attr('transform', "translate(#{width}, 0)")
       .call(yAxis)
 
   render: =>
