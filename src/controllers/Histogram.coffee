@@ -32,7 +32,7 @@ class Histogram extends BaseController
       .range([height, 0])
 
     x = d3.scale.linear()
-      .domain([Math.floor(d3.min(data, (d) -> d.x)), Math.ceil(d3.max(data, (d) -> d.x))])
+      .domain([Math.floor(d3.min(values)), Math.ceil(d3.max(values))])
       .range([width, 0])
 
     xAxis = d3.svg.axis()
@@ -48,6 +48,9 @@ class Histogram extends BaseController
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.right})")
+
+    console.log((x(data[1].x) - x(data[0].x)))
+    console.log(data)
 
     bar = svg.selectAll(".bar")
       .data(data)
@@ -74,7 +77,7 @@ class Histogram extends BaseController
 
     svg.append('g')
       .attr('class', "y axis")
-      .attr('transform', "translate(#{width}, 0)")
+      .attr('transform', "translate(0,0)")
       .call(yAxis)
 
   render: =>
