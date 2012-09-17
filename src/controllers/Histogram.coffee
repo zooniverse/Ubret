@@ -12,7 +12,7 @@ class Histogram extends BaseController
     @start()
 
   createGraph: =>
-    if !@data
+    if @data == []
       @append "<p>No Data</p>"
       return
 
