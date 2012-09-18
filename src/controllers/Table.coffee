@@ -91,7 +91,7 @@ class Table extends BaseController
     isIndex = _.indexOf predicate, "is"
     comparisonIndex = _.indexOf predicate, comparison
 
-    fieldEnd = if isIndex < comparisonIndex then isIndex else comparisonIndex
+    fieldEnd = if isIndex isnt -1 then isIndex else comparisonIndex
 
     field = predicate.splice(0, fieldEnd).join " "
 
@@ -105,8 +105,5 @@ class Table extends BaseController
       else operator = comparison
 
     return "(item['#{@uglifyKey(field)}'] #{operator} #{parseFloat(limiter)})"
-
-
-
 
 module.exports = Table

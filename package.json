@@ -9,7 +9,7 @@
   },
   "scripts" : {
     "pretest" : "hem server --port 9200 & echo $! > hem.pid",
-    "test" : "jasmine-phantom-node --port 9200 --url /public/test.html",
+    "test" : "sleep 2; jasmine-phantom-node --port 9200 --url /public/test.html",
     "posttest" : "kill `cat hem.pid`; rm hem.pid"
   },
   "main" : "./lib/index.js",

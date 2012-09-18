@@ -17,14 +17,14 @@
         return it('should produce a function from a given filter string', function() {
           var inString;
           inString = "u is less than 8.999";
-          return expect(this.table.parseFilter(inString).toString()).toBe(this.outFunc.toString());
+          return expect(this.table.parseFilter(inString)['func'].toString()).toBe(this.outFunc.toString());
         });
       });
       describe("string has mathematical symbols", function() {
         return it('should produce a function from a given filter string', function() {
           var inString;
           inString = "u < 8.999";
-          return expect(this.table.parseFilter(inString).toString()).toBe(this.outFunc.toString());
+          return expect(this.table.parseFilter(inString)['func'].toString()).toBe(this.outFunc.toString());
         });
       });
       return describe("string has multiple predicates", function() {
@@ -32,7 +32,7 @@
           var inString, outFunc;
           inString = "u < 8.999 and g > 9.283";
           outFunc = new Function("item", "return(item['u'] < 8.999) && (item['g'] > 9.283)");
-          return expect(this.table.parseFilter(inString).toString()).toBe(outFunc.toString());
+          return expect(this.table.parseFilter(inString)['func'].toString()).toBe(outFunc.toString());
         });
       });
     });
