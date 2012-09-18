@@ -7,6 +7,11 @@
     "type": "git",
     "url": "https://github.com/zooniverse/Ubret.git"
   },
+  "scripts" : {
+    "pretest" : "hem server --port 9200 & echo $! > hem.pid",
+    "test" : "jasmine-phantom-node --port 9200 --url /public/test.html",
+    "posttest" : "kill `cat hem.pid`; rm hem.pid"
+  },
   "main" : "./lib/index.js",
   "bin" : {
     "compile-eco": "./bin/compile-eco"

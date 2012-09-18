@@ -1,4 +1,7 @@
 {
+  "main" : "lib/index.js",
+  "paths" : ["lib"],
+  "public" : "test",
   "dependencies": [
     "node-pubsub",
     "underscore",
