@@ -1,7 +1,7 @@
 require = window.require
 
 describe 'InteractiveSubject', ->
-  InteractiveSubject = require('models/interactivesubject')
+  InteractiveSubject = require('models/InteractiveSubject')
 
   it 'can noop', ->
     

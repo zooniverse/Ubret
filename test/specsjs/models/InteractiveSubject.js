@@ -5,7 +5,7 @@
 
   describe('InteractiveSubject', function() {
     var InteractiveSubject;
-    InteractiveSubject = require('models/interactivesubject');
+    InteractiveSubject = require('models/InteractiveSubject');
     return it('can noop', function() {});
   });
 
