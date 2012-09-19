@@ -4,6 +4,7 @@ _ = require('underscore/underscore')
 
 GalaxyZooSubject = require('../models/GalaxyZooSubject')
 SkyServerSubject = require('../models/SkyServerSubject')
+InteractiveSubject = require('../models/InteractiveSubject')
 
 class BaseController extends Spine.Controller
   
@@ -28,6 +29,8 @@ class BaseController extends Spine.Controller
         dataSource = GalaxyZooSubject
       when 'SkyServerSubject'
         dataSource = SkyServerSubject
+      when 'InteractiveSubject'
+        dataSource = InteractiveSubject
 
     dataSource.fetch(params).always =>
       @receiveData dataSource.lastFetch

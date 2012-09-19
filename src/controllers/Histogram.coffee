@@ -20,7 +20,7 @@ class Histogram extends BaseController
     width = @width - margin.left - margin.right
     height = @height - margin.top - margin.bottom
 
-    formatCount = d3.format ",.of"
+    formatCount = d3.format ",.0f"
 
     values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
