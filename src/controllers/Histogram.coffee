@@ -18,6 +18,8 @@ class Histogram extends BaseController
     width = @width - margin.left - margin.right
     height = @height
 
+    console.log height, width
+
     formatCount = d3.format ",.0f"
 
     values = _.map (@filteredData), (datum) =>
@@ -33,11 +35,8 @@ class Histogram extends BaseController
       .domain([d3.min(values), d3.max(values)])
       .range([0, width])
 
-    console.log data
-
     xValues = new Array
     xValues.push datum.x for datum in data
-    console.log xValues
 
     xAxis = d3.svg.axis()
       .scale(x)
