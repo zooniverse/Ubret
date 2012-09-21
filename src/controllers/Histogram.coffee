@@ -14,7 +14,8 @@ class Histogram extends BaseController
       @append "<p>No Data</p>"
       return
 
-    width = @width
+    margin = {left: 20, right: 20}
+    width = @width - margin.left - margin.right
     height = @height
 
     formatCount = d3.format ",.0f"
