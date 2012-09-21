@@ -14,9 +14,8 @@ class Histogram extends BaseController
       @append "<p>No Data</p>"
       return
 
-    margin = {top: 10, right: 30, bottom: 30, left: 30}
-    width = @width - margin.left - margin.right
-    height = @height - margin.top - margin.bottom
+    width = @width
+    height = @height
 
     formatCount = d3.format ",.0f"
 
@@ -43,6 +42,7 @@ class Histogram extends BaseController
       .scale(x)
       .orient('bottom')
       .tickValues(values)
+      .tickFormat(d3.format(",.02f")
 
     yAxis = d3.svg.axis()
       .scale(y)
