@@ -9,8 +9,6 @@ class Histogram extends BaseController
     @width = 640
     @height = 480
 
-    @start()
-
   createGraph: =>
     if !@data.length
       @append "<p>No Data</p>"
