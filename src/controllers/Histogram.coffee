@@ -33,8 +33,11 @@ class Histogram extends BaseController
       .domain([d3.min(values), d3.max(values)])
       .range([0, width])
 
+    console.log data
+
     xValues = new Array
     xValues.push datum.x for datum in data
+    console.log xValues
 
     xAxis = d3.svg.axis()
       .scale(x)
