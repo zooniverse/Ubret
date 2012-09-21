@@ -16,7 +16,7 @@ class Histogram extends BaseController
 
     margin = {left: 30, right: 30, top: 30, bottom: 40}
     width = @width - margin.left - margin.right
-    height = @height - margin.top - margin-bottom
+    height = @height - margin.top - margin.bottom
 
     console.log height, width
 
