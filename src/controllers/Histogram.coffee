@@ -42,7 +42,7 @@ class Histogram extends BaseController
       .scale(x)
       .orient('bottom')
       .tickValues(values)
-      .tickFormat(d3.format(",.02f")
+      .tickFormat(d3.format(",.02f"))
 
     yAxis = d3.svg.axis()
       .scale(y)
