@@ -14,9 +14,9 @@ class Histogram extends BaseController
       @append "<p>No Data</p>"
       return
 
-    margin = {left: 20, right: 20}
+    margin = {left: 30, right: 30, top: 30, bottom: 40}
     width = @width - margin.left - margin.right
-    height = @height
+    height = @height - margin.top - margin-bottom
 
     console.log height, width
 
