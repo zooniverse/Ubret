@@ -92,8 +92,8 @@ class Scatterplot extends BaseController
 
   addAxis: (options) ->
     options =
-      xAxisFormat: '10f'
-      yAxisFormat: '10f'
+      xAxisFormat: ',.02f'
+      yAxisFormat: ',.02f'
 
     @graph.xAxis
       .axisLabel(@xAxisKey)

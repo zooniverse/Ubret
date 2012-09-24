@@ -82,6 +82,13 @@ class Histogram extends BaseController
       .attr('transform', "translate(0,0)")
       .call(yAxis)
 
+    svg.append('g')
+      .attr('class', 'x label')
+      .attr('text-anchor', 'end')
+      .attr('y', 6)
+      .attr('dy', '.75em')
+      .text(@prettyKey(@variable))
+
   render: =>
     @html require('../views/histogram')(@channel)
 
