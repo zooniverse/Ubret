@@ -60,6 +60,8 @@ class Scatterplot extends BaseController
       .transition().duration(500)
       .call(@graph)
 
+    console.log svg
+
     svg.append('text')
       .attr('class', 'title')
       .attr('text-anchor', 'middle')
