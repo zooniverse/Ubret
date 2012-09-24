@@ -5,8 +5,8 @@ class Scatterplot extends BaseController
   constructor: ->
     super
     
-    @xAxisKey = 'ra'
-    @yAxisKey = 'dec'
+    @xAxisKey = @xAxisKey or 'ra'
+    @yAxisKey = @xAxisKey or 'dec'
     @createGraph()
 
   name: "Scatterplot"
