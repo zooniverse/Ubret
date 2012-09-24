@@ -55,10 +55,17 @@ class Scatterplot extends BaseController
           shape: options.shape
           zooniverse_id: subject.zooniverse_id
 
-    d3.select("##{@channel} svg")
+    svg = d3.select("##{@channel} svg")
       .datum(@series)
       .transition().duration(500)
       .call(@graph)
+
+    svg.append('text')
+      .attr('class', 'title')
+      .attr('text-anchor', 'middle')
+      .attr('x', width / 2)
+      .attr('y', 0)
+      .text("#{@prettyKey(@xAxisKey)} vs. #{@prettyKey(@yAxisKey)}")
 
     nv.utils.windowResize(@graph.update)
 

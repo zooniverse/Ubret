@@ -90,6 +90,13 @@ class Histogram extends BaseController
       .attr('y', height + 35)
       .text(@prettyKey(@variable))
 
+    svg.append('text')
+      .attr('class', 'title')
+      .attr('text-anchor', 'middle')
+      .attr('x', width / 2)
+      .attr('y', 0)
+      .text("Distribution of #{@prettyKey(@variable)}")
+
   render: =>
     @html require('../views/histogram')(@channel)
 
