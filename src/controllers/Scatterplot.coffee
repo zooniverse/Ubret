@@ -97,11 +97,11 @@ class Scatterplot extends BaseController
 
     @graph.xAxis
       .axisLabel(@xAxisKey)
-      .tickFormat d3.format(options.xAxisFormat)
+      .tickFormat d3.format(@graph_options.x_tick_format)
 
     @graph.yAxis
       .axisLabel(@yAxisKey)
-      .tickFormat d3.format(options.yAxisFormat)
+      .tickFormat d3.format(@graph_options.y_tick_format)
 
   render: =>
     @html require('../views/scatterplot')(@)

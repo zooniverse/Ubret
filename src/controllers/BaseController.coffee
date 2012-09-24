@@ -12,6 +12,11 @@ class BaseController extends Spine.Controller
   
   constructor: ->
     super
+    @graph_options = {
+        x_tick_format: ',.02f',
+        y_tick_format: ',.02f'
+      }
+
     @data = new Array
     @filters = new Array
     @filteredData = new Array
