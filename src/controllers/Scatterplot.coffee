@@ -38,17 +38,13 @@ class Scatterplot extends BaseController
     @addAxis()
 
   addFieldsToAxes: ->
-    $("##{@channel} .x-axis").change (e) =>
-      @xAxisKey = e.currentTarget.value
-      @graph.xAxis
-        .axisLabel(@xAxisKey)
-      @addData()
-      
-    $("##{@channel} .y-axis").change (e) =>
-      @yAxisKey = e.currentTarget.value
-      @graph.yAxis
-        .axisLabel(@yAxisKey)
-      @addData()
+    @graph.xAxis
+      .axisLabel(@xAxisKey)
+    @addData()
+     
+    @graph.yAxis
+      .axisLabel(@yAxisKey)
+    @addData()
 
   addData: (options) ->
     options =
