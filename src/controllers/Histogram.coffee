@@ -84,9 +84,9 @@ class Histogram extends BaseController
 
     svg.append('text')
       .attr('class', 'x label')
-      .attr('text-anchor', 'end')
-      .attr('y', 6)
-      .attr('dy', '.75em')
+      .attr('text-anchor', 'middle')
+      .attr('x', width)
+      .attr('y', height - 6)
       .text(@prettyKey(@variable))
 
   render: =>
