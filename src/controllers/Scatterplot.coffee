@@ -38,20 +38,6 @@ class Scatterplot extends BaseController
     @addAxis()
 
   addFieldsToAxes: ->
-    @extractKeys @data[0]
-    options = ""
-    for key in @keys
-      options += "<option value='#{key}'>#{@prettyKey(key)}</option>"
-    
-    @el.find('.axis_controls').html("
-      <select class='x-axis'>
-        #{options}
-      </select>
-      <select class='y-axis'>
-        #{options}
-      </select>
-    ")
-    
     $("##{@channel} .x-axis").change (e) =>
       @xAxisKey = e.currentTarget.value
       @graph.xAxis
