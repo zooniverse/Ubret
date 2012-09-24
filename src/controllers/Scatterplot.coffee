@@ -60,15 +60,6 @@ class Scatterplot extends BaseController
       .transition().duration(500)
       .call(@graph)
 
-    console.log svg
-
-    svg.append('text')
-      .attr('class', 'title')
-      .attr('text-anchor', 'middle')
-      .attr('x', width / 2)
-      .attr('y', 0)
-      .text("#{@prettyKey(@xAxisKey)} vs. #{@prettyKey(@yAxisKey)}")
-
     nv.utils.windowResize(@graph.update)
 
   addAxis: (options) ->
