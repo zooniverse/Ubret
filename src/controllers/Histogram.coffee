@@ -59,7 +59,7 @@ class Histogram extends BaseController
       .data(data)
       .enter().append('g')
       .attr('class', 'bar')
-      .attr('transform', (d) -> "translate(#{x(d.x)}, #{y(d.y)})")
+      .attr('transform', (d) -> "translate(#{x(d.x) - 1}, #{y(d.y)})")
 
     bar.append('rect')
       .attr('x', 1)
