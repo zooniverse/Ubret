@@ -6,7 +6,7 @@ class Histogram extends BaseController
   constructor: ->
     super
     @variable = 'extinction_u'
-    @width = @weight or 640
+    @width = @width or 640
     @height = @height or 480
 
   createGraph: =>

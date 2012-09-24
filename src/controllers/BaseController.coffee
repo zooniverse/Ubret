@@ -13,8 +13,8 @@ class BaseController extends Spine.Controller
   constructor: ->
     super
     @graph_options = {
-        x_tick_format: ',.02f',
-        y_tick_format: ',.02f'
+        x_tick_format: ',.04f',
+        y_tick_format: ',.04f'
       }
 
     @data = new Array
