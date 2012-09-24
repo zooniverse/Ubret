@@ -87,7 +87,7 @@ class Histogram extends BaseController
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
       .attr('x', width / 2)
-      .attr('y', height + 20)
+      .attr('y', height + 35)
       .text(@prettyKey(@variable))
 
   render: =>

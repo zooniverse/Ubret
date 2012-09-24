@@ -39,15 +39,6 @@ class Scatterplot extends BaseController
     @addFieldsToAxes()
     @addAxis()
 
-  addFieldsToAxes: ->
-    @graph.xAxis
-      .axisLabel(@xAxisKey)
-    @addData()
-     
-    @graph.yAxis
-      .axisLabel(@yAxisKey)
-    @addData()
-
   addData: (options) ->
     options =
       size: 1
@@ -80,11 +71,11 @@ class Scatterplot extends BaseController
       yAxisFormat: ',.02f'
 
     @graph.xAxis
-      .axisLabel(@xAxisKey)
+      .axisLabel(@prettyKey(@xAxisKey))
       .tickFormat d3.format(@graph_options.x_tick_format)
 
     @graph.yAxis
-      .axisLabel(@yAxisKey)
+      .axisLabel(@prettyKey(@yAxisKey))
       .tickFormat d3.format(@graph_options.y_tick_format)
 
   render: =>
