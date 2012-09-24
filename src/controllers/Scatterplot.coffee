@@ -4,9 +4,11 @@ _ = require('underscore/underscore')
 class Scatterplot extends BaseController
   constructor: ->
     super
+
+    console.log @xAxisKey, @yAxisKey
     
     @xAxisKey = @xAxisKey or 'ra'
-    @yAxisKey = @xAxisKey or 'dec'
+    @yAxisKey = @yAxisKey or 'dec'
     @createGraph()
 
   name: "Scatterplot"

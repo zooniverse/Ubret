@@ -5,7 +5,8 @@ class Histogram extends BaseController
 
   constructor: ->
     super
-    @variable = 'extinction_u'
+    console.log @variable
+    @variable = @variable or 'extinction_u'
     @width = @width or 640
     @height = @height or 480
 
