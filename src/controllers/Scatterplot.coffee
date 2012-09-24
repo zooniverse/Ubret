@@ -32,9 +32,9 @@ class Scatterplot extends BaseController
     require('../views/scatterplot_tooltip')({datum, xAxis, yAxis})
 
   start: =>
+    @addAxis()
     @filterData()
     @addData() 
-    @addAxis()
 
   addData: (options) ->
     options =
@@ -64,8 +64,8 @@ class Scatterplot extends BaseController
 
   addAxis: (options) ->
     options =
-      xAxisFormat: ',.02f'
-      yAxisFormat: ',.02f'
+      xAxisFormat: '.02f'
+      yAxisFormat: '.02f'
 
     @graph.xAxis
       .axisLabel(@prettyKey(@xAxisKey))

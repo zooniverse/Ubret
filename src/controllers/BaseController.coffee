@@ -42,7 +42,6 @@ class BaseController extends Spine.Controller
 
   receiveData: (data) ->
     @data = data
-    console.log @data
     @start()
 
   underscoresToSpaces: (string) ->
