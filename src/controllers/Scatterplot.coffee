@@ -5,8 +5,6 @@ class Scatterplot extends BaseController
   constructor: ->
     super
 
-    console.log @xAxisKey, @yAxisKey
-    
     @xAxisKey = @xAxisKey or 'ra'
     @yAxisKey = @yAxisKey or 'dec'
     @createGraph()
@@ -36,7 +34,6 @@ class Scatterplot extends BaseController
   start: =>
     @filterData()
     @addData() 
-    @addFieldsToAxes()
     @addAxis()
 
   addData: (options) ->
