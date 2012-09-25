@@ -19,7 +19,7 @@ class Histogram extends Graph
     @values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
 
-    @binnedData = d3.layout.histogram()(values)
+    @binnedData = d3.layout.histogram()(@values)
 
   drawBars: =>
     formatCount = d3.format ",.0f"
