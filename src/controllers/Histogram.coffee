@@ -1,7 +1,7 @@
 Graph = require './Graph'
 _ = require 'underscore/underscore'
 
-class Histogram extends BaseController
+class Histogram extends Graph
 
   constructor: ->
     super
