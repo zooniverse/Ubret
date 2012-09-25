@@ -11,7 +11,7 @@ class Graph extends BaseController
       .orient('bottom')
       .tickFormat(d3.format(",.02f"))
 
-    xAxis.tickValues(ticks) if ticks isnt []
+    xAxis.tickValues(ticks) if ticks.length isnt 0
 
     @svg.append('g')
       .attr('class', "x axis")
@@ -32,8 +32,8 @@ class Graph extends BaseController
       .orient('left')
       .tickFormat(d3.format(",.02f"))
 
-    yAxis.tickValues(ticks) if ticks isnt []
-    console.log ticks if ticks isnt []
+    yAxis.tickValues(ticks) if ticks.length isnt 0
+    console.log ticks if tick.length isnt 0
 
     @svg.append('g')
       .attr('class', "y axis")
