@@ -24,7 +24,7 @@ class Histogram extends Graph
   drawBars: =>
     formatCount = d3.format ",.0f"
 
-    bar = svg.selectAll(".bar")
+    bar = @svg.selectAll(".bar")
       .data(@binnedData)
       .enter().append('g')
       .attr('class', 'bar')
