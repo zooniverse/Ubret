@@ -29,7 +29,9 @@ class Scatterplot extends BaseController
     @publish [ {message: 'selected', item_id: point.zooniverse_id} ]
     xAxis = @prettyKey(@xAxisKey)
     yAxis = @prettyKey(@yAxisKey)
-    require('../views/scatterplot_tooltip')({datum, xAxis, yAxis})
+    xAxisVal = datum[@xAxisKey]
+    yAxisVal = datum[@yAxisKey]
+    require('../views/scatterplot_tooltip')({xAxisVal, yAxisVal, xAxis, yAxis})
 
   start: =>
     @addAxis()

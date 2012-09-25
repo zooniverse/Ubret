@@ -1,4 +1,4 @@
 <ul>
-  <li><%- @xAxis %>: <%- @datum[@xAxis] %></li>
-  <li><%- @yAxis %>: <%- @datum[@yAxis] %></li>
+  <li><%- @xAxis %>: <%- @xAxisVal %></li>
+  <li><%- @yAxis %>: <%- @yAxisVal %></li>
 </ul>
