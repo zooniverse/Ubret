@@ -50,7 +50,7 @@ class Graph extends BaseController
   createXScale: (min=0, max=0) =>
     @x = d3.scale.linear()
       .domain([min, max])
-      .range([0, @graphwidth])
+      .range([0, @graphWidth])
 
   createYScale: (min=0, max=0) =>
     @y = d3.scale.linear()
