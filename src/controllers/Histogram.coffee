@@ -1,4 +1,4 @@
-BaseController = require './BaseController'
+Graph = require './Graph'
 _ = require 'underscore/underscore'
 
 class Histogram extends BaseController
@@ -10,91 +10,51 @@ class Histogram extends BaseController
     @width = @width or 640
     @height = @height or 480
 
-  createGraph: =>
-    if !@data.length
-      @append "<p>No Data</p>"
-      return
+  createXAxis: =>
+    xTicks = new Array
+    xTicks.push datum.x for datum in @binnedData
 
-    margin = {left: 30, right: 30, top: 40, bottom: 30}
-    width = @width - margin.left - margin.right
-    height = @height - margin.top - margin.bottom
+    super xTicks, @variable
 
-    console.log height, width
-
-    formatCount = d3.format ",.0f"
-
-    values = _.map (@filteredData), (datum) =>
+  binData: =>
+    @values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
 
-    data = d3.layout.histogram()(values)
-    
-    y = d3.scale.linear()
-      .domain([0, d3.max(data, (d) -> d.y)])
-      .range([height, 0])
+    @binnedData = d3.layout.histogram()(values)
 
-    x = d3.scale.linear()
-      .domain([d3.min(values), d3.max(values)])
-      .range([0, width])
-
-    xValues = new Array
-    xValues.push datum.x for datum in data
-
-    xAxis = d3.svg.axis()
-      .scale(x)
-      .orient('bottom')
-      .tickValues(xValues)
-      .tickFormat(d3.format(",.02f"))
-
-    yAxis = d3.svg.axis()
-      .scale(y)
-      .orient('left')
-
-    svg = d3.select("##{@channel} svg")
-      .attr('width', @width)
-      .attr('height', @height)
-      .append('g')
-        .attr('transform', "translate(#{margin.left}, #{margin.right})")
+  drawBars: =>
+    formatCount = d3.format ",.0f"
 
     bar = svg.selectAll(".bar")
-      .data(data)
+      .data(@binnedData)
       .enter().append('g')
       .attr('class', 'bar')
-      .attr('transform', (d) -> "translate(#{x(d.x) - 1}, #{y(d.y)})")
+      .attr('transform', (d) -> "translate(#{@x(d.x) - 1}, #{@y(d.y)})")
 
     bar.append('rect')
       .attr('x', 1)
-      .attr('width', (x(data[1].x) - x(data[0].x)))
-      .attr('height', (d) -> height - y(d.y))
+      .attr('width', (@x(@binnedData[1].x) - @x(@binnedData[0].x)))
+      .attr('height', (d) -> @graphHeight - @y(d.y))
 
     bar.append('text')
       .attr("dy", ".75em")
       .attr("y", 6)
-      .attr("x", (x(data[1].x) - x(data[0].x)) / 2 )
+      .attr("x", (@x(@binnedData[1].x) - @x(@binnedData[0].x)) / 2 )
       .attr("text-anchor", "middle")
       .text((d) -> formatCount(d.y))
 
-    svg.append('g')
-      .attr('class', "x axis")
-      .attr('transform', "translate(0, #{height})")
-      .call(xAxis)
-
-    svg.append('g')
-      .attr('class', "y axis")
-      .attr('transform', "translate(0,0)")
-      .call(yAxis)
-
-    svg.append('text')
-      .attr('class', 'x label')
-      .attr('text-anchor', 'middle')
-      .attr('x', width / 2)
-      .attr('y', height + 35)
-      .text(@prettyKey(@variable))
-
   render: =>
     @html require('../views/histogram')(@channel)
+    @createGraph()
+    @html()
 
   start: =>
     @filterData()
-    @createGraph()
+    @binData()
+    @createXScale(d3.min(@values), d3.max(@values))
+    @createYScale(0, d3.max(@binnedData, (d) -> d.y))
+    @createXAxis()
+    @createYAxis()
+    @drawBars()
 
 module.exports = Histogram
