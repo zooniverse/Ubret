@@ -33,6 +33,7 @@ class Graph extends BaseController
       .tickFormat(d3.format(",.02f"))
 
     yAxis.tickValues(ticks) if ticks isnt []
+    console.log ticks if ticks isnt []
 
     @svg.append('g')
       .attr('class', "y axis")

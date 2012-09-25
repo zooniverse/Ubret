@@ -12,6 +12,10 @@ class Histogram extends Graph
   createXAxis: ->
     xTicks = new Array
     xTicks.push datum.x for datum in @binnedData
+    
+    lastItem = _.last(@binnedData)
+    lastTick = lastItem.x + lastItem.dx
+    xTicks.push lastTick
 
     super xTicks, @variable
 
