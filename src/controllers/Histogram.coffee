@@ -44,12 +44,11 @@ class Histogram extends Graph
 
   render: =>
     @html require('../views/histogram')(@channel)
-    @createGraph()
-    @html()
 
   start: =>
     @filterData()
     @binData()
+    @createGraph()
     @createXScale(d3.min(@values), d3.max(@values))
     @createYScale(0, d3.max(@binnedData, (d) -> d.y))
     @createXAxis()
