@@ -71,3 +71,4 @@ class Graph extends BaseController
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.right})")
 
+module.exports = Graph
