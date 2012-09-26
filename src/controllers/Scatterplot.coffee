@@ -38,7 +38,7 @@ class Scatterplot extends Graph
     ticks = @calculateTicks(@y)
     super ticks, label, format
     
-  calculatTicks: (axis) =>
+  calculateTicks: (axis) =>
     min = _.first axis.domain()
     max = _.last axis.domain()
     
