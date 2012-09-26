@@ -55,7 +55,6 @@ class Scatterplot extends Graph
     while tick < max
       ticks.push tick
       tick = tick + tickWidth
-
     return ticks
 
   start: =>
