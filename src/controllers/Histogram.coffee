@@ -17,6 +17,8 @@ class Histogram extends Graph
     lastTick = lastItem.x + lastItem.dx
     xTicks.push lastTick
 
+    console.log @x
+
     super xTicks, @variable
 
   binData: =>
