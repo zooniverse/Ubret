@@ -26,9 +26,13 @@ class Scatterplot extends Graph
       .enter().append('g')
       .attr('class', 'point')
       .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y)})")
+      .on('mouseover', @displayTooltip)
 
     point.append('circle')
-      .attr('r', 2)
+      .attr('r', 3)
+
+  displayTooltip: (d, i) =>
+    console.log d,i
 
   createXAxis: (label, format) =>
     ticks = @calculateTicks(@x)

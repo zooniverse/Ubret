@@ -14,7 +14,6 @@ class Graph extends BaseController
 
     xAxis.tickValues(ticks) if ticks.length isnt 0
     xAxis.tickFormat(format) if typeof(format) is 'function'
-    console.log typeof(format)
 
     @svg.append('g')
       .attr('class', "x axis")
