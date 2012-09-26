@@ -52,8 +52,6 @@ class Graph extends BaseController
       .domain([min, max])
       .range([0, @graphWidth])
 
-    console.log @x
-
   createYScale: (min=0, max=0) =>
     @y = d3.scale.linear()
       .domain([min, max])

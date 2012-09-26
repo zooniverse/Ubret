@@ -9,7 +9,7 @@ class Histogram extends Graph
     @width = @width or 640
     @height = @height or 480
 
-  createXAxis: ->
+  createXAxis: =>
     xTicks = new Array
     xTicks.push datum.x for datum in @binnedData
     
@@ -19,16 +19,14 @@ class Histogram extends Graph
 
     super xTicks, @variable
 
-  binData: ->
+  binData: =>
     @values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
 
     @binnedData = d3.layout.histogram()(@values)
 
-  drawBars: ->
+  drawBars: =>
     formatCount = d3.format ",.0f"
-
-    console.log typeof(@x)
 
     bar = @svg.selectAll(".bar")
       .data(@binnedData)
@@ -39,7 +37,7 @@ class Histogram extends Graph
     bar.append('rect')
       .attr('x', 1)
       .attr('width', (@x(@binnedData[1].x) - @x(@binnedData[0].x)))
-      .attr('height', (d) -> @graphHeight - @y(d.y))
+      .attr('height', (d) => @graphHeight - @y(d.y))
 
     bar.append('text')
       .attr("dy", ".75em")
