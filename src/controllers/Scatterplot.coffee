@@ -7,6 +7,9 @@ class Scatterplot extends Graph
 
     @xAxisKey = @xAxisKey or 'ra'
     @yAxisKey = @yAxisKey or 'dec'
+    @options =
+      xFormat: ''
+      yFormat: ''
 
   name: "Scatterplot"
 
@@ -25,7 +28,31 @@ class Scatterplot extends Graph
       .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y)})")
 
     point.append('circle')
-      .attr('r', 5)
+      .attr('r', 2)
+
+  createXAxis: (label, format) =>
+    ticks = @calculateTicks(@x)
+    super ticks, label, format
+
+  createYAxis: (label, format) =>
+    ticks = @calculateTicks(@y)
+    super ticks, label, format
+    
+  calculatTicks: (axis) =>
+    min = _.first axis.domain()
+    max = _.last axis.domain()
+    
+    ticks = [min, max]
+    numTicks = Math.floor(@graphWidth/50)
+    tickWidth = (max - min) / numTicks
+    
+    tick = min + tickWidth
+
+    while tick < max
+      ticks.push tick
+      tick = tick + tickWidth
+
+    return ticks
 
   start: =>
     @filterData()
@@ -33,8 +60,8 @@ class Scatterplot extends Graph
     @createGraph()
     @createXScale(d3.min(@coordinates, (d) -> d.x), d3.max(@coordinates, (d) -> d.x))
     @createYScale(d3.min(@coordinates, (d) -> d.y), d3.max(@coordinates, (d) -> d.y))
-    @createXAxis([], @xAxisKey)
-    @createYAxis([], @yAxisKey)
+    @createXAxis(@xAxisKey, @options.xFormat)
+    @createYAxis(@yAxisKey, @options.yFormat)
     @drawPoints()
 
 module.exports = Scatterplot

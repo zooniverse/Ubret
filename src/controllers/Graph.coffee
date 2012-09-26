@@ -46,7 +46,7 @@ class Graph extends BaseController
       @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -30)
+        .attr('y', -25)
         .attr('x', -(@graphHeight / 2))
         .attr('transform', 'rotate(-90)')
         .text(@prettyKey(label))
@@ -65,7 +65,7 @@ class Graph extends BaseController
     if !@data.length
       return
 
-    margin = {left: 30, right: 30, top: 40, bottom: 30}
+    margin = {left: 40, right: 30, top: 40, bottom: 30}
     @graphWidth = @width - margin.left - margin.right
     @graphHeight = @height - margin.top - margin.bottom
 
