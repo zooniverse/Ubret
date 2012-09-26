@@ -13,7 +13,8 @@ class Graph extends BaseController
       .orient('bottom')
 
     xAxis.tickValues(ticks) if ticks.length isnt 0
-    xAxis.tickFormat(d3.format(",.02f")) if typeof(format) is 'function'
+    xAxis.tickFormat(format) if typeof(format) is 'function'
+    console.log typeof(format)
 
     @svg.append('g')
       .attr('class', "x axis")
@@ -45,7 +46,7 @@ class Graph extends BaseController
       @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -20)
+        .attr('y', -30)
         .attr('x', -(@graphHeight / 2))
         .attr('transform', 'rotate(-90)')
         .text(@prettyKey(label))

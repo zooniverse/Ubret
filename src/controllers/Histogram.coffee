@@ -52,7 +52,7 @@ class Histogram extends Graph
     @createGraph()
     @createXScale(d3.min(@values), d3.max(@values))
     @createYScale(0, d3.max(@binnedData, (d) -> d.y))
-    @createXAxis()
+    @createXAxis([], '', d3.format(',.02f'))
     @createYAxis()
     @drawBars()
 

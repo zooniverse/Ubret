@@ -33,7 +33,7 @@ class Scatterplot extends Graph
     @createGraph()
     @createXScale(d3.min(@coordinates, (d) -> d.x), d3.max(@coordinates, (d) -> d.x))
     @createYScale(d3.min(@coordinates, (d) -> d.y), d3.max(@coordinates, (d) -> d.y))
-    @createXAxis([], @xAxisKey, d3.format(',.02f'))
+    @createXAxis([], @xAxisKey)
     @createYAxis([], @yAxisKey)
     @drawPoints()
 
