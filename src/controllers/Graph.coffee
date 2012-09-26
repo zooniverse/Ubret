@@ -49,11 +49,13 @@ class Graph extends BaseController
         .text(@prettyKey(label))
 
   createXScale: (min=0, max=0) =>
+    console.log min, max
     @x = d3.scale.linear()
       .domain([min, max])
       .range([0, @graphWidth])
 
   createYScale: (min=0, max=0) =>
+    console.log min, max
     @y = d3.scale.linear()
       .domain([min, max])
       .range([@graphHeight, 0])
