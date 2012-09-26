@@ -17,8 +17,6 @@ class Histogram extends Graph
     lastTick = lastItem.x + lastItem.dx
     xTicks.push lastTick
 
-    console.log @x
-
     super xTicks, @variable
 
   binData: ->
@@ -29,6 +27,8 @@ class Histogram extends Graph
 
   drawBars: ->
     formatCount = d3.format ",.0f"
+
+    console.log @x
 
     bar = @svg.selectAll(".bar")
       .data(@binnedData)
