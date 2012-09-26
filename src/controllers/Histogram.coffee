@@ -21,13 +21,13 @@ class Histogram extends Graph
 
     super xTicks, @variable
 
-  binData: =>
+  binData: ->
     @values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
 
     @binnedData = d3.layout.histogram()(@values)
 
-  drawBars: =>
+  drawBars: ->
     formatCount = d3.format ",.0f"
 
     bar = @svg.selectAll(".bar")

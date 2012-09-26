@@ -26,14 +26,13 @@ class Graph extends BaseController
         .attr('y', @graphHeight + 35)
         .text(@prettyKey(label))
 
-  createYAxis: (ticks=[], label ='') =>
+  createYAxis: (ticks=[], label ='', format='') =>
     yAxis = d3.svg.axis()
       .scale(@y)
       .orient('left')
-      .tickFormat(d3.format(",.02f"))
 
     yAxis.tickValues(ticks) if ticks.length isnt 0
-    console.log ticks if ticks.length isnt 0
+    yAxis.tickFormat(format) if typeof(format) is 'function'
 
     @svg.append('g')
       .attr('class', "y axis")
