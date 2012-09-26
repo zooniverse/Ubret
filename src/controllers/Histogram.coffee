@@ -32,11 +32,11 @@ class Histogram extends Graph
       .data(@binnedData)
       .enter().append('g')
       .attr('class', 'bar')
-      .attr('transform', (d) => "translate(#{@x(d.x) - 1}, #{@y(d.y)})")
+      .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y) - 1})")
 
     bar.append('rect')
       .attr('x', 1)
-      .attr('width', (@x(@binnedData[1].x) - @x(@binnedData[0].x)))
+      .attr('width', (@x(@binnedData[1].x) - @x(@binnedData[0].x) - 2))
       .attr('height', (d) => @graphHeight - @y(d.y))
 
     bar.append('text')
