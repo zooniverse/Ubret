@@ -28,13 +28,13 @@ class Histogram extends Graph
   drawBars: ->
     formatCount = d3.format ",.0f"
 
-    console.log @x
+    console.log typeof(@x)
 
     bar = @svg.selectAll(".bar")
       .data(@binnedData)
       .enter().append('g')
       .attr('class', 'bar')
-      .attr('transform', (d) -> "translate(#{@x(d.x) - 1}, #{@y(d.y)})")
+      .attr('transform', (d) => "translate(#{@x(d.x) - 1}, #{@y(d.y)})")
 
     bar.append('rect')
       .attr('x', 1)
