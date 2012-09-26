@@ -22,8 +22,8 @@ class Scatterplot extends Graph
     point = @svg.selectAll('.bar')
       .data(@coordinates)
       .enter().append('g')
-        .attr('class', 'point')
-        .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y)}")
+      .attr('class', 'point')
+      .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y)})")
 
     point.append('circle')
       .attr('r', 5)
