@@ -18,6 +18,7 @@ class Scatterplot extends Graph
       return {x: datum[@xAxisKey], y: datum[@yAxisKey]}
 
   drawPoints: =>
+    console.log @coordinates
     point = @svg.selectAll('.bar')
       .data(@coordinates)
       .enter().append('g')

@@ -45,7 +45,7 @@ class Graph extends BaseController
         .attr('text-anchor', 'middle')
         .attr('x', 0)
         .attr('y', @graphHeight / 2)
-        .attr('transform', 'rotate(90)')
+        .attr('transform', 'rotate(-90)')
         .text(@prettyKey(label))
 
   createXScale: (min=0, max=0) =>
