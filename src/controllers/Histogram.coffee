@@ -6,8 +6,6 @@ class Histogram extends Graph
   constructor: ->
     super
     @variable = @variable or 'extinction_u'
-    @width = @width or 640
-    @height = @height or 480
 
   createXAxis: =>
     xTicks = new Array

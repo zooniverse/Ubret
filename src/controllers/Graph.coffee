@@ -3,6 +3,8 @@ BaseController = require './BaseController'
 class Graph extends BaseController
 
   constructor: ->
+    @width = @width or 640
+    @height = @height or 480
     super
 
   createXAxis: (ticks=[], label='') =>
