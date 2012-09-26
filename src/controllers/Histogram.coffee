@@ -20,7 +20,6 @@ class Histogram extends Graph
   binData: =>
     @values = _.map (@filteredData), (datum) =>
       parseFloat datum[@variable]
-
     @binnedData = d3.layout.histogram()(@values)
 
   drawBars: =>

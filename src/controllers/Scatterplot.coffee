@@ -18,7 +18,6 @@ class Scatterplot extends Graph
       return {x: datum[@xAxisKey], y: datum[@yAxisKey]}
 
   drawPoints: =>
-    console.log @coordinates
     point = @svg.selectAll('.bar')
       .data(@coordinates)
       .enter().append('g')
@@ -34,8 +33,8 @@ class Scatterplot extends Graph
     @createGraph()
     @createXScale(d3.min(@coordinates, (d) -> d.x), d3.max(@coordinates, (d) -> d.x))
     @createYScale(d3.min(@coordinates, (d) -> d.y), d3.max(@coordinates, (d) -> d.y))
-    @createXAxis([], @xAxisKey)
-    @createYAxis([], @yAxisKey, d3.format(',.02f'))
+    @createXAxis([], @xAxisKey, d3.format(',.02f'))
+    @createYAxis([], @yAxisKey)
     @drawPoints()
 
 module.exports = Scatterplot

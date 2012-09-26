@@ -7,13 +7,13 @@ class Graph extends BaseController
     @height = @height or 480
     super
 
-  createXAxis: (ticks=[], label='') =>
+  createXAxis: (ticks=[], label='', format='') =>
     xAxis = d3.svg.axis()
       .scale(@x)
       .orient('bottom')
-      .tickFormat(d3.format(",.02f"))
 
     xAxis.tickValues(ticks) if ticks.length isnt 0
+    xAxis.tickFormat(d3.format(",.02f")) if typeof(format) is 'function'
 
     @svg.append('g')
       .attr('class', "x axis")
@@ -45,19 +45,17 @@ class Graph extends BaseController
       @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('x', 0)
-        .attr('y', @graphHeight / 2)
+        .attr('y', -20)
+        .attr('x', -(@graphHeight / 2))
         .attr('transform', 'rotate(-90)')
         .text(@prettyKey(label))
 
   createXScale: (min=0, max=0) =>
-    console.log min, max
     @x = d3.scale.linear()
       .domain([min, max])
       .range([0, @graphWidth])
 
   createYScale: (min=0, max=0) =>
-    console.log min, max
     @y = d3.scale.linear()
       .domain([min, max])
       .range([@graphHeight, 0])
