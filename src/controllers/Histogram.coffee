@@ -7,7 +7,7 @@ class Histogram extends Graph
     super
     @variable = @variable or 'extinction_u'
 
-  createXAxis: =>
+  createXAxis: (format) =>
     xTicks = new Array
     xTicks.push datum.x for datum in @binnedData
     
@@ -15,7 +15,7 @@ class Histogram extends Graph
     lastTick = lastItem.x + lastItem.dx
     xTicks.push lastTick
 
-    super xTicks, @variable
+    super xTicks, @variable, format
 
   binData: =>
     @values = _.map (@filteredData), (datum) =>
@@ -52,7 +52,7 @@ class Histogram extends Graph
     @createGraph()
     @createXScale(d3.min(@values), d3.max(@values))
     @createYScale(0, d3.max(@binnedData, (d) -> d.y))
-    @createXAxis([], '', d3.format(',.02f'))
+    @createXAxis(d3.format(',.02f'))
     @createYAxis()
     @drawBars()
 
