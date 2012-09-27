@@ -45,7 +45,7 @@ class Graph extends BaseController
       @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -25)
+        .attr('y', -30)
         .attr('x', -(@graphHeight / 2))
         .attr('transform', 'rotate(-90)')
         .text(@prettyKey(label))
@@ -73,5 +73,7 @@ class Graph extends BaseController
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.right})")
+
+    console.log @svg
 
 module.exports = Graph
