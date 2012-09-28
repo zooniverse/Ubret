@@ -8,8 +8,6 @@ class Scatterplot extends BaseController
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
 
-    @xAxisKey = @xAxisKey or 'ra'
-    @yAxisKey = @yAxisKey or 'dec'
     @xFormat = @xFormat or d3.format(',.0f')
     @yFormat = @yFormat or d3.format(',.0f')
 
@@ -56,7 +54,7 @@ class Scatterplot extends BaseController
         .tickFormat(@xFormat)
 
       if data.length isnt 0
-        xAxis.ticks(calculateTicks(x))
+        xAxis.ticks(@calculateTicks(x))
 
       svg.append('g')
         .attr('class', 'x axis')
@@ -81,7 +79,7 @@ class Scatterplot extends BaseController
         .tickFormat(@yFormat)
 
       if data.length isnt 0
-        yAxis.ticks(calculateTicks(y))
+        yAxis.ticks(@calculateTicks(y))
 
       svg.append('g')
         .attr('class', 'y axis')
