@@ -54,7 +54,7 @@ class Scatterplot extends BaseController
         .tickFormat(@xFormat)
 
       if data.length isnt 0
-        xAxis.ticks(@calculateTicks(x))
+        xAxis.tickValues(@calculateTicks(x))
 
       svg.append('g')
         .attr('class', 'x axis')
