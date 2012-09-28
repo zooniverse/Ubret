@@ -6,9 +6,9 @@ class Histogram extends BaseController
   constructor: ->
     super
     @height = @height or 480
-    @wdith = @width or 640
+    @width = @width or 640
     @margin = @margin or { left: 40, bottom: 40 }
-    @format = d3.format(',.02f')
+    @format = @format or d3.format(',.02f')
 
   createGraph: =>
     if typeof(@variable) is 'undefined'
@@ -101,7 +101,7 @@ class Histogram extends BaseController
     @html require('../views/histogram')(@channel)
 
   setVariable: (variable) =>
-    @varaible = variable
+    @variable = variable
     @createGraph()
 
   start: =>
