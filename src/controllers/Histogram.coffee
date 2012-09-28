@@ -17,7 +17,7 @@ class Histogram extends BaseController
     graphWidth = @width - @margin.left
     graphHeight = @height - @margin.bottom
 
-    svg = d3.select("##{channel} svg")
+    svg = d3.select("##{@channel} svg")
       .attr('width', graphWdith)
       .attr('height', graphHeight)
       .append('g')
