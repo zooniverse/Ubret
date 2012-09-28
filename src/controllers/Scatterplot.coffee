@@ -108,9 +108,11 @@ class Scatterplot extends BaseController
   calculateTicks: (axis) =>
     min = _.first axis.domain()
     max = _.last axis.domain()
+
+    graphWidth = @width - @margin.left
     
     ticks = [min, max]
-    numTicks = Math.floor(@graphWidth/50)
+    numTicks = Math.floor(graphWidth/50)
     tickWidth = (max - min) / numTicks
     
     tick = min + tickWidth
