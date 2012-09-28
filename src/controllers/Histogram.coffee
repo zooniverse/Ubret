@@ -18,8 +18,8 @@ class Histogram extends BaseController
     graphHeight = @height - @margin.bottom
 
     svg = d3.select("##{@channel} svg")
-      .attr('width', graphWidth)
-      .attr('height', graphHeight)
+      .attr('width', @width)
+      .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.bottom})")
 
@@ -80,21 +80,20 @@ class Histogram extends BaseController
 
     if bins.length isnt 0
       bar = svg.selectAll('.bar')
-        .transition().duration(700)
         .data(bins)
         .enter().append('g')
         .attr('class', 'bar')
-        .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y) - 1})")
+        .attr('transform', (d) => "translate(#{x(d.x)}, #{y(d.y) - 1})")
 
       bar.append('rect')
         .attr('x', 1)
-        .attr('width', (@x(@binnedData[1].x) - @x(@binnedData[0].x) - 2))
-        .attr('height', (d) => @graphHeight - @y(d.y))
+        .attr('width', (x(bins[1].x) - x(bins[0].x) - 2))
+        .attr('height', (d) => graphHeight - y(d.y))
 
       bar.append('text')
         .attr("dy", ".75em")
         .attr("y", 6)
-        .attr("x", (@x(@binnedData[1].x) - @x(@binnedData[0].x)) / 2 )
+        .attr("x", (@x(bins[1].x) - x(bins[0].x)) / 2 )
         .attr("text-anchor", "middle")
         .text((d) -> formatCount(d.y))
 
