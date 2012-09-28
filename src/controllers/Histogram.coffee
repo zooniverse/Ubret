@@ -21,7 +21,7 @@ class Histogram extends BaseController
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
-        .attr('transform', "translate(#{@margin.left}, #{@margin.bottom})")
+        .attr('transform', "translate(#{@margin.bottom}, #{@margin.left})")
 
     if @filteredData.length isnt 0
       bins = d3.layout.histogram()(_.map(@filteredData, (d) -> d[@variable]))
@@ -93,7 +93,7 @@ class Histogram extends BaseController
       bar.append('text')
         .attr("dy", ".75em")
         .attr("y", 6)
-        .attr("x", (@x(bins[1].x) - x(bins[0].x)) / 2 )
+        .attr("x", (x(bins[1].x) - x(bins[0].x)) / 2 )
         .attr("text-anchor", "middle")
         .text((d) -> formatCount(d.y))
 
