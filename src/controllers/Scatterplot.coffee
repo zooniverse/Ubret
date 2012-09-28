@@ -80,6 +80,7 @@ class Scatterplot extends BaseController
 
       if data.length isnt 0
         ticks = @calculateTicks(y)
+        console.log ticks
         yAxis.ticks(ticks)
 
       svg.append('g')
@@ -121,9 +122,6 @@ class Scatterplot extends BaseController
     while tick < max
       ticks.push tick
       tick = tick + tickWidth
-
-    console.log ticks
-
     return ticks
 
   setXVar: (variable) =>
