@@ -44,6 +44,8 @@ class Scatterplot extends BaseController
       yDomain = [0, 1]
 
     if typeof(@xAxisKey) isnt 'undefined'
+      format = if data.length is 0 then ',.02f' else @xFormat
+
       x = d3.scale.linear()
         .domain(xDomain)
         .range([0, graphWidth])
@@ -51,7 +53,7 @@ class Scatterplot extends BaseController
       xAxis = d3.svg.axis()
         .scale(x)
         .orient('bottom')
-        .tickFormat(@xFormat)
+        .tickFormat(format)
 
       if data.length isnt 0
         xAxis.ticks(@calculateTicks(x))
@@ -69,6 +71,8 @@ class Scatterplot extends BaseController
         .text(@prettyKey(@xAxisKey))
 
     if typeof(@yAxisKey) isnt 'undefined'
+      format = if data.length is 0 then ',.02f' else @yFormat
+
       y = d3.scale.linear()
         .domain(yDomain)
         .range([graphHeight, 0])
@@ -76,7 +80,7 @@ class Scatterplot extends BaseController
       yAxis = d3.svg.axis()
         .scale(y)
         .orient('left')
-        .tickFormat(@yFormat)
+        .tickFormat(format)
 
       if data.length isnt 0
         yAxis.ticks(@calculateTicks(y))
@@ -99,7 +103,7 @@ class Scatterplot extends BaseController
         .data(data)
         .enter().append('g')
         .attr('class', 'point')
-        .attr('transform', "translate(#{x(d.x)}, #{y(d.y)})")
+        .attr('transform', (d) -> "translate(#{x(d.x)}, #{y(d.y)})")
         .on('mouseover', @displayTooltip)
 
       point.append('circle')
