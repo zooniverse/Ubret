@@ -40,12 +40,10 @@ class Scatterplot extends BaseController
       yDomain = d3.extent(data, (d) -> d.y)
     else
       data = []
-      xDomain = [0, 1]
-      yDomain = [0, 1]
+      xDomain = [0, 10]
+      yDomain = [0, 10]
 
     if typeof(@xAxisKey) isnt 'undefined'
-      format = if data.length is 0 then ',.02f' else @xFormat
-
       x = d3.scale.linear()
         .domain(xDomain)
         .range([0, graphWidth])
@@ -71,8 +69,6 @@ class Scatterplot extends BaseController
         .text(@prettyKey(@xAxisKey))
 
     if typeof(@yAxisKey) isnt 'undefined'
-      format = if data.length is 0 then ',.02f' else @yFormat
-
       y = d3.scale.linear()
         .domain(yDomain)
         .range([graphHeight, 0])
