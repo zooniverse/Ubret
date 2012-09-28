@@ -24,13 +24,10 @@ class Histogram extends BaseController
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
-        .attr('transform', "translate(#{@margin.bottom}, #{@margin.left})")
+        .attr('transform', "translate(#{@margin.left}, 0)")
 
     if @filteredData.length isnt 0
-      console.log @variable
-      console.log @filteredData
-      data = _.map(@filteredData, (d) -> d[@variable])
-      console.log data
+      data = _.map(@filteredData, (d) => d[@variable])
       bins = d3.layout.histogram()(data)
       xDomain = d3.extent(@filteredData, (d) -> d[@variable])
       yDomain= [0, d3.max(bins, (d) -> d.y)]
