@@ -14,6 +14,8 @@ class Histogram extends BaseController
     if typeof(@variable) is 'undefined'
       return
 
+    @el.find('svg').empty()
+
     graphWidth = @width - @margin.left
     graphHeight = @height - @margin.bottom
     formatCount = ',.0f'
@@ -26,6 +28,7 @@ class Histogram extends BaseController
 
     if @filteredData.length isnt 0
       data = _.map(@filteredData, (d) -> d[@variable])
+      console.log data
       bins = d3.layout.histogram()(data)
       xDomain = d3.extent(@filteredData, (d) -> d[@variable])
       yDomain= [0, d3.max(bins, (d) -> d.y)]
