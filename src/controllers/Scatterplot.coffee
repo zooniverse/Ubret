@@ -17,7 +17,12 @@ class Scatterplot extends BaseController
     @html require('../views/scatterplot')(@)
 
   displayTooltip: (d, i) =>
-    console.log d,i
+    xAxis = @prettyKey(@xAxisKey)
+    yAxis = @prettyKey(@yAxisKey)
+    xAxisVal = d.x
+    yAxisVal = d.y
+    tooltip = require('../views/scatterplot_toolip')({xAxis, yAxis, xAxisVal, yAxisVal})
+    @append tooltip
 
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
