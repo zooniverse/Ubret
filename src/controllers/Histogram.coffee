@@ -21,7 +21,7 @@ class Histogram extends BaseController
       .attr('width', graphWidth)
       .attr('height', graphHeight)
       .append('g')
-        .attr('transform', "translate(#{margin.left}, #{margin.bottom})")
+        .attr('transform', "translate(#{@margin.left}, #{@margin.bottom})")
 
     if @filteredData.length isnt 0
       bins = d3.layout.histogram()(_.map(@filteredData, (d) -> d[@variable]))
