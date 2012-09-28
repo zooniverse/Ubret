@@ -39,7 +39,7 @@ class Scatterplot extends BaseController
     if @filteredData.length isnt 0
       data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
       xDomain = d3.extent(data, (d) -> d.x)
-      yDomain = d3.extend(data, (d) -> d.y)
+      yDomain = d3.extent(data, (d) -> d.y)
     else
       data = []
       xDomain = [0, 1]
@@ -91,8 +91,8 @@ class Scatterplot extends BaseController
       svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('x', -30)
-        .attr('y', graphHeight / 2)
+        .attr('y', -30)
+        .attr('x', -(graphHeight / 2))
         .attr('transform', "rotate(-90)")
         .text(@prettyKey(@yAxisKey))
 
