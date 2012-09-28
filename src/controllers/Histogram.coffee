@@ -63,7 +63,7 @@ class Histogram extends BaseController
 
     svg.append('g')
       .attr('class', 'x aixs')
-      .attr('transform', "translate(0, #{graphHeight}")
+      .attr('transform', "translate(0, #{graphHeight})")
       .call(xAxis)
 
     svg.append('g')
@@ -76,7 +76,7 @@ class Histogram extends BaseController
       .attr('text-anchor', 'middle')
       .attr('x', graphWidth / 2)
       .attr('y', graphHeight + 35)
-      .text(@prettyKey(label))
+      .text(@prettyKey(@variable))
 
     if bins.length isnt 0
       bar = svg.selectAll('.bar')
