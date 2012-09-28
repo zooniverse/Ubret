@@ -7,7 +7,7 @@ class Histogram extends BaseController
     super
     @height = @height or 480
     @width = @width or 640
-    @margin = @margin or { left: 40, bottom: 40 }
+    @margin = @margin or { left: 40, bottom: 70 }
     @format = @format or d3.format(',.02f')
 
   createGraph: =>
@@ -62,7 +62,7 @@ class Histogram extends BaseController
       .orient('left')
 
     svg.append('g')
-      .attr('class', 'x aixs')
+      .attr('class', 'x axis')
       .attr('transform', "translate(0, #{graphHeight})")
       .call(xAxis)
 
