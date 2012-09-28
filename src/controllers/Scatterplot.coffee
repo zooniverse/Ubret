@@ -17,6 +17,8 @@ class Scatterplot extends BaseController
     @html require('../views/scatterplot')(@)
 
   displayTooltip: (d, i) =>
+    @removeTooltip()
+
     xAxis = @prettyKey(@xAxisKey)
     yAxis = @prettyKey(@yAxisKey)
     xAxisVal = d.x
@@ -28,6 +30,9 @@ class Scatterplot extends BaseController
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
     @el.find('.tooltip').offset({top: top, left: left})
+
+  removeTooltip: =>
+    @el.find('.tooltip').remove()
 
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
