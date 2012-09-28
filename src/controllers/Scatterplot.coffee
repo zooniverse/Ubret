@@ -51,7 +51,7 @@ class Scatterplot extends BaseController
       xAxis = d3.svg.axis()
         .scale(x)
         .orient('bottom')
-        .tickFormat(format)
+        .tickFormat(@xFormat)
 
       if data.length isnt 0
         xAxis.ticks(@calculateTicks(x))
@@ -76,7 +76,7 @@ class Scatterplot extends BaseController
       yAxis = d3.svg.axis()
         .scale(y)
         .orient('left')
-        .tickFormat(format)
+        .tickFormat(@yFormat)
 
       if data.length isnt 0
         yAxis.ticks(@calculateTicks(y))
