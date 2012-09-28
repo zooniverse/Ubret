@@ -10,6 +10,8 @@ class Histogram extends BaseController
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @format = @format or d3.format(',.02f')
 
+  name: "Histogram"
+
   createGraph: =>
     if typeof(@variable) is 'undefined'
       return

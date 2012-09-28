@@ -1,47 +1,112 @@
-Graph = require './Graph'
+BaseController = require './BaseController'
 _ = require 'underscore/underscore'
 
-class Scatterplot extends Graph
+class Scatterplot extends BaseController
   constructor: ->
     super
+    @height = @height or 480
+    @width = @width or 640
+    @margin = @margin or { left: 40, top: 20, bottom: 40 } 
 
     @xAxisKey = @xAxisKey or 'ra'
     @yAxisKey = @yAxisKey or 'dec'
-    @options =
-      xFormat: ''
-      yFormat: ''
+    @xFormat = @xFormat or d3.format(',.0f')
+    @yFormat = @yFormat or d3.format(',.0f')
 
   name: "Scatterplot"
 
   render: =>
     @html require('../views/scatterplot')(@)
 
-  buildCoordinates: =>
-    @coordinates = _.map @filteredData, (datum) =>
-      return {x: datum[@xAxisKey], y: datum[@yAxisKey]}
-
-  drawPoints: =>
-    point = @svg.selectAll('.bar')
-      .data(@coordinates)
-      .enter().append('g')
-      .attr('class', 'point')
-      .attr('transform', (d) => "translate(#{@x(d.x)}, #{@y(d.y)})")
-      .on('mouseover', @displayTooltip)
-
-    point.append('circle')
-      .attr('r', 3)
-
   displayTooltip: (d, i) =>
     console.log d,i
 
-  createXAxis: (label, format) =>
-    ticks = @calculateTicks(@x)
-    super ticks, label, format
+  createGraph: =>
+    if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
+      return
 
-  createYAxis: (label, format) =>
-    ticks = @calculateTicks(@y)
-    super ticks, label, format
-    
+    @el.find('svg').empty()
+
+    graphWidth = @width - @margin.left
+    graphHeight = @height - @margin.top - @margin.bottom
+
+    svg = d3.select("##{@channel} svg")
+      .attr('width', @width)
+      .attr('height', @height)
+      .append('g')
+        .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
+
+    if @filteredData.length isnt 0
+      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
+      xDomain = d3.extent(data, (d) -> d.x)
+      yDomain = d3.extend(data, (d) -> d.y)
+    else
+      data = []
+      xDomain = [0, 1]
+      yDomain = [0, 1]
+
+    if typeof(@xAxisKey) isnt 'undefined'
+      x = d3.scale.linear()
+        .domain(xDomain)
+        .range([0, graphWidth])
+
+      xAxis = d3.svg.axis()
+        .scale(x)
+        .orient('bottom')
+        .tickFormat(@xFormat)
+
+      if data.length isnt 0
+        xAxis.ticks(calculateTicks(x))
+
+      svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', "translate(0, #{graphHeight})")
+        .call(xAxis)
+
+      svg.append('text')
+        .attr('class', 'x label')
+        .attr('text-anchor', 'middle')
+        .attr('x', graphWidth / 2)
+        .attr('y', graphHeight + 30)
+        .text(@prettyKey(@xAxisKey))
+
+    if typeof(@yAxisKey) isnt 'undefined'
+      y = d3.scale.linear()
+        .domain(yDomain)
+        .range([graphHeight, 0])
+
+      yAxis = d3.svg.axis()
+        .scale(y)
+        .orient('left')
+        .tickFormat(@yFormat)
+
+      if data.length isnt 0
+        yAxis.ticks(calculateTicks(y))
+
+      svg.append('g')
+        .attr('class', 'y axis')
+        .attr('transform', 'translate(0, 0)')
+        .call(yAxis)
+
+      svg.append('text')
+        .attr('class', 'y label')
+        .attr('text-anchor', 'middle')
+        .attr('x', -30)
+        .attr('y', graphHeight / 2)
+        .attr('transform', "rotate(-90)")
+        .text(@prettyKey(@yAxisKey))
+
+    if data.length isnt 0
+      point = svg.selectAll('.point')
+        .data(data)
+        .enter().append('g')
+        .attr('class', 'point')
+        .attr('transform', "translate(#{x(d.x)}, #{y(d.y)})")
+        .on('mouseover', @displayTooltip)
+
+      point.append('circle')
+        .attr('r', 3)
+
   calculateTicks: (axis) =>
     min = _.first axis.domain()
     max = _.last axis.domain()
@@ -57,14 +122,16 @@ class Scatterplot extends Graph
       tick = tick + tickWidth
     return ticks
 
+  setXVar: (variable) =>
+    @xAxisKey = variable
+    @createGraph()
+
+  setYVar: (variable) =>
+    @yAxisKey = variable
+    @createGraph()
+
   start: =>
     @filterData()
-    @buildCoordinates()
     @createGraph()
-    @createXScale(d3.min(@coordinates, (d) -> d.x), d3.max(@coordinates, (d) -> d.x))
-    @createYScale(d3.min(@coordinates, (d) -> d.y), d3.max(@coordinates, (d) -> d.y))
-    @createXAxis(@xAxisKey, @options.xFormat)
-    @createYAxis(@yAxisKey, @options.yFormat)
-    @drawPoints()
 
 module.exports = Scatterplot
