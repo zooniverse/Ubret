@@ -21,7 +21,7 @@ class Scatterplot extends BaseController
     yAxis = @prettyKey(@yAxisKey)
     xAxisVal = d.x
     yAxisVal = d.y
-    tooltip = require('../views/scatterplot_toolip')({xAxis, yAxis, xAxisVal, yAxisVal})
+    tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
 
   createGraph: =>
