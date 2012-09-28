@@ -27,6 +27,8 @@ class Histogram extends BaseController
         .attr('transform', "translate(#{@margin.bottom}, #{@margin.left})")
 
     if @filteredData.length isnt 0
+      console.log @variable
+      console.log @filteredData
       data = _.map(@filteredData, (d) -> d[@variable])
       console.log data
       bins = d3.layout.histogram()(data)
