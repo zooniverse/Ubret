@@ -79,9 +79,7 @@ class Scatterplot extends BaseController
         .tickFormat(@yFormat)
 
       if data.length isnt 0
-        ticks = @calculateTicks(y)
-        console.log ticks
-        yAxis.ticks(ticks)
+        yAxis.tickValues(@calculateTicks(y))
 
       svg.append('g')
         .attr('class', 'y axis')
