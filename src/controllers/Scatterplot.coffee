@@ -21,6 +21,7 @@ class Scatterplot extends BaseController
     yAxis = @prettyKey(@yAxisKey)
     xAxisVal = d.x
     yAxisVal = d.y
+    console.log d3.event, d3.mouse
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
 
