@@ -18,7 +18,7 @@ class Histogram extends BaseController
     graphHeight = @height - @margin.bottom
 
     svg = d3.select("##{@channel} svg")
-      .attr('width', graphWdith)
+      .attr('width', graphWidth)
       .attr('height', graphHeight)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.bottom})")
