@@ -7,7 +7,7 @@ class Histogram extends BaseController
     super
     @height = @height or 480
     @width = @width or 640
-    @margin = @margin or { left: 40, top: 20 }
+    @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @format = @format or d3.format(',.02f')
 
   createGraph: =>
@@ -17,7 +17,7 @@ class Histogram extends BaseController
     @el.find('svg').empty()
 
     graphWidth = @width - @margin.left
-    graphHeight = @height - @margin.top
+    graphHeight = @height - @margin.top - @margin.bottom
     formatCount = ',.0f'
 
     svg = d3.select("##{@channel} svg")
