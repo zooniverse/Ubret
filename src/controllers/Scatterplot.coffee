@@ -21,9 +21,13 @@ class Scatterplot extends BaseController
     yAxis = @prettyKey(@yAxisKey)
     xAxisVal = d.x
     yAxisVal = d.y
-    console.log d3.event.pageX, d3.event.pageY
+
+    top = d3.event.pageY - 20
+    left = d3.event.pageX
+
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
+    @el.find('.tooltip').offset({top: top, left: left})
 
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
