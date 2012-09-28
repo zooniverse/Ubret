@@ -7,7 +7,7 @@ class Histogram extends BaseController
     super
     @height = @height or 480
     @width = @width or 640
-    @margin = @margin or { left: 40, bottom: 70 }
+    @margin = @margin or { left: 40, top: 20 }
     @format = @format or d3.format(',.02f')
 
   createGraph: =>
@@ -24,11 +24,13 @@ class Histogram extends BaseController
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
-        .attr('transform', "translate(#{@margin.left}, 0)")
+        .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
     if @filteredData.length isnt 0
       data = _.map(@filteredData, (d) => d[@variable])
+      console.log data
       bins = d3.layout.histogram()(data)
+      console.log bins
       xDomain = d3.extent(@filteredData, (d) -> d[@variable])
       yDomain= [0, d3.max(bins, (d) -> d.y)]
     else
