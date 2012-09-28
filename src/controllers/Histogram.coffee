@@ -16,6 +16,7 @@ class Histogram extends BaseController
 
     graphWidth = @width - @margin.left
     graphHeight = @height - @margin.bottom
+    formatCount = ',.0f'
 
     svg = d3.select("##{@channel} svg")
       .attr('width', @width)
@@ -24,7 +25,8 @@ class Histogram extends BaseController
         .attr('transform', "translate(#{@margin.bottom}, #{@margin.left})")
 
     if @filteredData.length isnt 0
-      bins = d3.layout.histogram()(_.map(@filteredData, (d) -> d[@variable]))
+      data = _.map(@filteredData, (d) -> d[@variable])
+      bins = d3.layout.histogram()(data)
       xDomain = d3.extent(@filteredData, (d) -> d[@variable])
       yDomain= [0, d3.max(bins, (d) -> d.y)]
     else
