@@ -7,6 +7,7 @@ class Scatterplot extends BaseController
     @height = @height or 480
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
+    @color = @color or 'teal'
 
     @xFormat = @xFormat or d3.format(',.0f')
     @yFormat = @yFormat or d3.format(',.0f')
@@ -17,21 +18,19 @@ class Scatterplot extends BaseController
     @html require('../views/scatterplot')(@)
 
   displayTooltip: (d, i) =>
-    @removeTooltip()
-
     xAxis = @prettyKey(@xAxisKey)
     yAxis = @prettyKey(@yAxisKey)
-    xAxisVal = d.x
-    yAxisVal = d.y
+    xAxisVal = @xFormat(d.x)
+    yAxisVal = @yFormat(d.y)
 
-    top = d3.event.pageY - 20
+    top = d3.event.pageY - 50
     left = d3.event.pageX
 
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
     @el.find('.tooltip').offset({top: top, left: left})
 
-  removeTooltip: =>
+  removeTooltip: (d, i) =>
     @el.find('.tooltip').remove()
 
   createGraph: =>
@@ -116,9 +115,11 @@ class Scatterplot extends BaseController
         .attr('class', 'point')
         .attr('transform', (d) -> "translate(#{x(d.x)}, #{y(d.y)})")
         .on('mouseover', @displayTooltip)
+        .on('mouseout', @removeTooltip)
 
       point.append('circle')
         .attr('r', 3)
+        .attr('fill', @color)
 
   calculateTicks: (axis) =>
     min = _.first axis.domain()

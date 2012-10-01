@@ -9,6 +9,7 @@ class Histogram extends BaseController
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @format = @format or d3.format(',.02f')
+    @color = @color or 'teal'
 
   name: "Histogram"
 
@@ -95,6 +96,7 @@ class Histogram extends BaseController
         .attr('x', 1)
         .attr('width', (x(bins[1].x) - x(bins[0].x) - 2))
         .attr('height', (d) => graphHeight - y(d.y))
+        .attr('fill', @color)
 
       bar.append('text')
         .attr("dy", ".75em")
