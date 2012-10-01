@@ -20,7 +20,8 @@ class SubjectViewer extends BaseController
     @keys = new Array
     @extractKeys subject
     keys = @keys
-    @html require('../views/subject_viewer')({subject, keys})
+
+    @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length})
 
   nextSubject: =>
     @count += 1

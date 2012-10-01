@@ -1,13 +1,17 @@
 <% if @subject: %>
-<ul>
-  <li>id: <%- @subject.zooniverse_id %></li>
   <% if @subject.image.src: %>
-  <li><img src="<%- @subject.image.src %>" /></li>
+    <img src="<%- @subject.image.src %>" />
   <% end %>
-  <% for key in @keys: %>
-  <li><%- key %>: <%- @subject[key] %></li>
-  <% end %>
-</ul>
+
+  <ul>
+    <li>id: <%- @subject.zooniverse_id %></li>
+    <% for key in @keys: %>
+    <li><%- key %>: <%- @subject[key] %></li>
+    <% end %>
+  </ul>
 <% end %>
-<a class="next">next</a>
-<a class="back">back</a>
+
+<% if @count > 1: %>
+  <a class="next">next</a>
+  <a class="back">back</a>
+<% end %>
