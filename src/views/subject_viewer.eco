@@ -9,5 +9,8 @@
   <% end %>
 </ul>
 <% end %>
-<a class="next">next</a>
-<a class="back">back</a>
+
+<% if @count > 1: %>
+  <a class="next">next</a>
+  <a class="back">back</a>
+<% end %>
