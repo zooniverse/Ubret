@@ -7,6 +7,7 @@ class Scatterplot extends BaseController
     @height = @height or 480
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
+    @color = @color or 'teal'
 
     @xFormat = @xFormat or d3.format(',.0f')
     @yFormat = @yFormat or d3.format(',.0f')
@@ -119,6 +120,7 @@ class Scatterplot extends BaseController
 
       point.append('circle')
         .attr('r', 3)
+        .attr('fill', @color)
 
   calculateTicks: (axis) =>
     min = _.first axis.domain()
