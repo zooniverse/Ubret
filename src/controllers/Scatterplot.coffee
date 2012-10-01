@@ -21,10 +21,10 @@ class Scatterplot extends BaseController
 
     xAxis = @prettyKey(@xAxisKey)
     yAxis = @prettyKey(@yAxisKey)
-    xAxisVal = d.x
-    yAxisVal = d.y
+    xAxisVal = @xFormat(d.x)
+    yAxisVal = @yFormat(d.y)
 
-    top = d3.event.pageY - 20
+    top = d3.event.pageY - 50
     left = d3.event.pageX
 
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
