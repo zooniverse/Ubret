@@ -18,8 +18,6 @@ class Scatterplot extends BaseController
     @html require('../views/scatterplot')(@)
 
   displayTooltip: (d, i) =>
-    @removeTooltip()
-
     xAxis = @prettyKey(@xAxisKey)
     yAxis = @prettyKey(@yAxisKey)
     xAxisVal = @xFormat(d.x)
@@ -32,7 +30,7 @@ class Scatterplot extends BaseController
     @append tooltip
     @el.find('.tooltip').offset({top: top, left: left})
 
-  removeTooltip: =>
+  removeTooltip: (d, i) =>
     @el.find('.tooltip').remove()
 
   createGraph: =>
@@ -117,6 +115,7 @@ class Scatterplot extends BaseController
         .attr('class', 'point')
         .attr('transform', (d) -> "translate(#{x(d.x)}, #{y(d.y)})")
         .on('mouseover', @displayTooltip)
+        .on('mouseout', @removeTooltip)
 
       point.append('circle')
         .attr('r', 3)
