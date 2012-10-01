@@ -26,12 +26,21 @@ class Scatterplot extends BaseController
     top = d3.event.pageY - 50
     left = d3.event.pageX
 
+    @sendSelection(i)
+
     tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
     @append tooltip
     @el.find('.tooltip').offset({top: top, left: left})
 
   removeTooltip: (d, i) =>
     @el.find('.tooltip').remove()
+
+  sendSelection: (index) =>
+    selectedItem = @filterData[index]
+    @publish [ {message: "selected", item_id: selectedItem.zooniverse_id} ]
+
+  select: (itemId) =>
+    _.indexOf @filteredData itemId
 
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
@@ -119,6 +128,9 @@ class Scatterplot extends BaseController
 
       point.append('circle')
         .attr('r', 3)
+        .attr('id', (d) -> 
+          console.log d
+          return d.x)
         .attr('fill', @color)
 
   calculateTicks: (axis) =>
