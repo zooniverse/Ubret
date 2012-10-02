@@ -36,8 +36,7 @@ class Scatterplot extends BaseController
     @el.find('.tooltip').remove()
 
   sendSelection: (index) =>
-    console.log index
-    selectedItem = @filterData[index]
+    selectedItem = @filteredData[index]
     @publish [ {message: "selected", item_id: selectedItem.zooniverse_id} ]
 
   select: (itemId) =>
