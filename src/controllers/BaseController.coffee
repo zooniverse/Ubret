@@ -41,6 +41,7 @@ class BaseController extends Spine.Controller
       @receiveData dataSource.lastFetch
 
   receiveData: (data) ->
+    @trigger 'data-received', @
     @data = data
     @start()
 
