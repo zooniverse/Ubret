@@ -46,6 +46,8 @@ class Scatterplot extends BaseController
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
 
+    console.log @xAxisKey, @yAxisKey
+
     @el.find('svg').empty()
 
     graphWidth = @width - @margin.left
