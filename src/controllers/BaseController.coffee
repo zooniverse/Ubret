@@ -12,14 +12,10 @@ class BaseController extends Spine.Controller
   
   constructor: ->
     super
-    @graph_options = {
-        x_tick_format: ',.04f',
-        y_tick_format: ',.04f'
-      }
-
     @data = new Array
     @filters = new Array
     @filteredData = new Array
+    @keys = new Array
 
   publish: (message) ->
     pubSub.publish(@channel, message, @)
@@ -41,9 +37,9 @@ class BaseController extends Spine.Controller
       @receiveData dataSource.lastFetch
 
   receiveData: (data) ->
-    @trigger 'data-received', @
     @data = data
     @start()
+    @trigger 'data-received', @
 
   underscoresToSpaces: (string) ->
     string.replace /_/g, " "
