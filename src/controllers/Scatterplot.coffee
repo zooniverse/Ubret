@@ -36,6 +36,7 @@ class Scatterplot extends BaseController
     @el.find('.tooltip').remove()
 
   sendSelection: (index) =>
+    console.log index
     selectedItem = @filterData[index]
     @publish [ {message: "selected", item_id: selectedItem.zooniverse_id} ]
 
@@ -45,8 +46,6 @@ class Scatterplot extends BaseController
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
-
-    console.log @xAxisKey, @yAxisKey
 
     @el.find('svg').empty()
 
