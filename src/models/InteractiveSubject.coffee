@@ -26,9 +26,10 @@ class InteractiveSubject extends Spine.Model
     @lastFetch = new Array
     for result in json
       item = @create
-        counters: result.recent.metadata.counters
+        counters: result.recent.subject.metadata.counters
         classification: result.recent.user.classification
-        type: @findType(result.recent.metadata.counters)
+        type: @findType(result.recent.subject.metadata.counters)
+        image: result.recent.subject.location.standard
       @lastFetch.push item
 
   @findType: (subject) =>
