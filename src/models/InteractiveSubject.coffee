@@ -5,7 +5,7 @@ User = require 'zooniverse/lib/models/user'
 class InteractiveSubject extends Spine.Model
   @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'type'
 
-  @fetch: ({random=false, limit, user=false}) =>
+  @fetch: ({random, limit, user}) =>
     url = @url(random, limit, user)
     fetcher = Api.get url, @fromJSON
 
