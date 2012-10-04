@@ -13,9 +13,9 @@ class InteractiveSubject extends Spine.Model
     if random
       url = '/user_groups/random-classifications'
     else if user
-      url = "/user_groups/#{User.current.user_group_id}/user_recents'
+      url = "/user_groups/#{User.current.user_group_id}/user_recents"
     else
-      url = '/user-groups/#{User.current.user_group_id}/recents'
+      url = "/user-groups/#{User.current.user_group_id}/recents"
 
     if limit isnt 0
       url = url + "?limit=#{limit}"
