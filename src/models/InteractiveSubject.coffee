@@ -5,7 +5,7 @@ User = require 'zooniverse/lib/models/user'
 class InteractiveSubject extends Spine.Model
   @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'type'
 
-  @fetch: ({random, limit, user}) =>
+  @fetch: ({random=false, limit, user=false}) =>
     url = @url(random, limit, user)
     fetcher = Api.get url, @fromJSON
 
@@ -13,7 +13,7 @@ class InteractiveSubject extends Spine.Model
     if random
       url = '/projects/galaxy_zoo/user-groups/random-classifications'
     else if user
-      url = "/projects/galaxy_zoo/user-groups/#{User.current.group}/classifications/users/#{User.current.id}/classifications"
+      url = "/projects/galaxy_zoo/user-groups/#{User.current.user_group_id}/classifications/user_recents'
     else
       url = '/projects/galaxy_zoo/user-groups/#{User.current.group}/classifications'
 
