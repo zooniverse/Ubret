@@ -11,11 +11,11 @@ class InteractiveSubject extends Spine.Model
 
   @url: (random, limit, user) =>
     if random
-      url = '/projects/galaxy_zoo/user-groups/random-classifications'
+      url = '/user_groups/random-classifications'
     else if user
-      url = "/projects/galaxy_zoo/user-groups/#{User.current.user_group_id}/classifications/user_recents'
+      url = "/user_groups/#{User.current.user_group_id}/user_recents'
     else
-      url = '/projects/galaxy_zoo/user-groups/#{User.current.group}/classifications'
+      url = '/user-groups/#{User.current.user_group_id}/recents'
 
     if limit isnt 0
       url = url + "?limit=#{limit}"
