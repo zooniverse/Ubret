@@ -3,7 +3,7 @@ Api = require 'zooniverse/lib/api'
 User = require 'zooniverse/lib/models/user'
 
 class InteractiveSubject extends Spine.Model
-  @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'type', 'counters', 'image'
+  @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'type', 'counters', 'image', 'zooniverse_id'
 
   @fetch: ({random, limit, user}) =>
     url = @url(random, limit, user)
@@ -30,6 +30,7 @@ class InteractiveSubject extends Spine.Model
         classification: result.recent.user.classification
         type: @findType(result.recent.subject.metadata.counters)
         image: result.recent.subject.location.standard
+        zooniverse_id: result.recent.subject.zooniverse_id
       @lastFetch.push item
 
   @findType: (subject) =>
