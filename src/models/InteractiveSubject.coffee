@@ -17,9 +17,9 @@ class InteractiveSubject extends Spine.Model
     else
       url = "/user_groups/#{User.current.user_group_id}/recents"
 
-    limit = parseInt(limit)
+    limit = parseInt(limit) + 5
     if limit isnt 0
-      url = url + "?limit=#{limit + 5}"
+      url = url + "?limit=#{limit}"
 
     return url
 

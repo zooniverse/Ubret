@@ -9,8 +9,8 @@ class Scatterplot extends BaseController
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @color = @color or 'teal'
 
-    @xFormat = @xFormat or d3.format(',.0f')
-    @yFormat = @yFormat or d3.format(',.0f')
+    @xFormat = @xFormat or d3.format(',.02f')
+    @yFormat = @yFormat or d3.format(',.02f')
 
   name: "Scatterplot"
 
