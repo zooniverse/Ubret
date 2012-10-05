@@ -112,7 +112,7 @@ class Scatterplot extends BaseController
       svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -30)
+        .attr('y', -40)
         .attr('x', -(graphHeight / 2))
         .attr('transform', "rotate(-90)")
         .text(@prettyKey(@yAxisKey))
@@ -122,15 +122,17 @@ class Scatterplot extends BaseController
         .data(data)
         .enter().append('g')
         .attr('class', 'point')
-        .attr('transform', (d) -> "translate(#{x(d.x)}, #{y(d.y)})")
+        .attr('transform', (d) -> 
+          if (d.x is null) or (d.y is null)
+            return
+          else
+            "translate(#{x(d.x)}, #{y(d.y)})")
         .on('mouseover', @displayTooltip)
         .on('mouseout', @removeTooltip)
 
       point.append('circle')
         .attr('r', 3)
-        .attr('id', (d) -> 
-          console.log d
-          return d.x)
+        .attr('id', (d) -> d.x)
         .attr('fill', @color)
 
   calculateTicks: (axis) =>
