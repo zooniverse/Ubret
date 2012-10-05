@@ -1,6 +1,6 @@
 <% if @subject: %>
   <% if @subject.image.src: %>
-    <img src="<%- @subject.image.src %>" />
+    <img src="<%- @subject.image %>" />
   <% end %>
 
   <ul>

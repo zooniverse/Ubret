@@ -20,7 +20,7 @@ class GalaxyZooSubject extends Spine.Model
     @lastFetch = new Array
     for result in json
       item = @create
-        image: @newImage(result.location.standard)
+        image: result.location.standard
         magnitdue: result.metadata.magnitude
         ra: result.coords[0]
         dec: result.coords[1]
