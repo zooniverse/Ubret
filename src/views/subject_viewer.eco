@@ -1,5 +1,5 @@
 <% if @subject: %>
-  <% if @subject.image.src: %>
+  <% if @subject.image: %>
     <img src="<%- @subject.image %>" />
   <% end %>
 
