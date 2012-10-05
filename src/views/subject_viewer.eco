@@ -5,8 +5,8 @@
 
   <ul>
     <li>id: <%- @subject.zooniverse_id %></li>
-    <% for key in @keys: %>
-    <li><%- @prettyKey(key) %>: <%- @subject[key] %></li>
+    <% for key, value of @keys: %>
+    <li><%- key %>: <%- @subject[value] %></li>
     <% end %>
   </ul>
 <% end %>

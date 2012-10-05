@@ -19,8 +19,9 @@ class SubjectViewer extends BaseController
     @publish [ {message: 'selected', item_id: subject?.zooniverse_id} ] 
     @keys = new Array
     @extractKeys subject
-    keys = @keys
 
+    keys = new Object
+    keys[@prettyKey(key)] = key for key in @keys
     @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length})
 
   nextSubject: =>
