@@ -11,33 +11,34 @@ class InteractiveSubject extends Spine.Model
 
   @url: (random, limit, user) =>
     if random
-      url = '/user_groups/random-classifications'
+      url = '/user_groups/506a216fd10d240486000002/recents'
     else if user
       url = "/user_groups/#{User.current.user_group_id}/user_recents"
     else
-      url = "/user-groups/#{User.current.user_group_id}/recents"
+      url = "/user_groups/#{User.current.user_group_id}/recents"
 
     if limit isnt 0
-      url = url + "?limit=#{limit}"
+      url = url + "?limit=#{limit + 5}"
 
     return url
 
   @fromJSON: (json) =>
     @lastFetch = new Array
     for result in json
-      item = @create
-        counters: result.recent.subject.metadata.counters
-        classification: result.recent.user.classification
-        type: @findType(result.recent.subject.metadata.counters)
-        image: result.recent.subject.location.standard
-        zooniverse_id: result.recent.subject.zooniverse_id
-        redshift: result.recent.subject.metadata.redshift
-        absolute_brightness: result.recent.subject.metadata.mag.abs_r
-        apparent_brightness: result.recent.subject.metadata.mag.r
-        color: result.recent.subject.metadata.mag.u - result.recent.subject.metadata.mag.r
-        absolute_size: result.recent.subject.metadata.absolute_size
+      if result.recent.subject.metadata.survey is 'sloan'
+        item = @create
+          counters: result.recent.subject.metadata.counters
+          classification: result.recent.user.classification
+          type: @findType(result.recent.subject.metadata.counters)
+          image: result.recent.subject.location.standard
+          zooniverse_id: result.recent.subject.zooniverse_id
+          redshift: result.recent.subject.metadata.redshift
+          absolute_brightness: result.recent.subject.metadata.mag.abs_r
+          apparent_brightness: result.recent.subject.metadata.mag.r
+          color: result.recent.subject.metadata.mag.u - result.recent.subject.metadata.mag.r
+          absolute_size: result.recent.subject.metadata.absolute_size
 
-      @lastFetch.push item
+        @lastFetch.push item
 
   @findType: (subject) =>
     if subject.smooth > subject.feature and subject.smooth > subject.artifact
