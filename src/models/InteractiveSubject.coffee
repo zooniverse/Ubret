@@ -32,11 +32,11 @@ class InteractiveSubject extends Spine.Model
           type: @findType(result.recent.subject.metadata.counters)
           image: result.recent.subject.location.standard
           zooniverse_id: result.recent.subject.zooniverse_id
-          redshift: result.recent.subject.metadata.redshift
-          absolute_brightness: result.recent.subject.metadata.mag.abs_r
-          apparent_brightness: result.recent.subject.metadata.mag.r
-          color: result.recent.subject.metadata.mag.u - result.recent.subject.metadata.mag.r
-          absolute_size: result.recent.subject.metadata.absolute_size
+          redshift: result.recent.subject.metadata.redshift?
+          absolute_brightness: result.recent.subject.metadata.mag?.abs_r
+          apparent_brightness: result.recent.subject.metadata.mag?.r
+          color: result.recent.subject.metadata.mag?.u - result.recent.subject.metadata.mag?.r
+          absolute_size: result.recent.subject.metadata.absolute_size?
 
         @lastFetch.push item
 
