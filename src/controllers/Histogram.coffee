@@ -31,7 +31,7 @@ class Histogram extends BaseController
 
     if @filteredData.length isnt 0
       data = _.map(@filteredData, (d) => d[@variable])
-      data = _.filter(data, (d) => d[@variable] isnt null)
+      data = _.filter(data, (d) => d isnt null)
       bins = d3.layout.histogram()(data)
       xDomain = d3.extent(@filteredData, (d) => d[@variable])
       yDomain= [0, d3.max(bins, (d) -> d.y)]
