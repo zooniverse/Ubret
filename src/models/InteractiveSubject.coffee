@@ -40,13 +40,4 @@ class InteractiveSubject extends Spine.Model
 
         @lastFetch.push item
 
-  @findType: (subject) =>
-    if subject.smooth > subject.feature and subject.smooth > subject.artifact
-      return 'smooth'
-    else if subject.feature > subject.smooth and subject.feature > subject.artifact
-      return 'feature'
-    else
-      return 'artifact'
-
 module.exports = InteractiveSubject
-
