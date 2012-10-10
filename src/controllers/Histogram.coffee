@@ -38,9 +38,10 @@ class Histogram extends BaseController
     else if @filteredData.length is 1
       svg.append('text')
         .attr('class', 'data-warning')
-        .text('Not Enough Data, Classify More Galaxies!')
         .attr('y', graphHeight / 2)
         .attr('x', graphWidth / 2)
+        .attr('text-anchor', 'middle')
+        .text('Not Enough Data, Classify More Galaxies!')
       return
     else
       bins = []
