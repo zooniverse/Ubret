@@ -37,7 +37,11 @@ class Histogram extends BaseController
       yDomain= [0, d3.max(bins, (d) -> d.y)]
     else if @filteredData.length is 1
       svg.append('text')
-        .text('Not Enough Data')
+        .attr('class', 'data-warning')
+        .text('Not Enough Data, Classify More Galaxies!')
+        .attr('y', graphHeight / 2)
+        .attr('x', graphWidth / 2)
+      return
     else
       bins = []
       xDomain = [0, 1]
