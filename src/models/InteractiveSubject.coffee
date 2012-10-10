@@ -7,7 +7,7 @@ class InteractiveSubject extends Spine.Model
 
   @fetch: ({random, limit, user}) =>
     url = @url(random, limit, user)
-    fetcher = Api.get url, @fromJSON
+    fetcher = Api.getJSON url, @fromJSON
 
   @url: (random, limit, user) =>
     if random
