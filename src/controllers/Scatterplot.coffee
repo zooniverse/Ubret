@@ -6,7 +6,7 @@ class Scatterplot extends BaseController
     super
     @height = @height or 480
     @width = @width or 640
-    @margin = @margin or { left: 50, top: 20, bottom: 40 } 
+    @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @color = @color or 'teal'
 
     @xFormat = @xFormat or d3.format(',.02f')
