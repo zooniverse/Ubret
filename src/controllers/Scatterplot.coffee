@@ -61,9 +61,20 @@ class Scatterplot extends BaseController
     graphData = @drawAxes()
     @drawPoints(graphData, @color)
 
+  addSelectionFilter: (filter, color) ->
+    @selectionFilter = filter
+    @selectionColor = color
+    @start()
+
   drawAxes: =>
     if @filteredData.length isnt 0
-      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
+      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey], color: @color})
+
+      if @selectionFilter
+        selected = _.filter(data, @selectionFilter)
+        data = _.map(data, (d) => 
+          d.color = @selectionColor if d in selected)
+
       xDomain = d3.extent(data, (d) -> d.x)
       yDomain = d3.extent(data, (d) -> d.y)
     else
@@ -124,7 +135,7 @@ class Scatterplot extends BaseController
 
     return data
 
-  drawPoints: (data, color) =>
+  drawPoints: (data) =>
     if data.length isnt 0
       point = @svg.selectAll('.point')
         .data(data)
@@ -141,7 +152,7 @@ class Scatterplot extends BaseController
       point.append('circle')
         .attr('r', 3)
         .attr('id', (d) -> d.x)
-        .attr('fill', color)
+        .attr('fill', (d) -> d.color)
 
   calculateTicks: (axis) =>
     min = _.first axis.domain()
