@@ -82,7 +82,7 @@ class Scatterplot extends BaseController
         .tickFormat(@xFormat)
 
       if data.length isnt 0
-        xAxis.tickValues(@calculateTicks(x))
+        xAxis.tickValues(@calculateTicks(@x))
 
       @svg.append('g')
         .attr('class', 'x axis')
@@ -107,7 +107,7 @@ class Scatterplot extends BaseController
         .tickFormat(@yFormat)
 
       if data.length isnt 0
-        yAxis.tickValues(@calculateTicks(y))
+        yAxis.tickValues(@calculateTicks(@y))
 
       @svg.append('g')
         .attr('class', 'y axis')
