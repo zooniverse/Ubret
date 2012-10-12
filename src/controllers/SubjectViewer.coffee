@@ -4,6 +4,7 @@ _ = require('underscore/underscore')
 class SubjectViewer extends BaseController
   constructor: ->
     super
+    @format = @format || d3.format(',.02f')
 
   events: 
     'click .next' : 'nextSubject'
@@ -22,7 +23,7 @@ class SubjectViewer extends BaseController
 
     keys = new Object
     keys[@prettyKey(key)] = key for key in @keys
-    @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length})
+    @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length, format: @format})
 
   nextSubject: =>
     @count += 1

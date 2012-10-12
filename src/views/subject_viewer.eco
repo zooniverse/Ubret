@@ -6,7 +6,7 @@
   <ul>
     <li>id: <%- @subject.zooniverse_id %></li>
     <% for key, value of @keys: %>
-    <li><%- key %>: <%- @subject[value] %></li>
+    <li><%- key %>: <%- @format(@subject[value]) %></li>
     <% end %>
   </ul>
 <% end %>
