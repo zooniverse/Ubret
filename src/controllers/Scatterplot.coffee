@@ -60,7 +60,9 @@ class Scatterplot extends BaseController
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
     @drawAxes()
+    console.log 'here'
     @drawPoints(@data, @color)
+    console.log 'at the end'
 
   drawAxes: =>
     if @filteredData.length isnt 0
