@@ -86,7 +86,7 @@ class Scatterplot extends BaseController
 
       @svg.append('g')
         .attr('class', 'x axis')
-        .attr('transform', "translate(0, #{graphHeight})")
+        .attr('transform', "translate(0, #{@graphHeight})")
         .call(xAxis)
 
       @svg.append('text')
