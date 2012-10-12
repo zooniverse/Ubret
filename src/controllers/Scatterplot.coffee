@@ -64,7 +64,6 @@ class Scatterplot extends BaseController
   addSelectionFilter: (filter, color) =>
     @selectionFilter = filter
     @selectionColor = color
-    @start()
 
   removeSelectionFilter: =>
     delete @selectionFilter
