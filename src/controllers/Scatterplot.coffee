@@ -75,8 +75,12 @@ class Scatterplot extends BaseController
 
       if @selectionFilter
         selected = _.filter(data, @selectionFilter)
+        console.log selected
         data = _.map(data, (d) => 
-          d.color = @selectionColor if d in selected)
+          if d in selected
+            return { x: d.x, y: d.y, color: @selectionColor }
+          else
+            return d)
         console.log data
 
       xDomain = d3.extent(data, (d) -> d.x)
