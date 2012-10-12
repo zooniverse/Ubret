@@ -59,7 +59,7 @@ class Scatterplot extends BaseController
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
     graphData = @drawAxes()
-    @drawPoints(@graphData, @color)
+    @drawPoints(graphData, @color)
 
   drawAxes: =>
     if @filteredData.length isnt 0
