@@ -71,7 +71,7 @@ class Scatterplot extends BaseController
 
   drawAxes: =>
     if @filteredData.length isnt 0
-      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey], color: @color})
+      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey], color: @color, classification: d['classification']})
 
       if @selectionFilter
         selected = _.filter(data, @selectionFilter)
