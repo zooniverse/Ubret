@@ -45,6 +45,7 @@ class Scatterplot extends BaseController
     _.indexOf @filteredData itemId
 
   createGraph: =>
+    console.log 'here'
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
 
@@ -62,7 +63,6 @@ class Scatterplot extends BaseController
     @drawAxes()
     console.log 'here'
     @drawPoints(@data, @color)
-    console.log 'at the end'
 
   drawAxes: =>
     if @filteredData.length isnt 0
