@@ -45,10 +45,9 @@ class Scatterplot extends BaseController
     _.indexOf @filteredData itemId
 
   createGraph: =>
-    console.log 'here'
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
-
+    console.log 'here'
     @el.find('svg').empty()
 
     @graphWidth = @width - @margin.left
