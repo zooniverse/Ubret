@@ -58,16 +58,16 @@ class Scatterplot extends BaseController
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
-    @drawAxes()
-    @drawPoints(@data, @color)
+    graphData = @drawAxes()
+    @drawPoints(@graphData, @color)
 
   drawAxes: =>
     if @filteredData.length isnt 0
-      @data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
+      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
       xDomain = d3.extent(data, (d) -> d.x)
       yDomain = d3.extent(data, (d) -> d.y)
     else
-      @data = []
+      data = []
       xDomain = [0, 10]
       yDomain = [0, 10]
 
@@ -121,6 +121,8 @@ class Scatterplot extends BaseController
         .attr('x', -(@graphHeight / 2))
         .attr('transform', "rotate(-90)")
         .text(@prettyKey(@yAxisKey))
+
+    return data
 
   drawPoints: (data, color) =>
     if data.length isnt 0
