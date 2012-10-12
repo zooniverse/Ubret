@@ -61,10 +61,14 @@ class Scatterplot extends BaseController
     graphData = @drawAxes()
     @drawPoints(graphData, @color)
 
-  addSelectionFilter: (filter, color) ->
+  addSelectionFilter: (filter, color) =>
     @selectionFilter = filter
     @selectionColor = color
     @start()
+
+  removeSelectionFilter: =>
+    delete @selectionFilter
+    delete @selectionColor
 
   drawAxes: =>
     if @filteredData.length isnt 0
