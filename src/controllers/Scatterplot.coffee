@@ -9,6 +9,8 @@ class Scatterplot extends BaseController
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @color = @color or 'teal'
 
+    @seriesFilters = new Array
+
     @xFormat = @xFormat or d3.format(',.02f')
     @yFormat = @yFormat or d3.format(',.02f')
 
@@ -48,28 +50,32 @@ class Scatterplot extends BaseController
 
     @el.find('svg').empty()
 
-    graphWidth = @width - @margin.left
-    graphHeight = @height - @margin.top - @margin.bottom
+    @graphWidth = @width - @margin.left
+    @graphHeight = @height - @margin.top - @margin.bottom
 
-    svg = d3.select("##{@channel} svg")
+    @svg = d3.select("##{@channel} svg")
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
+    @drawAxes()
+    @drawPoints(@data, @color)
+
+  drawAxes: =>
     if @filteredData.length isnt 0
-      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
+      @data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey]})
       xDomain = d3.extent(data, (d) -> d.x)
       yDomain = d3.extent(data, (d) -> d.y)
     else
-      data = []
+      @data = []
       xDomain = [0, 10]
       yDomain = [0, 10]
 
     if typeof(@xAxisKey) isnt 'undefined'
-      x = d3.scale.linear()
+      @x = d3.scale.linear()
         .domain(xDomain)
-        .range([0, graphWidth])
+        .range([0, @graphWidth])
 
       xAxis = d3.svg.axis()
         .scale(x)
@@ -79,46 +85,47 @@ class Scatterplot extends BaseController
       if data.length isnt 0
         xAxis.tickValues(@calculateTicks(x))
 
-      svg.append('g')
+      @svg.append('g')
         .attr('class', 'x axis')
         .attr('transform', "translate(0, #{graphHeight})")
         .call(xAxis)
 
-      svg.append('text')
+      @svg.append('text')
         .attr('class', 'x label')
         .attr('text-anchor', 'middle')
-        .attr('x', graphWidth / 2)
-        .attr('y', graphHeight + 30)
+        .attr('x', @graphWidth / 2)
+        .attr('y', @graphHeight + 30)
         .text(@prettyKey(@xAxisKey))
 
     if typeof(@yAxisKey) isnt 'undefined'
-      y = d3.scale.linear()
+      @y = d3.scale.linear()
         .domain(yDomain)
-        .range([graphHeight, 0])
+        .range([@graphHeight, 0])
 
       yAxis = d3.svg.axis()
-        .scale(y)
+        .scale(@y)
         .orient('left')
         .tickFormat(@yFormat)
 
       if data.length isnt 0
         yAxis.tickValues(@calculateTicks(y))
 
-      svg.append('g')
+      @svg.append('g')
         .attr('class', 'y axis')
         .attr('transform', 'translate(0, 0)')
         .call(yAxis)
 
-      svg.append('text')
+      @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
         .attr('y', -40)
-        .attr('x', -(graphHeight / 2))
+        .attr('x', -(@graphHeight / 2))
         .attr('transform', "rotate(-90)")
         .text(@prettyKey(@yAxisKey))
 
+  drawPoints: (data, color) =>
     if data.length isnt 0
-      point = svg.selectAll('.point')
+      point = @svg.selectAll('.point')
         .data(data)
         .enter().append('g')
         .attr('class', 'point')
@@ -126,23 +133,21 @@ class Scatterplot extends BaseController
           if (d.x is null) or (d.y is null)
             return
           else
-            "translate(#{x(d.x)}, #{y(d.y)})")
+            "translate(#{@x(d.x)}, #{@y(d.y)})")
         .on('mouseover', @displayTooltip)
         .on('mouseout', @removeTooltip)
 
       point.append('circle')
         .attr('r', 3)
         .attr('id', (d) -> d.x)
-        .attr('fill', @color)
+        .attr('fill', color)
 
   calculateTicks: (axis) =>
     min = _.first axis.domain()
     max = _.last axis.domain()
 
-    graphWidth = @width - @margin.left
-    
     ticks = [min, max]
-    numTicks = Math.floor(graphWidth/50)
+    numTicks = Math.floor(@graphWidth/50)
     tickWidth = (max - min) / numTicks
     
     tick = min + tickWidth
