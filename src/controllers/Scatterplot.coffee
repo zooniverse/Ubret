@@ -130,7 +130,7 @@ class Scatterplot extends BaseController
         .data(data)
         .enter().append('g')
         .attr('class', 'point')
-        .attr('transform', (d) -> 
+        .attr('transform', (d) =>
           if (d.x is null) or (d.y is null)
             return
           else
