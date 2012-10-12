@@ -47,7 +47,6 @@ class Scatterplot extends BaseController
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
-    console.log 'here'
     @el.find('svg').empty()
 
     @graphWidth = @width - @margin.left
@@ -60,7 +59,6 @@ class Scatterplot extends BaseController
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
     @drawAxes()
-    console.log 'here'
     @drawPoints(@data, @color)
 
   drawAxes: =>
@@ -79,7 +77,7 @@ class Scatterplot extends BaseController
         .range([0, @graphWidth])
 
       xAxis = d3.svg.axis()
-        .scale(x)
+        .scale(@x)
         .orient('bottom')
         .tickFormat(@xFormat)
 
