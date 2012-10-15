@@ -122,7 +122,7 @@ class Histogram extends BaseController
         if offset
           "translate(#{@x(d.x) + (width / 2)}, #{@y(d.y)})"
         else
-          "translate(#{@x(d.x)} - 1, #{@y(d.y)})" )
+          "translate(#{@x(d.x) - 1}, #{@y(d.y)})" )
 
     bar.append('rect')
       .attr('x', 1)
