@@ -49,6 +49,20 @@ class Histogram extends BaseController
       xDomain = [0, 1]
       yDomain = [0, 1]
 
+    if @selectedData.length isnt 0
+      binRanges = _.map(bins, (d) -> d.x)
+      binFunction= d3.layout.histogram()
+        .bins(binRanges)
+
+      unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
+      selectedData = _.map(@selectedData, (d) => d[@variable])
+      unselectedData = _.map(unselectedData, (d) => d[@variable]) 
+
+      unselectedBin = binFunction(unselectedData)
+      selectedBin = binFunction(selectedData)
+
+      yDomain = [0, d3.max([d3.max(unselectedBin, d -> d.y), d3.max(selectedBin, d -> d.y)])]
+
     @x = d3.scale.linear()
       .domain(xDomain)
       .range([0, @graphWidth])
@@ -97,16 +111,8 @@ class Histogram extends BaseController
 
     if bins.length isnt 0
       if @selectedData.length isnt 0
-        binRanges = _.map(bins, (d) -> d.x)
-        binFunction= d3.layout.histogram()
-          .bins(binRanges)
-
-        unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
-        selectedData = _.map(@selectedData, (d) => d[@variable])
-        unselectedData = _.map(unselectedData, (d) => d[@variable]) 
-
-        @drawBars binFunction(unselectedData), @color, true if unselectedData.length > 1
-        @drawBars binFunction(selectedData), @selectionColor, true, true if selectedData.length > 1
+        @drawBars unselectedBin, @color, true if unselectedData.length > 1
+        @drawBars selectedBin, @selectionColor, true, true if selectedData.length > 1
       else 
         @drawBars bins, @color
 
@@ -114,6 +120,7 @@ class Histogram extends BaseController
     console.log bins, color, halfSize, offset
     width = @x(bins[1].x) - @x(bins[0].x) 
     width = if halfSize then (width / 2) - 1 else width - 2 
+    witth = if offset then width - 1 else width
 
     bar = @svg.selectAll(".bar-#{color}")
       .data(bins)
@@ -121,7 +128,7 @@ class Histogram extends BaseController
       .attr('class', 'bar')
       .attr('transform', (d) => 
         if offset
-          "translate(#{@x(d.x) + (width)}, #{@y(d.y) - 1})"
+          "translate(#{@x(d.x) + (width) + 1}, #{@y(d.y) - 1})"
         else
           "translate(#{@x(d.x)}, #{@y(d.y) - 1})" )
 
