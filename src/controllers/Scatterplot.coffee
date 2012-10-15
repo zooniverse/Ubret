@@ -8,8 +8,7 @@ class Scatterplot extends BaseController
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @color = @color or 'teal'
-
-    @seriesFilters = new Array
+    @selectionColor = @selectionColor or 'orange'
 
     @xFormat = @xFormat or d3.format(',.02f')
     @yFormat = @yFormat or d3.format(',.02f')
@@ -61,23 +60,13 @@ class Scatterplot extends BaseController
     graphData = @drawAxes()
     @drawPoints(graphData, @color)
 
-  addSelectionFilter: (filter, color) =>
-    @selectionFilter = filter
-    @selectionColor = color
-
-  removeSelectionFilter: =>
-    delete @selectionFilter
-    delete @selectionColor
-
   drawAxes: =>
     if @filteredData.length isnt 0
       data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey], color: @color, classification: d['classification']})
 
-      if @selectionFilter
-        selected = _.filter(data, @selectionFilter)
-        console.log selected
+      if @selectedData.length isnt 0
         data = _.map(data, (d) => 
-          if d in selected
+          if d in @selectedData
             return { x: d.x, y: d.y, color: @selectionColor }
           else
             return d)
@@ -186,7 +175,7 @@ class Scatterplot extends BaseController
     @createGraph()
 
   start: =>
-    @filterData()
+    super
     @createGraph()
 
 module.exports = Scatterplot

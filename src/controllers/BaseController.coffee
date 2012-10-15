@@ -88,10 +88,24 @@ class BaseController extends Spine.Controller
     @publish [ {message: 'unfilter', filter: filter} ]
     @start()
 
+  addSelectionFilter: (filter) =>
+    @selectionFilter = filter
+
+  removeSelectionFilter: =>
+    delete @selectionFilter
+    delete @selectionColor
+
+  selectData: =>
+    @selectedData = _.filter(@filteredData(), @selectionFitler)
+
   process: (message) =>
     switch message.message
       when "selected" then @select message.item_id
       when "filter" then @addFilter message.filter
       when "unfilter" then @removeFilter message.filter
+
+  start: =>
+    @filterData()
+    @selectData()
 
 module.exports = BaseController
