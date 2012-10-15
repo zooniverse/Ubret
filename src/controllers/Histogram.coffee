@@ -146,7 +146,7 @@ class Histogram extends BaseController
     @createGraph()
 
   start: =>
-    @filterData()
+    super
     @createGraph()
 
 module.exports = Histogram
