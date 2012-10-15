@@ -61,7 +61,7 @@ class Histogram extends BaseController
       unselectedBin = binFunction(unselectedData)
       selectedBin = binFunction(selectedData)
 
-      yDomain = [0, d3.max([d3.max(unselectedBin, d -> d.y), d3.max(selectedBin, d -> d.y)])]
+      yDomain = [0, d3.max([d3.max(unselectedBin, (d) -> d.y), d3.max(selectedBin, (d) -> d.y)])]
 
     @x = d3.scale.linear()
       .domain(xDomain)
