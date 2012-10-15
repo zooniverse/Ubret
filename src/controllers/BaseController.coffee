@@ -94,7 +94,6 @@ class BaseController extends Spine.Controller
     @selectedData = new Array
 
   selectData: =>
-    console.log @selectionFilter
     @selectedData = _.filter(@filteredData, @selectionFilter) if @selectionFilter
 
   process: (message) =>

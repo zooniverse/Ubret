@@ -49,7 +49,6 @@ class Histogram extends BaseController
       xDomain = [0, 1]
       yDomain = [0, 1]
 
-    console.log @selectedData
     if @selectedData.length isnt 0
       binRanges = _.map(bins, (d) -> d.x)
       binFunction= d3.layout.histogram()
