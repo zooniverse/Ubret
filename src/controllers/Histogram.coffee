@@ -111,6 +111,7 @@ class Histogram extends BaseController
         @drawBars bins, @color
 
   drawBars: (bins, color, halfSize = false, offset = false) => 
+    console.log bins, color, halfSize, offset
     width = @x(bins[1].x) - @x(bins[0].x) 
     width = if halfSize then (width / 2) - 1 else width - 2 
 
@@ -135,7 +136,7 @@ class Histogram extends BaseController
       .attr("y", 6)
       .attr("x", (@x(bins[1].x) - @x(bins[0].x)) / 2 )
       .attr("text-anchor", "middle")
-      .text((d) -> @formatCount(d.y))
+      .text((d) => @formatCount(d.y))
 
   render: =>
     @html require('../views/histogram')(@channel)
