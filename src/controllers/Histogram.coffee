@@ -10,6 +10,7 @@ class Histogram extends BaseController
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @format = @format or d3.format(',.02f')
     @color = @color or 'teal'
+    @selectionColor = @color or 'orange'
 
   name: "Histogram"
 
@@ -19,11 +20,11 @@ class Histogram extends BaseController
 
     @el.find('svg').empty()
 
-    graphWidth = @width - @margin.left
-    graphHeight = @height - @margin.top - @margin.bottom
-    formatCount = d3.format(',.0f')
+    @graphWidth = @width - @margin.left
+    @graphHeight = @height - @margin.top - @margin.bottom
+    @formatCount = d3.format(',.0f')
 
-    svg = d3.select("##{@channel} svg")
+    @svg = d3.select("##{@channel} svg")
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
@@ -48,16 +49,16 @@ class Histogram extends BaseController
       xDomain = [0, 1]
       yDomain = [0, 1]
 
-    x = d3.scale.linear()
+    @x = d3.scale.linear()
       .domain(xDomain)
-      .range([0, graphWidth])
+      .range([0, @graphWidth])
 
-    y = d3.scale.linear()
+    @y = d3.scale.linear()
       .domain(yDomain)
-      .range([graphHeight, 0])
+      .range([@graphHeight, 0])
 
     xAxis = d3.svg.axis()
-      .scale(x)
+      .scale(@x)
       .orient('bottom')
 
     if bins.length isnt 0
@@ -74,45 +75,67 @@ class Histogram extends BaseController
     xAxis.tickFormat(@format)
 
     yAxis = d3.svg.axis()
-      .scale(y)
+      .scale(@y)
       .orient('left')
 
-    svg.append('g')
+    @svg.append('g')
       .attr('class', 'x axis')
-      .attr('transform', "translate(0, #{graphHeight})")
+      .attr('transform', "translate(0, #{@graphHeight})")
       .call(xAxis)
 
-    svg.append('g')
+    @svg.append('g')
       .attr('class', 'y axis')
       .attr('transform', "translate(0, 0)")
       .call(yAxis)
 
-    svg.append('text')
+    @svg.append('text')
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
-      .attr('x', graphWidth / 2)
-      .attr('y', graphHeight + 35)
+      .attr('x', @graphWidth / 2)
+      .attr('y', @graphHeight + 35)
       .text(@prettyKey(@variable))
 
     if bins.length isnt 0
-      bar = svg.selectAll('.bar')
-        .data(bins)
-        .enter().append('g')
-        .attr('class', 'bar')
-        .attr('transform', (d) => "translate(#{x(d.x)}, #{y(d.y) - 1})")
+      if @selectedData.length isnt 0
+        binRanges = _.map(bins, (d) -> d.x)
+        binFunction= d3.layout.histogram()
+          .bins(binRanges)
 
-      bar.append('rect')
-        .attr('x', 1)
-        .attr('width', (x(bins[1].x) - x(bins[0].x) - 2))
-        .attr('height', (d) => graphHeight - y(d.y))
-        .attr('fill', @color)
+        unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
+        selectedData = _.map(@selectedData, (d) => d[@variable])
+        unselectedData = _.map(unselectedData, (d) => d[@variable]) 
 
-      bar.append('text')
-        .attr("dy", ".75em")
-        .attr("y", 6)
-        .attr("x", (x(bins[1].x) - x(bins[0].x)) / 2 )
-        .attr("text-anchor", "middle")
-        .text((d) -> formatCount(d.y))
+        @drawBars binFunction(unselectedData), @color, true if unselectedData.length > 1
+        @drawBars binFunction(selectedData), @selectionColor, true, true if selectedData.length > 1
+      else 
+        @drawBars bins, @color
+
+  drawBars: (bins, color, halfSize = false, offset = false) => 
+    width = @x(bins[1].x) - @x(bins[0].x) 
+    width = if halfSize then (width / 2) - 1 else width - 2 
+
+    bar = @svg.selectAll(".bar-#{color}")
+      .data(bins)
+      .enter().append('g')
+      .attr('class', 'bar')
+      .attr('transform', (d) => 
+        if offset
+          "translate(#{@x(d.x) + (width / 2)}, #{@y(d.y)})"
+        else
+          "translate(#{@x(d.x)} - 1, #{@y(d.y)})" )
+
+    bar.append('rect')
+      .attr('x', 1)
+      .attr('width', width)
+      .attr('height', (d) => @graphHeight - y(d.y))
+      .attr('fill', color)
+
+    bar.append('text')
+      .attr("dy", ".75em")
+      .attr("y", 6)
+      .attr("x", (@x(bins[1].x) - @x(bins[0].x)) / 2 )
+      .attr("text-anchor", "middle")
+      .text((d) -> @formatCount(d.y))
 
   render: =>
     @html require('../views/histogram')(@channel)
