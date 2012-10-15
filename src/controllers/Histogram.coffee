@@ -121,9 +121,9 @@ class Histogram extends BaseController
       .attr('class', 'bar')
       .attr('transform', (d) => 
         if offset
-          "translate(#{@x(d.x) + (width)}, #{@y(d.y)})"
+          "translate(#{@x(d.x) + (width)}, #{@y(d.y) - 1})"
         else
-          "translate(#{@x(d.x) - 1}, #{@y(d.y)})" )
+          "translate(#{@x(d.x)}, #{@y(d.y) - 1})" )
 
     bar.append('rect')
       .attr('x', 1)
@@ -134,7 +134,7 @@ class Histogram extends BaseController
     bar.append('text')
       .attr("dy", ".75em")
       .attr("y", 6)
-      .attr("x", (@x(bins[1].x) - @x(bins[0].x)) / 2 )
+      .attr("x", (width / 2))
       .attr("text-anchor", "middle")
       .text((d) => @formatCount(d.y))
 
