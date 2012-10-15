@@ -43,6 +43,14 @@ class Scatterplot extends BaseController
   select: (itemId) =>
     _.indexOf @filteredData itemId
 
+  dataToCoordinates: (d) =>
+    coordinate = {x: d[@xAxisKey], y: d[@yAxisKey], classification: d['classification']}
+    if @selectedData.length isnt 0 and d in @selectedData
+      coordinate['color'] = @selectionColor
+    else
+      coordinate['color'] = @color
+    return coordinate
+
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
@@ -62,15 +70,7 @@ class Scatterplot extends BaseController
 
   drawAxes: =>
     if @filteredData.length isnt 0
-      data = _.map(@filteredData, (d) => {x: d[@xAxisKey], y: d[@yAxisKey], color: @color, classification: d['classification']})
-
-      if @selectedData.length isnt 0
-        data = _.map(data, (d) => 
-          if d in @selectedData
-            return { x: d.x, y: d.y, color: @selectionColor }
-          else
-            return d)
-        console.log data
+      data = _.map(@filteredData, @dataToCoordinates)
 
       xDomain = d3.extent(data, (d) -> d.x)
       yDomain = d3.extent(data, (d) -> d.y)
