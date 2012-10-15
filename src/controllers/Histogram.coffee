@@ -49,6 +49,7 @@ class Histogram extends BaseController
       xDomain = [0, 1]
       yDomain = [0, 1]
 
+    console.log @selectedData
     if @selectedData.length isnt 0
       binRanges = _.map(bins, (d) -> d.x)
       binFunction= d3.layout.histogram()
@@ -117,7 +118,6 @@ class Histogram extends BaseController
         @drawBars bins, @color
 
   drawBars: (bins, color, halfSize = false, offset = false) => 
-    console.log bins, color, halfSize, offset
     width = @x(bins[1].x) - @x(bins[0].x) 
     width = if halfSize then (width / 2) - 1 else width - 2 
     witth = if offset then width - 1 else width
