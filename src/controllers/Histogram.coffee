@@ -10,7 +10,7 @@ class Histogram extends BaseController
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
     @format = @format or d3.format(',.02f')
     @color = @color or 'teal'
-    @selectionColor = @color or 'orange'
+    @selectionColor = @selectionColor or 'orange'
 
   name: "Histogram"
 
@@ -121,7 +121,7 @@ class Histogram extends BaseController
       .attr('class', 'bar')
       .attr('transform', (d) => 
         if offset
-          "translate(#{@x(d.x) + (width / 2)}, #{@y(d.y)})"
+          "translate(#{@x(d.x) + (width)}, #{@y(d.y)})"
         else
           "translate(#{@x(d.x) - 1}, #{@y(d.y)})" )
 
