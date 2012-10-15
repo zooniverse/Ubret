@@ -97,7 +97,7 @@ class BaseController extends Spine.Controller
     delete @selectionColor
 
   selectData: =>
-    @selectedData = _.filter(@filteredData(), @selectionFitler)
+    @selectedData = _.filter(@filteredData, @selectionFitler)
 
   process: (message) =>
     switch message.message
