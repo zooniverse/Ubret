@@ -127,7 +127,7 @@ class Histogram extends BaseController
     bar.append('rect')
       .attr('x', 1)
       .attr('width', width)
-      .attr('height', (d) => @graphHeight - y(d.y))
+      .attr('height', (d) => @graphHeight - @y(d.y))
       .attr('fill', color)
 
     bar.append('text')
