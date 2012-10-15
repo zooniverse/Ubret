@@ -89,14 +89,11 @@ class BaseController extends Spine.Controller
     @publish [ {message: 'unfilter', filter: filter} ]
     @start()
 
-  addSelectionFilter: (filter) =>
-    @selectionFilter = filter
-
   removeSelectionFilter: =>
     delete @selectionFilter
-    delete @selectionColor
 
   selectData: =>
+    console.log @selectionFilter
     @selectedData = _.filter(@filteredData, @selectionFitler) if @selectionFilter
 
   process: (message) =>
