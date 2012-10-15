@@ -15,6 +15,7 @@ class BaseController extends Spine.Controller
     @data = new Array
     @filters = new Array
     @filteredData = new Array
+    @selectedData = new Array
     @keys = new Array
 
   publish: (message) ->
