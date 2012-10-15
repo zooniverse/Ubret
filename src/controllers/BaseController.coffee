@@ -94,7 +94,7 @@ class BaseController extends Spine.Controller
 
   selectData: =>
     console.log @selectionFilter
-    @selectedData = _.filter(@filteredData, @selectionFitler) if @selectionFilter
+    @selectedData = _.filter(@filteredData, @selectionFilter) if @selectionFilter
 
   process: (message) =>
     switch message.message
