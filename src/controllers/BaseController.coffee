@@ -91,6 +91,7 @@ class BaseController extends Spine.Controller
 
   removeSelectionFilter: =>
     delete @selectionFilter
+    delete @selectedData
 
   selectData: =>
     console.log @selectionFilter
