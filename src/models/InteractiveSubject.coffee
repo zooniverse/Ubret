@@ -3,7 +3,7 @@ Api = require 'zooniverse/lib/api'
 User = require 'zooniverse/lib/models/user'
 
 class InteractiveSubject extends Spine.Model
-  @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'counters', 'image', 'zooniverse_id', 'absolute_brightness', 'apparent_brightness', 'absolute_size'
+  @configure 'InteractiveSubject', 'redshift', 'color', 'subject', 'classification', 'counters', 'image', 'zooniverse_id', 'absolute_brightness', 'apparent_brightness', 'absolute_radius'
 
   @fetch: ({random, limit, user}) =>
     url = @url(random, limit, user)
