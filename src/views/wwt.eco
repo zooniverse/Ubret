@@ -1,0 +1,1 @@
+<div id="WWTCanvas-<%- @index %>" style="width:750px; height:750px; border-style: none; border-width: 0px;"></div>
