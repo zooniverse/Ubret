@@ -14,6 +14,9 @@ class SubjectViewer extends BaseController
     @count = 0
     @render()
 
+  labels:
+    absolute_radius: 'kpc'
+
   render: =>
     @filterData()
     subject = @filteredData[@count]
@@ -23,7 +26,7 @@ class SubjectViewer extends BaseController
 
     keys = new Object
     keys[@prettyKey(key)] = key for key in @keys
-    @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length, format: @format})
+    @html require('../views/subject_viewer')({subject, keys, count: @filteredData.length, format: @format, labels: @labels})
 
   nextSubject: =>
     @count += 1

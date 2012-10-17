@@ -79,7 +79,7 @@ class BaseController extends Spine.Controller
     console.log @bindOptions
 
   extractKeys: (datum) ->
-    undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters']
+    undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
     for key, value of datum
       dataKey = key if typeof(value) != 'function'
       @keys.push dataKey unless dataKey in undesiredKeys

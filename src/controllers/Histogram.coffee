@@ -11,6 +11,7 @@ class Histogram extends BaseController
     @format = @format or d3.format(',.02f')
     @color = @color or 'teal'
     @selectionColor = @selectionColor or 'orange'
+    @yLabel = @yLabel or 'Number'
 
   name: "Histogram"
 
@@ -108,6 +109,14 @@ class Histogram extends BaseController
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 35)
       .text(@prettyKey(@variable))
+
+    @svg.append('text')
+      .attr('class', 'y label')
+      .attr('text-anchor', 'middle')
+      .attr('y', -40)
+      .attr('x', -(@graphHeight / 2))
+      .attr('transform', "rotate(-90)")
+      .text(@yLabel)
 
     if bins.length isnt 0
       if @selectedData.length isnt 0
