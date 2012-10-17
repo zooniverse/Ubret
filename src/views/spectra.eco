@@ -1,2 +1,2 @@
-<div id="spectra-<%- @ %>">
+<div id="spectra-<%- @index %>">
 </div>

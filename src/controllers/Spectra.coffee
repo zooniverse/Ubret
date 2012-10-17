@@ -11,6 +11,7 @@ class Spectra extends BaseController
     @subscribe @subChannel, @process
   
   render: =>
+    console.log "index", @index
     @html require('../views/spectra')({index: @index})
   
 module.exports = Spectra
