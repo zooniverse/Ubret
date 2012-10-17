@@ -24,7 +24,7 @@
     "jqueryify": "~0.0.1",
     "underscore": "*",
     "spine": "~1.0.8",
-    "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git",
+    "Zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git",
     "node-pubsub" : "*"
   },
   "devDependencies" : {
