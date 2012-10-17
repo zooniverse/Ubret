@@ -8,7 +8,7 @@ fs.readdir(__dirname + '/../src/views', function(err, files) {
     console.log(err);
     throw err;
   }
-  console.log(files);
+  
   files.forEach(function(file) {
     fs.readFile(__dirname + '/../src/views/' + file, function(err, data) {
       if (err) {
