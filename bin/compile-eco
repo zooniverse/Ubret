@@ -3,14 +3,14 @@
 var eco = require('eco');
 var fs  = require('fs');
 
-fs.readdir(__dirname + 'src/views', function(err, files) {
+fs.readdir(__dirname + '/../src/views', function(err, files) {
   if (err) {
     console.log(err);
     throw err;
   }
-
+  console.log(files);
   files.forEach(function(file) {
-    fs.readFile(__dirname + 'src/views/' + file, function(err, data) {
+    fs.readFile(__dirname + '/../src/views/' + file, function(err, data) {
       if (err) {
         console.log(err);
         throw err;
@@ -23,7 +23,7 @@ fs.readdir(__dirname + 'src/views', function(err, files) {
 
       templateFile = "module.exports = " + template.toString();
 
-      filepath = __dirname + 'lib/views/' + filename;
+      filepath = __dirname + '/../lib/views/' + filename;
 
       fs.writeFile(filepath, templateFile, function(err) {
         if (err) {
