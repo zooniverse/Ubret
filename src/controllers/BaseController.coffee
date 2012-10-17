@@ -17,6 +17,7 @@ class BaseController extends Spine.Controller
     @filteredData = new Array
     @selectedData = new Array
     @keys = new Array
+    @bindOptions = new Object()
 
   publish: (message) ->
     pubSub.publish(@channel, message, @)
@@ -62,14 +63,23 @@ class BaseController extends Spine.Controller
   uglifyKey: (key) ->
     @spacesToUnderscores(@lowercaseWords(key))
 
-  bindTool: (source, params='') ->
+  bindTool: (source, params='') =>
     if params
+      @bindOptions = {
+          'source': source,
+          'params': params
+        }
       @getDataSource source, params
     else
+      @bindOptions = {
+          'source': source,
+          'process': @process
+        }
       @subscribe source, @process
+    console.log @bindOptions
 
   extractKeys: (datum) ->
-    undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters']
+    undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
     for key, value of datum
       dataKey = key if typeof(value) != 'function'
       @keys.push dataKey unless dataKey in undesiredKeys
