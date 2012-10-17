@@ -38,7 +38,7 @@ class BaseController extends Spine.Controller
         dataSource = InteractiveSubject
       when 'SDSS3SpectralData'
         dataSource = SDSS3SpectralData
-
+    
     dataSource.fetch(params).always =>
       @receiveData dataSource.lastFetch
 
