@@ -36,7 +36,7 @@ class InteractiveSubject extends Spine.Model
           absolute_brightness: result.recent.subject.metadata.mag?.abs_r
           apparent_brightness: result.recent.subject.metadata.mag?.r
           color: result.recent.subject.metadata.mag?.u - result.recent.subject.metadata.mag?.r
-          absolute_size: result.recent.subject.metadata.absolute_size
+          absolute_radius: result.recent.subject.metadata.absolute_size
 
         @lastFetch.push item
 
