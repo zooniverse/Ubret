@@ -70,14 +70,16 @@ class BaseController extends Spine.Controller
   bindTool: (source, params='') =>
     if params
       @bindOptions = {
-          'source': source,
-          'params': params
+          source: source
+          params: params
+          type: 'api'
         }
       @getDataSource source, params
     else
       @bindOptions = {
-          'source': source,
-          'process': @process
+          source: source
+          process: @process
+          type: 'channel'
         }
       @subscribe source, @process
 

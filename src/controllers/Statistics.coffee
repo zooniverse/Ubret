@@ -35,8 +35,6 @@ class Statistics extends BaseController
       # Data is numerical. Might be in strings though. Convert to floats.
       data = _.map data, (num) -> parseFloat num
 
-    console.log 'Data: ', data
-
     @stats.push @getMean data
     @stats.push @getMedian data
     @stats.push @getMode data
