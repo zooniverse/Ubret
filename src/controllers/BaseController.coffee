@@ -67,21 +67,24 @@ class BaseController extends Spine.Controller
   uglifyKey: (key) ->
     @spacesToUnderscores(@lowercaseWords(key))
 
-  bindTool: (source, params='') =>
+  setBindOptions: (source, params='') =>
+    @bindOptions = {
+        source: source
+      }
+
     if params
-      @bindOptions = {
-          source: source
-          params: params
-          type: 'api'
-        }
-      @getDataSource source, params
+      @bindOptions = _.extend @bindOptions, {type: 'api', params: params}
     else
-      @bindOptions = {
-          source: source
-          process: @process
-          type: 'channel'
-        }
+      @bindOptions = _.extend @bindOptions, {type: 'channel', process: @process}
+
+  bindTool: (source, params='') =>
+    @setBindOptions source, params
+    if @bindOptions.type is 'api'
+      @getDataSource source, params
+    else if @bindOptions.type is 'channel'
       @subscribe source, @process
+    else
+      console.log 'err'
 
   extractKeys: (datum) ->
     undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
