@@ -57,17 +57,13 @@ class Spectra extends BaseController
       .x (d, i) =>
         return x(wavelengths[i])
       .y (d, i) => return y(d)
-    
+  
     @svg = d3.select("#spectra-#{@index}").append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.top})")
         .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", @zoom))
-    
-    @svg.append("area")
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
     
     @svg.append("g")
         .attr("class", "x axis")
