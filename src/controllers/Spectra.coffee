@@ -15,11 +15,16 @@ class Spectra extends BaseController
     console.log "index", @index
     @html require('../views/spectra')({index: @index})
   
-  plot: =>
-    console.log 'wavelength versus flux', @data[0].wavelengths, @data[0].flux
+  zoom: =>
+    @svg.select(".x.axis").call(@xAxis)
+    @svg.select(".y.axis").call(@yAxis)
+    @svg.select("path.fluxes").attr("d", @fluxLine)
+    @svg.select("path.best-fit").attr("d", @bestFitLine)
     
+  plot: =>
     wavelengths = @data[0].wavelengths
     fluxes = @data[0].flux
+    bestFit = @data[0].best_fit
     
     margin =
       top: 14
@@ -31,49 +36,60 @@ class Spectra extends BaseController
     
     x = d3.scale.linear()
       .range([0, width])
+      .domain(d3.extent(wavelengths))
     y = d3.scale.linear()
       .range([0, height])
+      .domain(d3.extent(fluxes))
+    x.ticks(8)
     
-    xAxis = d3.svg.axis()
+    @xAxis = d3.svg.axis()
       .scale(x)
       .orient("bottom")
-    yAxis = d3.svg.axis()
+    @yAxis = d3.svg.axis()
       .scale(y)
       .orient("left")
     
-    line = d3.svg.line()
-      .x (d, i) ->
+    @fluxLine = d3.svg.line()
+      .x (d, i) =>
         return x(wavelengths[i])
-      .y (d, i) ->
-        return y(fluxes[i])
+      .y (d, i) => return y(d)
+    @bestFitLine = d3.svg.line()
+      .x (d, i) =>
+        return x(wavelengths[i])
+      .y (d, i) => return y(d)
     
-    svg = d3.select("#spectra-#{@index}").append('svg')
+    @svg = d3.select("#spectra-#{@index}").append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.top})")
+        .call(d3.behavior.zoom().x(x).y(y).scaleExtent([1, 8]).on("zoom", @zoom))
     
-    x.domain d3.extent(wavelengths)
-    y.domain d3.extent(fluxes)
-    console.log 'x', x.domain
-    console.log 'y', y.domain
+    @svg.append("area")
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
     
-    svg.append("g")
+    @svg.append("g")
         .attr("class", "x axis")
         .attr("transform", "translate(0, #{height})")
-        .call(xAxis)
-    svg.append("g")
+        .call(@xAxis)
+    @svg.append("g")
         .attr("class", "y axis")
-        .call(yAxis)
+        .call(@yAxis)
       .append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("Flux")
-    svg.append("path")
+        .text("Flux (1E-17 erg/cm^2/s/Ang)")
+    @svg.append("path")
         .datum(fluxes)
-        .attr("class", "line")
-        .attr("d", line)
+        .attr("class", "line fluxes")
+        .attr("d", @fluxLine)
+        
+    @svg.append("path")
+        .datum(bestFit)
+        .attr("class", "line best-fit")
+        .attr("d", @bestFitLine)
 
 module.exports = Spectra
