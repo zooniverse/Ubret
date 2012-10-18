@@ -2,6 +2,7 @@ BaseController = require('./BaseController')
 _ = require('underscore/underscore')
 
 class SubjectViewer extends BaseController
+  name: "Subject Viewer"
   constructor: ->
     super
     @format = @format || d3.format(',.02f')

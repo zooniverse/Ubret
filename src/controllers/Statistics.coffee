@@ -2,6 +2,7 @@ BaseController = require('./BaseController')
 _ = require('underscore/underscore')
 
 class Statistics extends BaseController
+  name: "Statistics"
   events:
     'change #select-key': 'changeSelectedKey'
 

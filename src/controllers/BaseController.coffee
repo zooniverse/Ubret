@@ -10,7 +10,7 @@ class BaseController extends Spine.Controller
   
   name: 'BaseController'
   
-  constructor: ->
+  constructor: (params) ->
     super
     @data = new Array
     @filters = new Array
@@ -76,7 +76,6 @@ class BaseController extends Spine.Controller
           'process': @process
         }
       @subscribe source, @process
-    console.log @bindOptions
 
   extractKeys: (datum) ->
     undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
