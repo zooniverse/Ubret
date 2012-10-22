@@ -5,7 +5,6 @@ Ubret =
   SubjectViewer: require './controllers/SubjectViewer'
   Histogram: require './controllers/Histogram'
   Statistics: require './controllers/Statistics'
-  BaseController: require './controllers/BaseController'
   WWT: require './controllers/WWT'
   Spectra: require './controllers/Spectra'
 
