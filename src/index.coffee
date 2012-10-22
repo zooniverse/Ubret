@@ -1,14 +1,12 @@
-module.exports = require './ubret'
+Ubret = 
+  Map: require './controllers/Map'
+  Table: require './controllers/Table'
+  Scatterplot: require './controllers/Scatterplot'
+  SubjectViewer: require './controllers/SubjectViewer'
+  Histogram: require './controllers/Histogram'
+  Statistics: require './controllers/Statistics'
+  BaseController: require './controllers/BaseController'
+  WWT: require './controllers/WWT'
+  Spectra: require './controllers/Spectra'
 
-# exports.GalaxyZooSubject = require './models/GalaxyZooSubject'
-# exports.SkyServerSubject = require './models/SkyServerSubject'
-
-# exports.Map = require './controllers/Map'
-# exports.Table = require './controllers/Table'
-# exports.Scatterplot = require './controllers/Scatterplot'
-# exports.SubjectViewer = require './controllers/SubjectViewer'
-# exports.Histogram = require './controllers/Histogram'
-# exports.Statistics = require './controllers/Statistics'
-# exports.BaseController = require './controllers/BaseController'
-# exports.WWT = require './controllers/WWT'
-# exports.Spectra = require './controllers/Spectra'
+module.exports = Ubret
