@@ -97,6 +97,11 @@ class BaseController extends Spine.Controller
     for filter in @filters
       @filteredData = _.filter @filteredData, filter.func
 
+  # Pub-Sub functions
+  select: (item_id) ->
+    # By default, do nothing.
+    return
+
   addFilter: (filter) =>
     @filters.push filter
     @publish [ {message: 'filter', filter: filter} ]
