@@ -25,12 +25,13 @@ class Spectra extends BaseController
     wavelengths = @data[0].wavelengths
     fluxes = @data[0].flux
     bestFit = @data[0].best_fit
+    spectralLines = @data[0].spectralLines
     
     margin =
       top: 14
       right: 10
       bottom: 14
-      left: 10
+      left: 40
     width = 370 - margin.left - margin.right
     height = 200 - margin.top - margin.bottom
     
@@ -87,5 +88,15 @@ class Spectra extends BaseController
         .datum(bestFit)
         .attr("class", "line best-fit")
         .attr("d", @bestFitLine)
+        
+    # Drawing spectral lines
+    for name, wavelength of spectralLines
+      @svg.append("line")
+        .attr("x1", x(wavelength))
+        .attr("x2", x(wavelength))
+        .attr("y1", 0)
+        .attr("y2", height)
+        .style("stroke", "rgb(255,0,0)")
+        .style("stroke-width", 0.5)
 
 module.exports = Spectra
