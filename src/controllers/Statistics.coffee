@@ -50,6 +50,11 @@ class Statistics extends BaseController
     @currentKey = $(e.currentTarget).val()
     @start()
 
+  selectKey: (key) =>
+    @currentKey = key
+    @start()
+
+
   # Statistics functions
   getMean: (data) =>
     average = _.reduce(data, ((memo, num) -> memo + num)) / data.length

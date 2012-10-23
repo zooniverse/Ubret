@@ -1,11 +1,19 @@
-BaseController = require("./BaseController")
-_ = require ("underscore/underscore")
+_ = require 'underscore/underscore'
+
+BaseController = require './BaseController'
+
+$.fn.column = (index) ->
+  $("tr td:nth-child(#{index + 1}), tr th:nth-child(#{index + 1})")
 
 class Table extends BaseController
+  name: 'Table'
+  tableRow: require('../views/table_row')
+
   elements: 
     'input[name="filter"]' : 'filter'
 
-  events: 
+  events:
+    'click th': 'onSelectKey'
     'click .subject' : 'selection'
     'click .delete'  : 'removeColumn'
     'click .remove_filter' : 'onRemoveFilter'
@@ -13,8 +21,6 @@ class Table extends BaseController
 
   constructor: ->
     super
-
-  name: "Table"
 
   start: =>
     @render()
@@ -24,8 +30,6 @@ class Table extends BaseController
     @extractKeys @data[0]
     @filterData()
     @html require('../views/table')(@)
-
-  tableRow: require('../views/table_row')
 
   selection: (e) =>
     @selected.removeClass('selected') if @selected
@@ -39,17 +43,29 @@ class Table extends BaseController
     @selected.addClass('selected')
     @publish([ {message: "selected", item_id: itemId} ])
 
+  onSelectKey: (e) =>
+    key = $(e.currentTarget).data 'key'
+    @selectKey key
+
+  selectKey: (key) ->
+    table_body = @el.find('table')
+
+    if not _.isUndefined @select_index
+      table_body.column(@select_index).removeClass 'selected'
+
+    @select_index = table_body.find("th[data-key=#{key}]").index()
+    table_body.column(@select_index).addClass 'selected'
+
+    @publish([{message: 'selected_key', key: key}])
+
   removeColumn: (e) =>
     target = $(e.currentTarget)
     index = target.closest('th').prevAll('th').length
     target.parents('table').find('tr').each ->
-      $(@).find("td:eq(#{index}), th:eq(#{index})").remove()
+      $(@).find("td:eq(#{index}), th:eq(#{index})").hide()
 
   onRemoveFilter: (e) =>
     filter = (filter for filter in @filters when filter.id is $(e.currentTarget).data('id'))
-      # filter = _.find @filters, (e) ->
-
-      # filter.id == $(e.currentTarget).data('id') in fil
     @removeFilter filter
     
   onSubmit: (e) =>

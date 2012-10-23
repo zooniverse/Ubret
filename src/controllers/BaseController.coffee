@@ -102,6 +102,10 @@ class BaseController extends Spine.Controller
     # By default, do nothing.
     return
 
+  selectKey: (key) ->
+    # By default, do nothing.
+    return
+
   addFilter: (filter) =>
     @filters.push filter
     @publish [ {message: 'filter', filter: filter} ]
@@ -124,6 +128,7 @@ class BaseController extends Spine.Controller
       when "selected" then @select message.item_id
       when "filter" then @addFilter message.filter
       when "unfilter" then @removeFilter message.filter
+      when 'selected_key' then @selectKey message.key
 
   start: =>
     @filterData()

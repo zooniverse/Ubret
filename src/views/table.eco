@@ -1,5 +1,5 @@
 <form>
-  <label>Filter Data: <input type="text" name="filter" /></label>
+  <label>Filter Data: <input type="text" name="filter"></label>
   <button type="submit">Filter</button>
 </form>
 <ul class="filters">
@@ -14,17 +14,17 @@
     <tr>
       <% if @keys.length and @data.length: %>
         <th>Zooniverse ID <a class="delete">X</a></th>
-      <% for key in @keys: %>
-        <th><%= @prettyKey(key) %> <a class="delete">X</a></th>
-      <% end %>
+        <% for key in @keys: %>
+          <th data-key="<%- key %>"><%= @prettyKey(key) %> <a class="delete">X</a></th>
+        <% end %>
       <% end %>
     </tr>
   </thead>
   <tbody>
     <% if @filteredData.length: %>
-    <% for subject in @filteredData: %>
-      <%- @tableRow({subject, @keys}) %>
-    <% end %>
+      <% for subject in @filteredData: %>
+        <%- @tableRow({subject, @keys}) %>
+      <% end %>
     <% end %>
   </tbody>
 </table>
