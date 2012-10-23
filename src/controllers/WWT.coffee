@@ -7,7 +7,7 @@ class WWT extends BaseController
   
   constructor: ->
     super
-    console.log 'WWT'
+    console.log 'WWT', wwtlib
     @subscribe @subChannel, @process
   
   render: =>
