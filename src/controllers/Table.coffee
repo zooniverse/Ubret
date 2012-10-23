@@ -1,11 +1,15 @@
 BaseController = require("./BaseController")
 _ = require ("underscore/underscore")
 
+$.fn.column = (index) ->
+  $("tr td:nth-child(#{index + 1}), tr th:nth-child(#{index + 1})")
+
 class Table extends BaseController
   elements: 
     'input[name="filter"]' : 'filter'
 
-  events: 
+  events:
+    'click th': 'onSelectKey'
     'click .subject' : 'selection'
     'click .delete'  : 'removeColumn'
     'click .remove_filter' : 'onRemoveFilter'
@@ -38,6 +42,19 @@ class Table extends BaseController
     @selected = @el.find("tr.subject[data-id='#{itemId}']")
     @selected.addClass('selected')
     @publish([ {message: "selected", item_id: itemId} ])
+
+  onSelectKey: (e) =>
+    table_body = $(e.currentTarget).closest('table')
+
+    if not _.isUndefined @select_index
+      table_body.column(@select_index).removeClass 'selected'
+
+    @select_index = $(e.currentTarget).index()
+
+    table_body.column(@select_index).addClass 'selected'
+
+    key = $(e.currentTarget).data 'key'
+    @publish([{message: 'selected_key', key: key}])
 
   removeColumn: (e) =>
     target = $(e.currentTarget)
