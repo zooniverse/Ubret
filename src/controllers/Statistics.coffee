@@ -144,7 +144,7 @@ class Statistics extends BaseController
       percent = i / 10
 
       # Get position of the element at the $percent position
-      percentile = data[(data.length * percent) - 1]
+      percentile = data[Math.floor((data.length * percent) - 1)]
       value_object = {
           'label': (percent * 100) + 'th',
           'value': percentile
@@ -160,7 +160,6 @@ class Statistics extends BaseController
   getSkew: (data) =>
     mean = (@getMean data).value
     standard_deviation = (@getStandardDeviation data).value
-
 
     sum = _.reduce data, ((memo, datum) ->
       Math.pow(datum - mean, 3) + memo
@@ -178,7 +177,6 @@ class Statistics extends BaseController
     mean = (@getMean data).value
     standard_deviation = (@getStandardDeviation data).value
 
-
     sum = _.reduce data, ((memo, datum) ->
       Math.pow(datum - mean, 4) + memo
       ), 0
@@ -190,7 +188,6 @@ class Statistics extends BaseController
         'label': 'Kurtosis',
         'value': kurtosis
       }
-
 
 
 module.exports = Statistics
