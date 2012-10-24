@@ -18,8 +18,6 @@ class Statistics extends BaseController
     @keys = new Array
     @extractKeys subject
 
-    console.log @stats
-
     @html require('../views/statistics')({@keys, @stats, @currentKey})
 
   start: =>
