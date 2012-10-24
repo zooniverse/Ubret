@@ -11,7 +11,14 @@
 
   <ul>
     <% for stat in @stats: %>
-      <li><label><%- stat.label %>:</label> <%- stat.value %></li>
+      <li>
+        <label><%- stat.label %>:</label>
+        <% if stat.view: %>
+          <%- stat.view %>
+        <% else: %>
+          <%- stat.value %>
+        <% end %>
+      </li>
     <% end %>
   </ul>
 </div>

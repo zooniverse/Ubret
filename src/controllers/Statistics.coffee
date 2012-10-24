@@ -18,6 +18,8 @@ class Statistics extends BaseController
     @keys = new Array
     @extractKeys subject
 
+    console.log @stats
+
     @html require('../views/statistics')({@keys, @stats, @currentKey})
 
   start: =>
@@ -42,7 +44,7 @@ class Statistics extends BaseController
     @stats.push @getMax data
     @stats.push @getVariance data
     @stats.push @getStandardDeviation data
-    # @stats.push @getPercentile data
+    @stats.push @getPercentile data
 
     @render()
 
@@ -142,22 +144,18 @@ class Statistics extends BaseController
       percent = i / 10
 
       # Get position of the element at the $percent position
-      percentile = data[data.length * percent]
+      percentile = data[(data.length * percent) - 1]
       value_object = {
           'label': (percent * 100) + 'th',
           'value': percentile
         }
-
       percentile_data.push value_object
-
 
     percentile_object = {
         'label': 'Percentile',
         'value': percentile_data,
-        'view': 'getPercentileView'
+        'view': require('../views/statistics_percentile')(data: percentile_data)
       }
 
-  getPercentileView: =>
-    # @html require('../views/_percentile')(@)
 
 module.exports = Statistics
