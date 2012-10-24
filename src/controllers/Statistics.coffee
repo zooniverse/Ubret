@@ -43,6 +43,8 @@ class Statistics extends BaseController
     @stats.push @getVariance data
     @stats.push @getStandardDeviation data
     @stats.push @getPercentile data
+    @stats.push @getSkew data
+    @stats.push @getKurtosis data
 
     @render()
 
@@ -154,6 +156,41 @@ class Statistics extends BaseController
         'value': percentile_data,
         'view': require('../views/statistics_percentile')(data: percentile_data)
       }
+
+  getSkew: (data) =>
+    mean = (@getMean data).value
+    standard_deviation = (@getStandardDeviation data).value
+
+
+    sum = _.reduce data, ((memo, datum) ->
+      Math.pow(datum - mean, 3) + memo
+      ), 0
+
+    denom = data.length * Math.pow(standard_deviation, 3)
+
+    skew = sum / denom
+    skew_object = {
+        'label': 'Skew',
+        'value': skew
+      }
+      
+  getKurtosis: (data) =>
+    mean = (@getMean data).value
+    standard_deviation = (@getStandardDeviation data).value
+
+
+    sum = _.reduce data, ((memo, datum) ->
+      Math.pow(datum - mean, 4) + memo
+      ), 0
+
+    denom = data.length * Math.pow(standard_deviation, 4)
+
+    kurtosis = sum / denom
+    kurtosis_object = {
+        'label': 'Kurtosis',
+        'value': kurtosis
+      }
+
 
 
 module.exports = Statistics
