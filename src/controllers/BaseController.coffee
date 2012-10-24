@@ -1,12 +1,6 @@
-Spine = require('spine')
-pubSub = require('node-pubsub')
-_ = require('underscore/underscore')
-
-GalaxyZooSubject    = require('../models/GalaxyZooSubject')
-SkyServerSubject    = require('../models/SkyServerSubject')
-InteractiveSubject  = require('../models/InteractiveSubject')
-SDSS3SpectralData   = require('../models/SDSS3SpectralData')
-
+pubSub = require 'node-pubsub'
+Spine = require 'spine'
+_ = require 'underscore/underscore'
 
 class BaseController extends Spine.Controller
   
@@ -28,20 +22,6 @@ class BaseController extends Spine.Controller
     pubSub.subscribe(channel, callback)
     @trigger 'subscribed', channel
     
-  getDataSource: (source, params) =>
-    switch source
-      when 'GalaxyZooSubject'
-        dataSource = GalaxyZooSubject
-      when 'SkyServerSubject'
-        dataSource = SkyServerSubject
-      when 'InteractiveSubject'
-        dataSource = InteractiveSubject
-      when 'SDSS3SpectralData'
-        dataSource = SDSS3SpectralData
-    
-    dataSource.fetch(params).always =>
-      @receiveData dataSource.lastFetch
-
   receiveData: (data) ->
     @data = data
     @start()
@@ -66,25 +46,6 @@ class BaseController extends Spine.Controller
 
   uglifyKey: (key) ->
     @spacesToUnderscores(@lowercaseWords(key))
-
-  setBindOptions: (source, params='') =>
-    @bindOptions = {
-        source: source
-      }
-
-    if params
-      @bindOptions = _.extend @bindOptions, {type: 'api', params: params}
-    else
-      @bindOptions = _.extend @bindOptions, {type: 'channel', process: @process}
-
-  bindTool: (source, params='') =>
-    @setBindOptions source, params
-    if @bindOptions.type is 'api'
-      @getDataSource source, params
-    else if @bindOptions.type is 'channel'
-      @subscribe source, @process
-    else
-      console.log 'err'
 
   extractKeys: (datum) ->
     undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
