@@ -26,7 +26,6 @@ class BaseController extends Spine.Controller
     @data = data
     @start()
     @trigger 'data-received', @
-    @publish [{message: 'receive_data', data: data}]
 
   underscoresToSpaces: (string) ->
     string.replace /_/g, " "
