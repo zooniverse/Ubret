@@ -1,6 +1,6 @@
+_ = require 'underscore/underscore'
 pubSub = require 'node-pubsub'
 Spine = require 'spine'
-_ = require 'underscore/underscore'
 
 class BaseController extends Spine.Controller
   
@@ -26,6 +26,7 @@ class BaseController extends Spine.Controller
     @data = data
     @start()
     @trigger 'data-received', @
+    @publish [{message: 'receive_data', data: data}]
 
   underscoresToSpaces: (string) ->
     string.replace /_/g, " "
@@ -90,6 +91,7 @@ class BaseController extends Spine.Controller
       when 'filter' then @addFilter message.filter
       when 'unfilter' then @removeFilter message.filter
       when 'selected_key' then @selectKey message.key
+      when 'receive_data' then @receiveData message.data
 
   start: =>
     @filterData()
