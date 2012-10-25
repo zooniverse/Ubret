@@ -39,7 +39,7 @@ class Histogram extends BaseController
         bins = d3.layout.histogram().bins(@binNumber)(data)
       else
         bins = d3.layout.histogram()(data)
-      xDomain = d3.extent(@filteredData, (d) => d[@variable])
+      xDomain = d3.extent(@filteredData, (d) => parseFloat(d[@variable]))
       yDomain= [0, d3.max(bins, (d) -> d.y)]
     else if @filteredData.length is 1
       svg.append('text')
@@ -146,7 +146,7 @@ class Histogram extends BaseController
 
     bar.append('rect')
       .attr('x', 1)
-      .attr('width', width)
+      .attr('width', Math.floor(width))
       .attr('height', (d) => @graphHeight - @y(d.y))
       .attr('fill', color)
 
