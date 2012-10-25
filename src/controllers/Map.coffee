@@ -99,6 +99,7 @@ class Map extends BaseController
       left: 0
       width: '100%'
       height: '100%'
+    @map.invalidateSize true
 
   
 module.exports = Map
