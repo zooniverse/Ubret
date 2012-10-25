@@ -89,5 +89,16 @@ class Map extends BaseController
     latlng = new L.LatLng(item.dec, item.ra)
     circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
     circle.openPopup()
+
+  # Events
+  setFullscreenMode: =>
+    @el.addClass 'fullscreen'
+    @el.children('div').css
+      position: 'fixed'
+      top: 0
+      left: 0
+      width: '100%'
+      height: '100%'
+
   
 module.exports = Map
