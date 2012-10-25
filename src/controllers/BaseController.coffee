@@ -86,9 +86,9 @@ class BaseController extends Spine.Controller
 
   process: (message) =>
     switch message.message
-      when "selected" then @select message.item_id
-      when "filter" then @addFilter message.filter
-      when "unfilter" then @removeFilter message.filter
+      when 'selected' then @select message.item_id
+      when 'filter' then @addFilter message.filter
+      when 'unfilter' then @removeFilter message.filter
       when 'selected_key' then @selectKey message.key
 
   start: =>

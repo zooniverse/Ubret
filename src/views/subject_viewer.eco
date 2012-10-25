@@ -1,4 +1,12 @@
 <% if @subject: %>
+
+  <% if @count > 1: %>
+    <div class="nav">
+      <a class="back">back</a>
+      <a class="next">next</a>
+    </div>
+  <% end %>
+
   <% if @subject.image: %>
     <img src="<%- @subject.image %>" />
   <% end %>
@@ -11,7 +19,3 @@
   </ul>
 <% end %>
 
-<% if @count > 1: %>
-  <a class="next">next</a>
-  <a class="back">back</a>
-<% end %>
