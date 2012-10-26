@@ -5,7 +5,7 @@ Ubret =
   SubjectViewer: require './controllers/SubjectViewer'
   Histogram: require './controllers/Histogram'
   Statistics: require './controllers/Statistics'
-  WWT: require './controllers/WWT'
+  # WWT: require './controllers/WWT'
   Spectra: require './controllers/Spectra'
 
 module.exports = Ubret
