@@ -10,6 +10,20 @@ class Map extends BaseController
 
   name: "Map"
   
+  selected_icon: new L.icon {
+      className: 'selected_icon'
+      iconUrl: '/css/images/marker-icon-orange.png'
+      iconSize: [25, 41]
+      iconAnchor: [13, 41]
+    }
+
+  default_icon: new L.icon {
+      className: 'default_icon'
+      iconUrl: '/css/images/marker-icon.png'
+      iconSize: [25, 41]
+      iconAnchor: [13, 41]
+    }
+
   constructor: ->
     super
     @circles = []
@@ -64,14 +78,28 @@ class Map extends BaseController
   
   plotObject: (subject, options) =>
     coords = [subject.dec, subject.ra]
+    options = 
+      icon = new L.icon {
+          iconSize: [25, 41]
+          iconAnchor: [13, 41]
+        }
+    
     circle = new L.marker(coords, options)
     circle.zooniverse_id = subject.zooniverse_id
     
     circle.addTo(@map)
     circle.bindPopup require('../views/map_popup')({subject})
     circle.on 'click', =>
+      # Set previous selected subject back to default icon
+      if @selected_subject?
+        @selected_subject.setIcon @default_icon
+
+      @selected_subject = circle
       circle.openPopup()
-      @publish [ {message: "selected", item_id: circle.zooniverse_id} ]
+      circle.setIcon @selected_icon
+
+      @publish [{message: "selected", item_id: circle.zooniverse_id}]
+
     @circles.push circle
     
   plotObjects: =>
@@ -88,7 +116,14 @@ class Map extends BaseController
       subject.zooniverse_id = itemId
     latlng = new L.LatLng(item.dec, item.ra)
     circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
+
+    # Set previous selected subject back to default icon
+    if @selected_subject?
+      @selected_subject.setIcon @default_icon
+
+    @selected_subject = circle
     circle.openPopup()
+    circle.setIcon @selected_icon
 
   # Events
   setFullscreenMode: =>
@@ -99,6 +134,7 @@ class Map extends BaseController
       left: 0
       width: '100%'
       height: '100%'
+      z_index: '0'
     @map.invalidateSize true
 
   
