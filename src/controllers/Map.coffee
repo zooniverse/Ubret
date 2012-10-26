@@ -1,25 +1,27 @@
-BaseController = require('./BaseController')
-_ = require('underscore/underscore')
+_ = require 'underscore/underscore'
+
+BaseController = require './BaseController'
+SubjectViewer = require './SubjectViewer'
 
 class Map extends BaseController
+  name: 'Map'
+
   @mapOptions =
     attributionControl: false
     
   # Set the default image path for Leaflet
   L.Icon.Default.imagePath = 'css/images'
 
-  name: "Map"
-  
-  selected_icon: new L.icon {
-      className: 'selected_icon'
-      iconUrl: '/css/images/marker-icon-orange.png'
+  default_icon: new L.icon {
+      className: 'default_icon'
+      iconUrl: '/css/images/marker-icon.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
     }
 
-  default_icon: new L.icon {
-      className: 'default_icon'
-      iconUrl: '/css/images/marker-icon.png'
+  selected_icon: new L.icon {
+      className: 'selected_icon'
+      iconUrl: '/css/images/marker-icon-orange.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
     }
@@ -88,16 +90,16 @@ class Map extends BaseController
     circle.zooniverse_id = subject.zooniverse_id
     
     circle.addTo(@map)
-    circle.bindPopup require('../views/map_popup')({subject})
+
+    # Use subject viewer for popup
+    subject_viewer = new SubjectViewer
+    subject_viewer.receiveData [subject]
+    subject_viewer.render()
+
+    circle.bindPopup subject_viewer.el.get(0).outerHTML, {maxWidth: 460}
+
     circle.on 'click', =>
-      # Set previous selected subject back to default icon
-      if @selected_subject?
-        @selected_subject.setIcon @default_icon
-
-      @selected_subject = circle
-      circle.openPopup()
-      circle.setIcon @selected_icon
-
+      @selectSubject circle
       @publish [{message: "selected", item_id: circle.zooniverse_id}]
 
     @circles.push circle
@@ -117,6 +119,10 @@ class Map extends BaseController
     latlng = new L.LatLng(item.dec, item.ra)
     circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
 
+    @selectSubject circle
+
+  # Events
+  selectSubject: (circle) =>
     # Set previous selected subject back to default icon
     if @selected_subject?
       @selected_subject.setIcon @default_icon
@@ -125,7 +131,6 @@ class Map extends BaseController
     circle.openPopup()
     circle.setIcon @selected_icon
 
-  # Events
   setFullscreenMode: =>
     @el.addClass 'fullscreen'
     @el.children('div').css

@@ -1,22 +1,25 @@
-BaseController = require('./BaseController')
-_ = require('underscore/underscore')
+_ = require 'underscore/underscore'
+
+BaseController = require './BaseController'
 
 class SubjectViewer extends BaseController
-  name: "Subject Viewer"
-  constructor: ->
-    super
-    @format = @format || d3.format(',.02f')
+  name: 'Subject Viewer'
+  className: 'subjectviewer'
 
   events: 
     'click .next' : 'nextSubject'
     'click .back' : 'prevSubject'
 
+  labels:
+    absolute_radius: 'kpc'
+
+  constructor: ->
+    super
+    @format = @format || d3.format(',.02f')
+
   start: =>
     @count = 0
     @render()
-
-  labels:
-    absolute_radius: 'kpc'
 
   render: =>
     @filterData()

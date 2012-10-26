@@ -1,5 +1,4 @@
 <% if @subject: %>
-
   <% if @count > 1: %>
     <div class="nav">
       <a class="back">back</a>
