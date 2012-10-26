@@ -18,9 +18,13 @@ class BaseController extends Spine.Controller
   publish: (message) ->
     pubSub.publish(@channel, message, @)
 
-  subscribe: (channel, callback) ->
-    pubSub.subscribe(channel, callback)
+  subscribe: (channel, callback) =>
+    @subscription = pubSub.subscribe(channel, callback)
     @trigger 'subscribed', channel
+
+  unsubscribe: =>
+    if @subscription?
+      pubSub.unsubscribe @subscription
     
   receiveData: (data) ->
     @data = data
@@ -47,7 +51,8 @@ class BaseController extends Spine.Controller
   uglifyKey: (key) ->
     @spacesToUnderscores(@lowercaseWords(key))
 
-  extractKeys: (datum) ->
+  extractKeys: (datum) =>
+    @keys = []
     undesiredKeys = ['id', 'cid', 'image', 'zooniverse_id', 'objID', 'counters', 'classification']
     for key, value of datum
       dataKey = key if typeof(value) != 'function'
