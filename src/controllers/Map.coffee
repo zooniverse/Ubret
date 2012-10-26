@@ -131,16 +131,5 @@ class Map extends BaseController
     circle.openPopup()
     circle.setIcon @selected_icon
 
-  setFullscreenMode: =>
-    @el.addClass 'fullscreen'
-    @el.children('div').css
-      position: 'fixed'
-      top: 0
-      left: 0
-      width: '100%'
-      height: '100%'
-      z_index: '0'
-    @map.invalidateSize true
-
   
 module.exports = Map
