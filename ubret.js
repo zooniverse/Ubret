@@ -23,11 +23,13 @@
       this.keys = keys;
       this.data = data;
       this.selector = selector;
+      this.changeData = __bind(this.changeData, this);
+
       this.selectRow = __bind(this.selectRow, this);
 
       this.selectColumn = __bind(this.selectColumn, this);
 
-      this.compare = __bind(this.compare, this);
+      this.toArray = __bind(this.toArray, this);
 
       this.createRows = __bind(this.createRows, this);
 
@@ -64,7 +66,6 @@
       }
       this.tbody.selectAll('tr').remove();
       tr = this.tbody.selectAll('tr').data(this.data).enter().append('tr').sort(function(a, b) {
-        console.log(a, b);
         if (a === null || b === null) {
           return 0;
         } else {
@@ -83,7 +84,6 @@
     };
 
     Table.prototype.compare = function(a, b) {
-      console.log(a, b);
       if (typeof a === 'string') {
         return a.localeCompare(b);
       } else {
@@ -125,6 +125,11 @@
         this.selected.attr('class', '');
       }
       return this.selected = this.tbody.select("[data-id=" + datum.id + "]").attr('class', 'selected');
+    };
+
+    Table.prototype.changeData = function(data) {
+      this.data = data;
+      return this.createRows();
     };
 
     return Table;
