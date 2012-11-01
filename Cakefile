@@ -16,10 +16,6 @@ task 'watch', 'Watch src/ for changes', ->
   coffee_src.stderr.on 'data', (data) -> process.stderr.write data.toString()
   coffee_src.stdout.on 'data', (data) -> print data.toString()
   
-  coffee_test = spawn 'coffee', ['-w', '-c', '-o', 'test', 'test']
-  coffee_test.stderr.on 'data', (data) -> process.stderr.write data.toString()
-  coffee_test.stdout.on 'data', (data) -> print data.toString()
-
 task 'concat', 'Concat lib/ into one js file', ->
   singleFile = new String
 
@@ -28,8 +24,6 @@ task 'concat', 'Concat lib/ into one js file', ->
   fs.readdir __dirname + '/lib/ubret/', (err, files) ->
     throw err if err
     files.forEach (file) ->
-      fs.readFile file, (err, data) ->
-        throw err if err
-        singleFile = singleFile + data
-
+      data = fs.readFileSync __dirname + '/lib/ubret/' + file
+      singleFile = singleFile + data
     fs.writeFileSync __dirname + '/ubret.js', singleFile
