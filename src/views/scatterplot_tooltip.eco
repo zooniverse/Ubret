@@ -1,6 +1,0 @@
-<div class="tooltip">
-  <ul>
-    <li><%- @xAxis %>: <%- @xAxisVal %></li>
-    <li><%- @yAxis %>: <%- @yAxisVal %></li>
-  </ul>
-</div>

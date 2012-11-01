@@ -1,4 +1,0 @@
-Ubret = 
-  {}
-
-module.exports = Ubret
