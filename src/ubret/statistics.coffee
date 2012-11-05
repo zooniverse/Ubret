@@ -1,13 +1,10 @@
 
 class Statistics
 
-  constructor: (@keys, @data, @selector) ->
-    @selectTool()
+  constructor: (opts) ->
+    super
     @selectKey @keys[0]
     @start()
-
-  selectTool: =>
-    @tool_view = $("#{@selector}")
 
   start: =>
     # Get data

@@ -1,0 +1,19 @@
+<% if @subject: %>
+  <% if @count > 1: %>
+    <div class="nav">
+      <a class="back">back</a>
+      <a class="next">next</a>
+    </div>
+  <% end %>
+
+  <% if @subject.image: %>
+    <img src="<%- @subject.image %>" />
+  <% end %>
+
+  <ul>
+    <li>id: <%- @subject.zooniverse_id %></li>
+    <% for key, value of @keys: %>
+    <li><%- key %>: <%- if typeof(@subject[value]) isnt 'string' then @format(@subject[value]) else @subject[value] %> <%- @labels[value] %></li>
+    <% end %>
+  </ul>
+<% end %>
