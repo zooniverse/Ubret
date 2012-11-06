@@ -1,5 +1,4 @@
-
-class Statistics extends BaseTool
+class Statistics
 
   attributes:
     currentKey:

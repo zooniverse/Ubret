@@ -1,4 +1,3 @@
-
 class BaseTool
 
   required_opts: ['data']
