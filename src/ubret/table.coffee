@@ -1,9 +1,17 @@
+try
+  BaseTool = require './base_tool'
+catch error
+  BaseTool = window.Ubret.BaseTool
 
 class Table extends BaseTool
 
-  constructor: (@keys, @data, @selector) ->
+  constructor: (opts) ->
+    super opts
     @selectTable()
     @createHeader()
+    @start()
+
+  start: =>
     @createRows()
 
   selectTable: =>
@@ -14,26 +22,26 @@ class Table extends BaseTool
     @thead.selectAll("th")
       .data(@keys)
       .enter().append("th")
-        .on('click', (d, i) => @selectColumn d)
+        .on('click', (d, i) => @selectKey d)
         .attr('data-key', (d) -> d)
         .text( (d) => @formatKey d )
 
-  createRows: (sortAttr='id') =>
+  createRows: => 
     @tbody.selectAll('tr').remove()
 
     tr = @tbody.selectAll('tr')
       .data(@data)
       .enter().append('tr')
-        .sort((a, b) => if a is null || b is null then 0 else @compare a[sortAttr], b[sortAttr])
+        .sort((a, b) => if a is null || b is null then 0 else @compare a[@selectedKey], b[@selectedKey])
         .attr('data-id', (d) -> d.id)
-        .on('click', (d, i) => @selectRow d)
+        .on('click', (d, i) => @selectElement d.id)
     
     tr.selectAll('td')
       .data((d) => @toArray(d))
       .enter().append('td')
         .text( (d) -> return d)
 
-    if @selected?
+    if @selectedElement
       @highlightRow()
 
   compare: (a, b) ->
@@ -55,13 +63,8 @@ class Table extends BaseTool
   selectColumn: (key) =>
     @createRows key
 
-  selectRow: (datum) => 
-    @tbody.select("[data-id=#{@selected}]").attr('class', '') unless typeof @selected is 'undefined'
-    @selected = datum.id
-    @highlightRow()
-
   highlightRow: =>
-    @tbody.select("[data-id=#{@selected}]").attr('class', 'selected')
+    @tbody.select("[data-id=#{@selectedElement}]").attr('class', 'selected')
 
   changeData: (data) =>
     @data = data

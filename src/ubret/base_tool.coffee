@@ -13,17 +13,16 @@ class BaseTool
     else
       @selector = opts.selector
 
-    @extractKeys()
-    @selectTool()
+    unless _.has opts, 'keys'
+      throw 'must provide keys'
+    else
+      @keys = opts.keys
 
-  selectTool: =>
-    @tool_view = $("#{@selector}")
+    @selectElementCb = opts.selectElementCb || ->
+    @selectKeyCb = opts.selectKeyCb || ->
 
-  extractKeys: =>
-    @keys = []
-    for key, value of @data[0]
-      dataKey = key if typeof(value) != 'function'
-      @keys.push dataKey unless dataKey in undesiredKeys
+    @selectedElement = opts.selectedElement || null
+    @selectedKey = opts.selectedKey || 'id'
 
   prettyKey: (key) =>
     @capitalizeWords(@underscoresToSpaces(key))
@@ -31,6 +30,15 @@ class BaseTool
   uglifyKey: (key) =>
     @spacesToUnderscores(@lowercaseWords(key))
 
+  selectElement: (id) =>
+    @selectedElement = id
+    @selectElementCb id
+    @start()
+
+  selectKey: (key) =>
+    @selectedKey = key
+    @selectKeyCb key
+    @start()
 
   # Helpers
   underscoresToSpaces: (string) ->
@@ -47,5 +55,7 @@ class BaseTool
     string.replace /(\b[A-Z])/g, (char) ->
       char.toLowerCase()
 
-
-module.exports = BaseTool
+if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
+  module.exports = BaseTool
+else
+  window.Ubret['BaseTool'] = BaseTool

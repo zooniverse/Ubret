@@ -1,9 +1,9 @@
-if typeof require is 'function' and typeof exports is 'object' and typeof module is object
+if typeof require is 'function' and typeof exports is 'object' and typeof module is 'object'
   Ubret = 
-    Map: require'./controllers/map'
-    Statistics: require './controllers/statistics'
-    SubjectViewer: require './controllers/subject_viewer'
-    Table: require './controllers/table'
+    Map: require './ubret/map'
+    Statistics: require './ubret/statistics'
+    SubjectViewer: require './ubret/subject_viewer'
+    Table: require './ubret/table'
   
   module.exports = Ubret
 else
