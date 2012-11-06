@@ -62,7 +62,6 @@
     };
 
     BaseTool.prototype.selectElement = function(id) {
-      console.log(id);
       this.selectedElement = id;
       this.selectElementCb(id);
       return this.start();
@@ -1074,7 +1073,6 @@
     Table.prototype.createRows = function() {
       var tr,
         _this = this;
-      console.log(this.selectedElement);
       this.tbody.selectAll('tr').remove();
       tr = this.tbody.selectAll('tr').data(this.data).enter().append('tr').sort(function(a, b) {
         if (a === null || b === null) {
@@ -1135,7 +1133,6 @@
     };
 
     Table.prototype.highlightRow = function() {
-      console.log(this.selectedElement);
       return this.tbody.select("[data-id=" + this.selectedElement + "]").attr('class', 'selected');
     };
 
