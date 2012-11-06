@@ -3,7 +3,7 @@ _ = require 'underscore/underscore'
 BaseController = require './BaseController'
 SubjectViewer = require './SubjectViewer'
 
-class Map extends BaseController
+class Map extends BaseTool
   name: 'Map'
 
   @mapOptions =

@@ -1,4 +1,5 @@
-class Table
+
+class Table extends BaseTool
 
   constructor: (@keys, @data, @selector) ->
     @selectTable()
