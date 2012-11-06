@@ -693,7 +693,6 @@
       this.start = __bind(this.start, this);
       Statistics.__super__.constructor.apply(this, arguments);
       this.selectKey(this.keys[0]);
-      console.log('test');
       this.start();
     }
 
@@ -1046,7 +1045,6 @@
 
       this.start = __bind(this.start, this);
       Table.__super__.constructor.call(this, opts);
-      console.log('testing');
       this.selectTable();
       this.createHeader();
       this.start();

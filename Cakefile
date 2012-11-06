@@ -13,8 +13,11 @@ task 'build', 'Build lib/ from src', ->
 
 task 'watch', 'Watch src/ for changes', ->
   coffee_src = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
-  coffee_src.stderr.on 'data', (data) -> process.stderr.write data.toString()
-  coffee_src.stdout.on 'data', (data) -> print data.toString()
+  coffee_src.stderr.on 'data', (data) ->
+    process.stderr.write data.toString()
+  coffee_src.stdout.on 'data', (data) ->
+    invoke 'concat'
+    print data.toString()
 
 task 'concat', 'Concat lib/ into one js file', ->
   destination_dir = __dirname + '/lib/ubret/'
@@ -44,5 +47,5 @@ task 'concat', 'Concat lib/ into one js file', ->
     data = fs.readFileSync destination_dir + view
     singleFile = singleFile + data
   
-  fs.writeFileSync __dirname + '/ubret.js', singleFile
+  fs.writeFileSync __dirname + '/build/ubret.js', singleFile
 

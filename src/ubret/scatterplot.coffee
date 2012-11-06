@@ -1,8 +1,8 @@
-
 try
   BaseTool = require './base_tool'
 catch error
   BaseTool = window.Ubret.BaseTool
+
 class Scatterplot extends BaseTool
 
   attributes:
