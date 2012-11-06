@@ -133,7 +133,7 @@
 
     __extends(Histogram, _super);
 
-    Histogram.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- @ %>\">\n    <svg></svg>\n  </div>\n</div>";
+    Histogram.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Histogram() {
       this.start = __bind(this.start, this);
@@ -144,8 +144,12 @@
 
       this.createGraph = __bind(this.createGraph, this);
 
-      this.render = __bind(this.render, this);
+      var compiled;
       Histogram.__super__.constructor.apply(this, arguments);
+      compiled = _.template(this.template, {
+        selector: this.selector
+      });
+      this.el.html(compiled);
       this.height = this.height || 480;
       this.width = this.width || 640;
       this.margin = this.margin || {
@@ -157,17 +161,14 @@
       this.color = this.color || 'teal';
       this.selectionColor = this.selectionColor || 'orange';
       this.yLabel = this.yLabel || 'Number';
+      this.createGraph();
     }
-
-    Histogram.prototype.render = function() {
-      var compiled;
-      compiled = _.template(this.template, this.channel);
-      return this.tool_view.html(compiled);
-    };
 
     Histogram.prototype.createGraph = function() {
       var bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
         _this = this;
+      this.variable = 'dec';
+      this.selectedData = [];
       if (typeof this.variable === 'undefined') {
         return;
       }
@@ -175,9 +176,9 @@
       this.graphWidth = this.width - this.margin.left;
       this.graphHeight = this.height - this.margin.top - this.margin.bottom;
       this.formatCount = d3.format(',.0f');
-      this.svg = d3.select("#" + this.channel + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      if (this.filteredData.length > 1) {
-        data = _.map(this.filteredData, function(d) {
+      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
+      if (this.data.length > 1) {
+        data = _.map(this.data, function(d) {
           return d[_this.variable];
         });
         data = _.filter(data, function(d) {
@@ -188,7 +189,7 @@
         } else {
           bins = d3.layout.histogram()(data);
         }
-        xDomain = d3.extent(this.filteredData, function(d) {
+        xDomain = d3.extent(this.data, function(d) {
           return parseFloat(d[_this.variable]);
         });
         yDomain = [
@@ -196,7 +197,7 @@
             return d.y;
           })
         ];
-      } else if (this.filteredData.length === 1) {
+      } else if (this.data.length === 1) {
         svg.append('text').attr('class', 'data-warning').attr('y', graphHeight / 2).attr('x', graphWidth / 2).attr('text-anchor', 'middle').text('Not Enough Data, Classify More Galaxies!');
         return;
       } else {

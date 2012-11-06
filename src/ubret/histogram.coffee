@@ -2,13 +2,13 @@ try
   BaseTool = require './base_tool'
 catch error
   BaseTool = window.Ubret.BaseTool
-  
+
 class Histogram extends BaseTool
   
   template:
     """
     <div class="histogram">
-      <div id="<%- @ %>">
+      <div id="<%- selector %>">
         <svg></svg>
       </div>
     </div>
@@ -16,6 +16,9 @@ class Histogram extends BaseTool
 
   constructor: ->
     super
+    compiled = _.template @template, {selector: @selector}
+    @el.html compiled
+
     @height = @height or 480
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
@@ -24,11 +27,11 @@ class Histogram extends BaseTool
     @selectionColor = @selectionColor or 'orange'
     @yLabel = @yLabel or 'Number'
 
-  render: =>
-    compiled = _.template @template, @channel
-    @tool_view.html compiled
+    @createGraph()
 
   createGraph: =>
+    @variable = 'dec'
+    @selectedData = []
     if typeof(@variable) is 'undefined'
       return
 
@@ -38,23 +41,23 @@ class Histogram extends BaseTool
     @graphHeight = @height - @margin.top - @margin.bottom
     @formatCount = d3.format(',.0f')
 
-    @svg = d3.select("##{@channel} svg")
+    @svg = d3.select("#{@selector} svg")
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
-    if @filteredData.length > 1
-      data = _.map(@filteredData, (d) => d[@variable])
+    if @data.length > 1
+      data = _.map(@data, (d) => d[@variable])
       data = _.filter(data, (d) => d isnt null)
 
       if @binNumber?
         bins = d3.layout.histogram().bins(@binNumber)(data)
       else
         bins = d3.layout.histogram()(data)
-      xDomain = d3.extent(@filteredData, (d) => parseFloat(d[@variable]))
+      xDomain = d3.extent(@data, (d) => parseFloat(d[@variable]))
       yDomain= [0, d3.max(bins, (d) -> d.y)]
-    else if @filteredData.length is 1
+    else if @data.length is 1
       svg.append('text')
         .attr('class', 'data-warning')
         .attr('y', graphHeight / 2)
