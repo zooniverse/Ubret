@@ -5,13 +5,20 @@ catch error
 
 class Table extends BaseTool
 
+  template:
+    """
+    <table>
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    """
+
   constructor: (opts) ->
     super opts
-    @selectTable()
-    @createHeader()
-    @start()
 
   start: =>
+    @selectTable()
+    @createHeader()
     @createRows()
 
   selectTable: =>

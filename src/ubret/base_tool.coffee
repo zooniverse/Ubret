@@ -24,6 +24,9 @@ class BaseTool
     @selectedElement = opts.selectedElement || null
     @selectedKey = opts.selectedKey || 'id'
 
+  getTemplate: =>
+    @template
+    
   prettyKey: (key) =>
     @capitalizeWords(@underscoresToSpaces(key))
 

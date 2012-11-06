@@ -32,6 +32,8 @@
       this.uglifyKey = __bind(this.uglifyKey, this);
 
       this.prettyKey = __bind(this.prettyKey, this);
+
+      this.getTemplate = __bind(this.getTemplate, this);
       if (!_.has(opts, 'data')) {
         throw 'must provide data';
       } else {
@@ -52,6 +54,10 @@
       this.selectedElement = opts.selectedElement || null;
       this.selectedKey = opts.selectedKey || 'id';
     }
+
+    BaseTool.prototype.getTemplate = function() {
+      return this.template;
+    };
 
     BaseTool.prototype.prettyKey = function(key) {
       return this.capitalizeWords(this.underscoresToSpaces(key));
@@ -1028,6 +1034,8 @@
 
     __extends(Table, _super);
 
+    Table.prototype.template = "<table>\n  <thead></thead>\n  <tbody></tbody>\n</table>";
+
     function Table(opts) {
       this.changeData = __bind(this.changeData, this);
 
@@ -1045,12 +1053,11 @@
 
       this.start = __bind(this.start, this);
       Table.__super__.constructor.call(this, opts);
-      this.selectTable();
-      this.createHeader();
-      this.start();
     }
 
     Table.prototype.start = function() {
+      this.selectTable();
+      this.createHeader();
       return this.createRows();
     };
 
