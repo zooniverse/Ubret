@@ -1,6 +1,6 @@
 
 class Spectra extends BaseTool
-  
+
   name: "Spectra"
   
   template:
@@ -100,4 +100,7 @@ class Spectra extends BaseTool
         .style("stroke-width", 0.5)
 
 
-module.exports = Spectra
+if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
+  module.exports = Spectra
+else
+  window.Ubret['Spectra'] = Spectra

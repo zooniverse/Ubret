@@ -174,4 +174,8 @@ class Histogram extends BaseTool
     super
     @createGraph()
 
-module.exports = Histogram
+
+if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
+  module.exports = Histogram
+else
+  window.Ubret['Histogram'] = Histogram

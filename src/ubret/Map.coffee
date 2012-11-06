@@ -1,5 +1,15 @@
 
 class Map extends BaseTool
+
+  attributes:
+    currentSubject:
+      name: 'currentSubject'
+      events: [
+          'selector': 'click .circle' # Placeholder
+          'callback': 'selectSubject'
+          'action': 'click'
+        ]
+
   name: 'Map'
 
   template:
@@ -30,7 +40,7 @@ class Map extends BaseTool
   constructor: ->
     super
     @circles = []
-    @subscribe @subChannel, @process
+    # @subscribe @subChannel, @process
 
   render: =>
     compiled = _.template @template, @
@@ -102,7 +112,7 @@ class Map extends BaseTool
 
     circle.on 'click', =>
       @selectSubject circle
-      @publish [{message: "selected", item_id: circle.zooniverse_id}]
+      # @publish [{message: "selected", item_id: circle.zooniverse_id}]
 
     @circles.push circle
     
@@ -134,4 +144,7 @@ class Map extends BaseTool
     circle.setIcon @selected_icon
 
   
-module.exports = Map
+if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
+  module.exports = Map
+else
+  window.Ubret['Map'] = Map

@@ -1,4 +1,3 @@
-_ = require 'underscore/underscore'
 
 class Scatterplot extends BaseTool
 
@@ -189,4 +188,7 @@ class Scatterplot extends BaseTool
     @createGraph()
 
 
-module.exports = Scatterplot
+if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
+  module.exports = Scatterplot
+else
+  window.Ubret['Scatterplot'] = Scatterplot
