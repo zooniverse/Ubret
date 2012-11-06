@@ -18,6 +18,11 @@ class BaseTool
     else
       @keys = opts.keys
 
+    unless _.has opts, 'el'
+      throw 'must provde el'
+    else
+      @el = opts.el
+
     @selectElementCb = opts.selectElementCb || ->
     @selectKeyCb = opts.selectKeyCb || ->
 
@@ -26,7 +31,7 @@ class BaseTool
 
   getTemplate: =>
     @template
-    
+
   prettyKey: (key) =>
     @capitalizeWords(@underscoresToSpaces(key))
 

@@ -3,7 +3,7 @@ try
 catch error
   BaseTool = window.Ubret.BaseTool
 
-class Statistics
+class Statistics extends BaseTool
 
   attributes:
     currentKey:
@@ -18,33 +18,23 @@ class Statistics
   template:
     """
     <div class="stats">
-      <select class="key" name="key" id="select-key">
-        <% for key in @keys: %>
-          <% if key is @currentKey: %>
-            <option name="key" value="<%- key %>" selected><%- key %></option>
-          <% else: %>
-            <option name="key" value="<%- key %>"><%- key %></option>
-          <% end %>
-        <% end %>
-      </select>
-
       <ul>
-        <% for stat in @stats: %>
-        <li>
-          <label><%- stat.label %>:</label>
-          <% if stat.view: %>
-            <%- stat.view %>
-          <% else: %>
-            <%- stat.value %>
-          <% end %>
-        </li>
-        <% end %>
+        <% _.each(stats, function(stat) { %>
+          <li>
+            <label><%= stat.label %></label>
+            <% if(stat.view) { %>
+              <%= stat.view %>
+            <% } else { %>
+              <%= stat.value %>
+            <% } %>
+          </li>
+        <% }); %>
       </ul>
     </div>
     """
 
   constructor: (opts) ->
-    super
+    super opts
     @selectKey @keys[0]
     @start()
 
@@ -68,12 +58,12 @@ class Statistics
     @stats.push @getMax data
     @stats.push @getVariance data
     @stats.push @getStandardDeviation data
-    @stats.push @getPercentile data
+    # @stats.push @getPercentile data
     @stats.push @getSkew data
     @stats.push @getKurtosis data
 
-    compiled = _.template @template, {@keys, @stats, @currentKey}
-    @tool_view.html compiled
+    compiled = _.template @template, {stats: @stats}
+    @el.html compiled
 
   changeSelectedKey: (e) =>
     @currentKey = $(e.currentTarget).val()

@@ -188,7 +188,6 @@ class Scatterplot extends BaseTool
     @createGraph()
 
   start: =>
-    super
     @createGraph()
 
 

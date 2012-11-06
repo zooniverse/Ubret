@@ -7,7 +7,7 @@ class Table extends BaseTool
 
   template:
     """
-    <table>
+    <table id=<%- selector %>>
       <thead></thead>
       <tbody></tbody>
     </table>
@@ -15,8 +15,11 @@ class Table extends BaseTool
 
   constructor: (opts) ->
     super opts
+    @start()
 
   start: =>
+    compiled = _.template @template, {selector: @selector}
+    @el.html compiled
     @selectTable()
     @createHeader()
     @createRows()
