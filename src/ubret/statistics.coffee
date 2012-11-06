@@ -1,17 +1,46 @@
 
 class Statistics
 
-  events:
-    '': 'onDataChange'
+  attributes:
+    currentKey:
+      name: 'currentKey'
+      events: [
+          'selector': 'change .key'
+          'callback': 'selectKey'
+          'action': 'change'
+        ]
+
+  # Placeholder
+  template:
+    """
+    <div class="stats">
+      <select class="key" name="key" id="select-key">
+        <% for key in @keys: %>
+          <% if key is @currentKey: %>
+            <option name="key" value="<%- key %>" selected><%- key %></option>
+          <% else: %>
+            <option name="key" value="<%- key %>"><%- key %></option>
+          <% end %>
+        <% end %>
+      </select>
+
+      <ul>
+        <% for stat in @stats: %>
+        <li>
+          <label><%- stat.label %>:</label>
+          <% if stat.view: %>
+            <%- stat.view %>
+          <% else: %>
+            <%- stat.value %>
+          <% end %>
+        </li>
+        <% end %>
+      </ul>
+    </div>
+    """
 
   constructor: (opts) ->
     super
-
-    if opts.template
-      @template = opts.template
-    else
-      @template = require('views/statistics/base')
-      
     @selectKey @keys[0]
     @start()
 
@@ -39,20 +68,18 @@ class Statistics
     @stats.push @getSkew data
     @stats.push @getKurtosis data
 
-    @tool_view.html @template({@keys, @stats, @currentKey})
+    compiled = _.template @template, {@keys, @stats, @currentKey}
+    @tool_view.html compiled
 
   changeSelectedKey: (e) =>
     @currentKey = $(e.currentTarget).val()
     @start()
 
-  selectKey: (key) =>
-    @currentKey = key
-
 
   # Events
-  onDataChange: (data) =>
-    @data = data
-    @start()
+  selectKey: (key) =>
+    @currentKey = key
+    @currentKey
 
 
   # Statistics
@@ -149,10 +176,19 @@ class Statistics
         }
       percentile_data.push value_object
 
+    percentile_view = 
+      """
+      <ul>
+        <% for set, i in @data: %>
+          <li><%- set.label %>: <%- set.value %></li>
+        <% end %>
+      </ul>
+      """
+      
     percentile_object = {
         'label': 'Percentile',
         'value': percentile_data,
-        'view': require('views/statistics/percentile')(data: percentile_data)
+        'view': _.template percentile_view, {data: percentile_data}
       }
 
   getSkew: (data) =>

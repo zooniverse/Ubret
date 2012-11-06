@@ -8,7 +8,7 @@ class SubjectViewer extends BaseTool
     currentSubject:
       name: 'currentSubject'
       default: 0
-      events:
+      events: [
           'selector': 'click .nav .prev'
           'callback': 'prevSubject'
           'action': 'change'
@@ -16,6 +16,31 @@ class SubjectViewer extends BaseTool
           'selector': 'click .nav .next'
           'callback': 'nextSubject'
           'action': 'change'
+        ]
+
+  # Need to rework this. Just placeholder for now
+  template:
+    """
+    <% if @subject: %>
+      <% if @count > 1: %>
+        <div class="nav">
+          <a class="back">back</a>
+          <a class="next">next</a>
+        </div>
+      <% end %>
+
+      <% if @subject.image: %>
+        <img src="<%- @subject.image %>" />
+      <% end %>
+
+      <ul>
+        <li>id: <%- @subject.zooniverse_id %></li>
+        <% for key, value of @keys: %>
+          <li><%- key %>: <%- if typeof(@subject[value]) isnt 'string' then @format(@subject[value]) else @subject[value] %> <%- @labels[value] %></li>
+        <% end %>
+      </ul>
+    <% end %>
+    """
 
   constructor: (opts) ->
     super
@@ -26,7 +51,9 @@ class SubjectViewer extends BaseTool
     @render()
 
   render: =>
-    @tool_view.html require('views/subject_viewer/base')({@getCurrentSubject(), @keys, count: @data.length, format: @format})
+    # Likely need to do more work here
+    compiled = _.template(@template, {subject: @getCurrentSubject(), @keys, count: @data.length, format: @format})
+    @tool_view.html compiled
 
   getCurrentSubject: =>
     @data[@count]

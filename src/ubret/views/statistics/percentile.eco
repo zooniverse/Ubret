@@ -1,5 +1,0 @@
-<ul>
-  <% for set, i in @data: %>
-    <li><%- set.label %>: <%- set.value %></li>
-  <% end %>
-</ul>
