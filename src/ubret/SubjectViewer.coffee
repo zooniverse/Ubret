@@ -4,41 +4,53 @@ BaseTool = require 'BaseTool'
 
 class SubjectViewer extends BaseTool
 
-  constructor: (@data) ->
+  attributes:
+    currentSubject:
+      name: 'currentSubject'
+      default: 0
+      events:
+          'selector': 'click .nav .prev'
+          'callback': 'prevSubject'
+          'action': 'change'
+        ,
+          'selector': 'click .nav .next'
+          'callback': 'nextSubject'
+          'action': 'change'
+
+  constructor: (opts) ->
     super
     @format = @format || d3.format(',.02f')
-
-    @tool_view.find('.nav .prev').on 'click', @prevSubject
-    @tool_view.find('.nav .next').on 'click', @nextSubject
-
     @start()
 
   start: =>
-    @count = 0
     @render()
 
   render: =>
-    @tool_view.html require('views/subject_viewer/base')({@currentSubject(), @keys, count: @data.length, format: @format})
+    @tool_view.html require('views/subject_viewer/base')({@getCurrentSubject(), @keys, count: @data.length, format: @format})
 
-  currentSubject: =>
+  getCurrentSubject: =>
     @data[@count]
 
-  nextSubject: =>
-    @count += 1
-    if @count >= @data.length
-      @count = 0
-    @render()
-
-  prevSubject: =>
+  prevSubject: (count) =>
     @count -= 1
     if @count < 0
       @count = @data.length - 1
-    @render()
+    @count
+
+  nextSubject: (count) =>
+    @count += 1
+    if @count >= @data.length
+      @count = 0
+    @count
+
+  # Validation
+  validateCurrentSubject: (currentSubject) ->
+    console.log 'noop'
 
   select: (itemId) =>
-    subject = _.find @filteredData, (datum) ->
+    subject = _.find @data, (datum) ->
       datum.zooniverse_id == itemId
-    subjectIndex = _.indexOf @filteredData, subject
+    subjectIndex = _.indexOf @data, subject
     @count = subjectIndex
     @render()
 

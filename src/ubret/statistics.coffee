@@ -1,8 +1,17 @@
 
 class Statistics
 
+  events:
+    '': 'onDataChange'
+
   constructor: (opts) ->
     super
+
+    if opts.template
+      @template = opts.template
+    else
+      @template = require('views/statistics/base')
+      
     @selectKey @keys[0]
     @start()
 
@@ -30,7 +39,7 @@ class Statistics
     @stats.push @getSkew data
     @stats.push @getKurtosis data
 
-    @tool_view.html require('views/statistics/base')({@keys, @stats, @currentKey})
+    @tool_view.html @template({@keys, @stats, @currentKey})
 
   changeSelectedKey: (e) =>
     @currentKey = $(e.currentTarget).val()
@@ -40,7 +49,13 @@ class Statistics
     @currentKey = key
 
 
-  # Statistics functions
+  # Events
+  onDataChange: (data) =>
+    @data = data
+    @start()
+
+
+  # Statistics
   getMean: (data) =>
     average = _.reduce(data, ((memo, num) -> memo + num)) / data.length
     average_object = {
