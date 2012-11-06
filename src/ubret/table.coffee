@@ -32,6 +32,9 @@ class Table
       .enter().append('td')
         .text( (d) -> return d)
 
+    if @selected?
+      @highlightRow()
+
   compare: (a, b) ->
     if typeof a is 'string'
       return a.localeCompare b
@@ -52,9 +55,12 @@ class Table
     @createRows key
 
   selectRow: (datum) => 
-    @selected.attr('class', '') unless typeof @selected is 'undefined'
-    @selected = @tbody.select("[data-id=#{datum.id}]")
-      .attr('class', 'selected')
+    @tbody.select("[data-id=#{@selected}]").attr('class', '') unless typeof @selected is 'undefined'
+    @selected = datum.id
+    @highlightRow()
+
+  highlightRow: =>
+    @tbody.select("[data-id=#{@selected}]").attr('class', 'selected')
 
   changeData: (data) =>
     @data = data
