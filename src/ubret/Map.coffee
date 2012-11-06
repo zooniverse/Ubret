@@ -1,10 +1,11 @@
-_ = require 'underscore/underscore'
-
-BaseController = require './BaseController'
-SubjectViewer = require './SubjectViewer'
 
 class Map extends BaseTool
   name: 'Map'
+
+  template:
+    """
+    <div id="sky-<%= @['index'] %>" style="width:400px;height:200px;text-align:left;"></div>
+    """
 
   @mapOptions =
     attributionControl: false
@@ -32,7 +33,8 @@ class Map extends BaseTool
     @subscribe @subChannel, @process
 
   render: =>
-    @html require('../views/map')({index: @index})
+    compiled = _.template @template, @
+    @tool_view.html compiled
 
   start: =>
     @createSky() unless @map

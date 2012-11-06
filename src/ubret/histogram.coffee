@@ -1,4 +1,3 @@
-_ = require 'underscore/underscore'
 
 class Histogram extends BaseTool
   
