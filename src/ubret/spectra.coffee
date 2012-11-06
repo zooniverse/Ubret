@@ -10,8 +10,6 @@ class Spectra extends BaseTool
 
   constructor: ->
     super
-    @subscribe @subChannel, @process
-    @bind 'data-received', @plot
   
   render: =>
     compiled = _.template @template, @index
