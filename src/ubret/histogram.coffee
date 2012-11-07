@@ -30,8 +30,10 @@ class Histogram extends BaseTool
     @createGraph()
 
   createGraph: =>
+    # Cheats until settings is set in stone
     @variable = 'dec'
     @selectedData = []
+    
     if typeof(@variable) is 'undefined'
       return
 
