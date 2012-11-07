@@ -14,32 +14,32 @@ class Histogram extends BaseTool
     </div>
     """
 
-  constructor: ->
-    super
+  constructor: (opts) ->
+    super opts
     compiled = _.template @template, {selector: @selector}
     @el.html compiled
 
-    @height = @height or 480
-    @width = @width or 640
-    @margin = @margin or { left: 40, top: 20, bottom: 40 } 
-    @format = @format or d3.format(',.02f')
-    @color = @color or 'teal'
-    @selectionColor = @selectionColor or 'orange'
-    @yLabel = @yLabel or 'Number'
+    @height = opts.height or 480
+    @width = opts.width or 640
+    @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
+    @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
+    @color = opts.color or 'teal'
+    @selectionColor = opts.selectionColor or 'orange'
+    @yLabel = opts.yLabel or 'Number'
 
     @createGraph()
 
   createGraph: =>
     # Cheats until settings is set in stone
-    @variable = 'dec'
+    @selectedKey = 'dec'
     @selectedData = []
     
-    if typeof(@variable) is 'undefined'
+    if typeof(@selectedKey) is 'undefined'
       return
 
     @el.find('svg').empty()
 
-    @graphWidth = @width - @margin.left
+    @graphWidth = @width - @margin.left - @margin.right
     @graphHeight = @height - @margin.top - @margin.bottom
     @formatCount = d3.format(',.0f')
 
@@ -50,14 +50,14 @@ class Histogram extends BaseTool
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
 
     if @data.length > 1
-      data = _.map(@data, (d) => d[@variable])
+      data = _.map(@data, (d) => d[@selectedKey])
       data = _.filter(data, (d) => d isnt null)
 
       if @binNumber?
         bins = d3.layout.histogram().bins(@binNumber)(data)
       else
         bins = d3.layout.histogram()(data)
-      xDomain = d3.extent(@data, (d) => parseFloat(d[@variable]))
+      xDomain = d3.extent(@data, (d) => parseFloat(d[@selectedKey]))
       yDomain= [0, d3.max(bins, (d) -> d.y)]
     else if @data.length is 1
       svg.append('text')
@@ -78,8 +78,8 @@ class Histogram extends BaseTool
         .bins(binRanges)
 
       unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
-      selectedData = _.map(@selectedData, (d) => d[@variable])
-      unselectedData = _.map(unselectedData, (d) => d[@variable]) 
+      selectedData = _.map(@selectedData, (d) => d[@selectedKey])
+      unselectedData = _.map(unselectedData, (d) => d[@selectedKey]) 
 
       unselectedBin = binFunction(unselectedData)
       selectedBin = binFunction(selectedData)
@@ -114,6 +114,10 @@ class Histogram extends BaseTool
     yAxis = d3.svg.axis()
       .scale(@y)
       .orient('left')
+      .tickFormat( (tick) ->
+        if Math.floor(tick) isnt tick
+          return
+        return tick)
 
     @svg.append('g')
       .attr('class', 'x axis')
@@ -130,7 +134,7 @@ class Histogram extends BaseTool
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 35)
-      .text(@prettyKey(@variable))
+      .text(@prettyKey(@selectedKey))
 
     @svg.append('text')
       .attr('class', 'y label')
@@ -175,14 +179,9 @@ class Histogram extends BaseTool
       .attr("text-anchor", "middle")
       .text((d) => @formatCount(d.y))
 
-  setVariable: (variable) =>
-    @variable = variable
-    @createGraph()
-
   start: =>
     super
     @createGraph()
-
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram
