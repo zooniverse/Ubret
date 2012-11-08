@@ -5,82 +5,44 @@ catch error
 
 class SubjectViewer extends BaseTool
 
-  attributes:
-    currentSubject:
-      name: 'currentSubject'
-      default: 0
-      events: [
-          'selector': 'click .nav .prev'
-          'callback': 'prevSubject'
-          'action': 'change'
-        ,
-          'selector': 'click .nav .next'
-          'callback': 'nextSubject'
-          'action': 'change'
-        ]
-
-  # Need to rework this. Just placeholder for now
   template:
     """
-    <% if @subject: %>
-      <% if @count > 1: %>
-        <div class="nav">
-          <a class="back">back</a>
-          <a class="next">next</a>
-        </div>
-      <% end %>
+    <% if(subject.image) { %>
+      <img src="<%- subject.image %>" />
+    <% } %>
 
-      <% if @subject.image: %>
-        <img src="<%- @subject.image %>" />
-      <% end %>
-
-      <ul>
-        <li>id: <%- @subject.zooniverse_id %></li>
-        <% for key, value of @keys: %>
-          <li><%- key %>: <%- if typeof(@subject[value]) isnt 'string' then @format(@subject[value]) else @subject[value] %> <%- @labels[value] %></li>
-        <% end %>
-      </ul>
-    <% end %>
+    <ul>
+      <% for(i = 0; i < keys.length; i++) { %>
+        <li>
+          <%- keys[i] %>: <%- subject[keys[i]] %>
+        </li>
+      <% } %>
+    </ul>
     """
 
   constructor: (opts) ->
     super
-    @format = @format || d3.format(',.02f')
+    @count = 0
     @start()
 
   start: =>
     @render()
 
   render: =>
-    # Likely need to do more work here
-    compiled = _.template(@template, {subject: @getCurrentSubject(), @keys, count: @data.length, format: @format})
-    @tool_view.html compiled
+    compiled = _.template @template, { subject: @data[@count], keys: @keys }
+    @el.html compiled
 
-  getCurrentSubject: =>
-    @data[@count]
-
-  prevSubject: (count) =>
+  prevSubject: =>
     @count -= 1
     if @count < 0
       @count = @data.length - 1
-    @count
+    @selectElementCb @data[@count].id
 
-  nextSubject: (count) =>
+  nextSubject: =>
     @count += 1
     if @count >= @data.length
       @count = 0
-    @count
-
-  # Validation
-  validateCurrentSubject: (currentSubject) ->
-    console.log 'noop'
-
-  select: (itemId) =>
-    subject = _.find @data, (datum) ->
-      datum.zooniverse_id == itemId
-    subjectIndex = _.indexOf @data, subject
-    @count = subjectIndex
-    @render()
+    @selectElementCb @data[@count].id
 
     
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'

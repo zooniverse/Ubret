@@ -911,40 +911,18 @@
 
     __extends(SubjectViewer, _super);
 
-    SubjectViewer.prototype.attributes = {
-      currentSubject: {
-        name: 'currentSubject',
-        "default": 0,
-        events: [
-          {
-            'selector': 'click .nav .prev',
-            'callback': 'prevSubject',
-            'action': 'change'
-          }, {
-            'selector': 'click .nav .next',
-            'callback': 'nextSubject',
-            'action': 'change'
-          }
-        ]
-      }
-    };
-
-    SubjectViewer.prototype.template = "<% if @subject: %>\n  <% if @count > 1: %>\n    <div class=\"nav\">\n      <a class=\"back\">back</a>\n      <a class=\"next\">next</a>\n    </div>\n  <% end %>\n\n  <% if @subject.image: %>\n    <img src=\"<%- @subject.image %>\" />\n  <% end %>\n\n  <ul>\n    <li>id: <%- @subject.zooniverse_id %></li>\n    <% for key, value of @keys: %>\n      <li><%- key %>: <%- if typeof(@subject[value]) isnt 'string' then @format(@subject[value]) else @subject[value] %> <%- @labels[value] %></li>\n    <% end %>\n  </ul>\n<% end %>";
+    SubjectViewer.prototype.template = "<% if(subject.image) { %>\n  <img src=\"<%- subject.image %>\" />\n<% } %>\n\n<ul>\n  <% for(i = 0; i < keys.length; i++) { %>\n    <li>\n      <%- keys[i] %>: <%- subject[keys[i]] %>\n    </li>\n  <% } %>\n</ul>";
 
     function SubjectViewer(opts) {
-      this.select = __bind(this.select, this);
-
       this.nextSubject = __bind(this.nextSubject, this);
 
       this.prevSubject = __bind(this.prevSubject, this);
-
-      this.getCurrentSubject = __bind(this.getCurrentSubject, this);
 
       this.render = __bind(this.render, this);
 
       this.start = __bind(this.start, this);
       SubjectViewer.__super__.constructor.apply(this, arguments);
-      this.format = this.format || d3.format(',.02f');
+      this.count = 0;
       this.start();
     }
 
@@ -955,46 +933,26 @@
     SubjectViewer.prototype.render = function() {
       var compiled;
       compiled = _.template(this.template, {
-        subject: this.getCurrentSubject(),
-        keys: this.keys,
-        count: this.data.length,
-        format: this.format
+        subject: this.data[this.count],
+        keys: this.keys
       });
-      return this.tool_view.html(compiled);
+      return this.el.html(compiled);
     };
 
-    SubjectViewer.prototype.getCurrentSubject = function() {
-      return this.data[this.count];
-    };
-
-    SubjectViewer.prototype.prevSubject = function(count) {
+    SubjectViewer.prototype.prevSubject = function() {
       this.count -= 1;
       if (this.count < 0) {
         this.count = this.data.length - 1;
       }
-      return this.count;
+      return this.selectElementCb(this.data[this.count].id);
     };
 
-    SubjectViewer.prototype.nextSubject = function(count) {
+    SubjectViewer.prototype.nextSubject = function() {
       this.count += 1;
       if (this.count >= this.data.length) {
         this.count = 0;
       }
-      return this.count;
-    };
-
-    SubjectViewer.prototype.validateCurrentSubject = function(currentSubject) {
-      return console.log('noop');
-    };
-
-    SubjectViewer.prototype.select = function(itemId) {
-      var subject, subjectIndex;
-      subject = _.find(this.data, function(datum) {
-        return datum.zooniverse_id === itemId;
-      });
-      subjectIndex = _.indexOf(this.data, subject);
-      this.count = subjectIndex;
-      return this.render();
+      return this.selectElementCb(this.data[this.count].id);
     };
 
     return SubjectViewer;
