@@ -26,6 +26,10 @@ class SubjectViewer extends BaseTool
     @start()
 
   start: =>
+    if @selectedElement
+      for datum, i in @data
+        if @selectedElement is datum.id
+          @count = i
     @render()
 
   render: =>
