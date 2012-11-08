@@ -166,7 +166,6 @@
     Histogram.prototype.createGraph = function() {
       var bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
         _this = this;
-      this.selectedKey = 'dec';
       this.selectedData = [];
       if (typeof this.selectedKey === 'undefined') {
         return;
@@ -299,7 +298,6 @@
     };
 
     Histogram.prototype.start = function() {
-      Histogram.__super__.start.apply(this, arguments);
       return this.createGraph();
     };
 

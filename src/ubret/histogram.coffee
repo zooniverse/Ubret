@@ -30,10 +30,7 @@ class Histogram extends BaseTool
     @createGraph()
 
   createGraph: =>
-    # Cheats until settings is set in stone
-    @selectedKey = 'dec'
     @selectedData = []
-    
     if typeof(@selectedKey) is 'undefined'
       return
 
@@ -180,7 +177,6 @@ class Histogram extends BaseTool
       .text((d) => @formatCount(d.y))
 
   start: =>
-    super
     @createGraph()
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
