@@ -20,9 +20,9 @@ class Scatterplot extends BaseTool
     super
     compiled = _.template @template, {selector: @selector}
     @el.html compiled
-    @height = @height or 480
-    @width = @width or 640
-    @margin = @margin or { left: 40, top: 20, bottom: 40 } 
+    @height = @el.height() or @height
+    @width = @el.width() or @width
+    @margin = @margin or { top: 17, right: 40, bottom: 55, left: 75 } 
     @color = @color or 'teal'
     @selectionColor = @selectionColor or 'orange'
 
@@ -65,12 +65,9 @@ class Scatterplot extends BaseTool
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
-    console.log 'creating graph'
     @el.find('svg').empty()
-    console.log 'el', @el
-    console.log 'channel', @selector
 
-    @graphWidth = @width - @margin.left
+    @graphWidth = @width - @margin.left - @margin.right
     @graphHeight = @height - @margin.top - @margin.bottom
 
     @svg = d3.select("#{@selector} svg")
@@ -115,7 +112,7 @@ class Scatterplot extends BaseTool
         .attr('class', 'x label')
         .attr('text-anchor', 'middle')
         .attr('x', @graphWidth / 2)
-        .attr('y', @graphHeight + 30)
+        .attr('y', @graphHeight + 40)
         .text(@prettyKey(@xAxisKey))
 
     if typeof(@yAxisKey) isnt 'undefined'
@@ -139,7 +136,7 @@ class Scatterplot extends BaseTool
       @svg.append('text')
         .attr('class', 'y label')
         .attr('text-anchor', 'middle')
-        .attr('y', -40)
+        .attr('y', -60)
         .attr('x', -(@graphHeight / 2))
         .attr('transform', "rotate(-90)")
         .text(@prettyKey(@yAxisKey))
