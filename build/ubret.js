@@ -463,18 +463,12 @@
       var data, xAxis, xDomain, yAxis, yDomain;
       if (this.data.length !== 0) {
         data = _.map(this.data, this.dataToCoordinates);
-        xDomain = d3.extent(data, function(d) {
+        xDomain = this.bufferAxes(d3.extent(data, function(d) {
           return d.x;
-        });
-        xDomain = _.map(xDomain, function(datum) {
-          return datum * 1.13;
-        });
-        yDomain = d3.extent(data, function(d) {
+        }));
+        yDomain = this.bufferAxes(d3.extent(data, function(d) {
           return d.y;
-        });
-        yDomain = _.map(yDomain, function(datum) {
-          return datum * 1.13;
-        });
+        }));
       } else {
         data = [];
         xDomain = [0, 10];
@@ -518,6 +512,20 @@
           return d.color;
         });
       }
+    };
+
+    Scatterplot.prototype.bufferAxes = function(domain) {
+      var border, i, _i, _len, _results;
+      _results = [];
+      for (i = _i = 0, _len = domain.length; _i < _len; i = ++_i) {
+        border = domain[i];
+        if (border > 0) {
+          _results.push(border = border - (border * 0.15));
+        } else {
+          _results.push(border = border + (border * 0.15));
+        }
+      }
+      return _results;
     };
 
     Scatterplot.prototype.calculateTicks = function(axis) {

@@ -84,13 +84,8 @@ class Scatterplot extends BaseTool
       data = _.map(@data, @dataToCoordinates)
 
       # Build in a buffer so the points aren't right on the axes
-      xDomain = d3.extent(data, (d) -> d.x)
-      xDomain = _.map xDomain, (datum) ->
-        datum * 1.13
-
-      yDomain = d3.extent(data, (d) -> d.y)
-      yDomain = _.map yDomain, (datum) ->
-        datum * 1.13
+      xDomain = @bufferAxes(d3.extent(data, (d) -> d.x))
+      yDomain = @bufferAxes(d3.extent(data, (d) -> d.y))
     else
       data = []
       xDomain = [0, 10]
@@ -167,6 +162,13 @@ class Scatterplot extends BaseTool
         .attr('r', 3)
         .attr('id', (d) -> d.x)
         .attr('fill', (d) -> d.color)
+
+  bufferAxes: (domain) ->
+    for border, i in domain
+      if border > 0
+        border = border - (border * 0.15)
+      else
+        border = border + (border * 0.15)
 
   calculateTicks: (axis) =>
     min = _.first axis.domain()
