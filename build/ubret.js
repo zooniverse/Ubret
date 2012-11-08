@@ -466,8 +466,14 @@
         xDomain = d3.extent(data, function(d) {
           return d.x;
         });
+        xDomain = _.map(xDomain, function(datum) {
+          return datum * 1.13;
+        });
         yDomain = d3.extent(data, function(d) {
           return d.y;
+        });
+        yDomain = _.map(yDomain, function(datum) {
+          return datum * 1.13;
         });
       } else {
         data = [];

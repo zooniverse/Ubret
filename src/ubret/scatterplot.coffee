@@ -83,8 +83,14 @@ class Scatterplot extends BaseTool
     if @data.length isnt 0
       data = _.map(@data, @dataToCoordinates)
 
+      # Build in a buffer so the points aren't right on the axes
       xDomain = d3.extent(data, (d) -> d.x)
+      xDomain = _.map xDomain, (datum) ->
+        datum * 1.13
+
       yDomain = d3.extent(data, (d) -> d.y)
+      yDomain = _.map yDomain, (datum) ->
+        datum * 1.13
     else
       data = []
       xDomain = [0, 10]
