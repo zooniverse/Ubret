@@ -5,16 +5,6 @@ catch error
 
 class Statistics extends BaseTool
 
-  attributes:
-    currentKey:
-      name: 'currentKey'
-      events: [
-          'selector': 'change .key'
-          'callback': 'selectKey'
-          'action': 'change'
-        ]
-
-  # Placeholder
   template:
     """
     <div class="stats">
@@ -64,16 +54,12 @@ class Statistics extends BaseTool
 
     compiled = _.template @template, {stats: @stats}
     @el.html compiled
-
-  changeSelectedKey: (e) =>
-    @currentKey = $(e.currentTarget).val()
-    @start()
-
+    
 
   # Events
   selectKey: (key) =>
     @currentKey = key
-    @currentKey
+    @start()
 
 
   # Statistics
