@@ -345,6 +345,8 @@
 
     Scatterplot.prototype.template = "<div id=\"<%- selector %>\">\n  <svg></svg>\n</div>";
 
+    Scatterplot.prototype.tooltip = "<div class=\"tooltip\">\n  <ul>\n    <li><label><%- xAxis %>:</label><span><%- xAxisVal %></span></li>\n    <li><label><%- yAxis %>:</label><span><%- yAxisVal %></span></li>\n  </ul>\n</div>";
+
     function Scatterplot() {
       this.start = __bind(this.start, this);
 
@@ -363,8 +365,6 @@
       this.dataToCoordinates = __bind(this.dataToCoordinates, this);
 
       this.select = __bind(this.select, this);
-
-      this.sendSelection = __bind(this.sendSelection, this);
 
       this.removeTooltip = __bind(this.removeTooltip, this);
 
@@ -397,15 +397,14 @@
       xAxisVal = this.xFormat(d.x);
       yAxisVal = this.yFormat(d.y);
       top = d3.event.pageY - 50;
-      left = d3.event.pageX;
-      this.sendSelection(i);
-      tooltip = require('../views/scatterplot_tooltip')({
+      left = d3.event.pageX + 10;
+      tooltip = _.template(this.tooltip, {
         xAxis: xAxis,
         yAxis: yAxis,
         xAxisVal: xAxisVal,
         yAxisVal: yAxisVal
       });
-      this.append(tooltip);
+      this.el.append(tooltip);
       return this.el.find('.tooltip').offset({
         top: top,
         left: left
@@ -414,17 +413,6 @@
 
     Scatterplot.prototype.removeTooltip = function(d, i) {
       return this.el.find('.tooltip').remove();
-    };
-
-    Scatterplot.prototype.sendSelection = function(index) {
-      var selectedItem;
-      selectedItem = this.filteredData[index];
-      return this.publish([
-        {
-          message: "selected",
-          item_id: selectedItem.zooniverse_id
-        }
-      ]);
     };
 
     Scatterplot.prototype.select = function(itemId) {

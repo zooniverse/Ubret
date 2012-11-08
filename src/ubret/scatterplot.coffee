@@ -16,6 +16,16 @@ class Scatterplot extends BaseTool
     </div>
     """
 
+  tooltip:
+    """
+    <div class="tooltip">
+      <ul>
+        <li><label><%- xAxis %>:</label><span><%- xAxisVal %></span></li>
+        <li><label><%- yAxis %>:</label><span><%- yAxisVal %></span></li>
+      </ul>
+    </div>
+    """
+
   constructor: ->
     super
     compiled = _.template @template, {selector: @selector}
@@ -36,20 +46,14 @@ class Scatterplot extends BaseTool
     yAxisVal = @yFormat(d.y)
 
     top = d3.event.pageY - 50
-    left = d3.event.pageX
+    left = d3.event.pageX + 10
 
-    @sendSelection(i)
-
-    tooltip = require('../views/scatterplot_tooltip')({xAxis, yAxis, xAxisVal, yAxisVal})
-    @append tooltip
+    tooltip = _.template @tooltip, { xAxis: xAxis, yAxis: yAxis, xAxisVal: xAxisVal, yAxisVal: yAxisVal }
+    @el.append tooltip
     @el.find('.tooltip').offset({top: top, left: left})
 
   removeTooltip: (d, i) =>
     @el.find('.tooltip').remove()
-
-  sendSelection: (index) =>
-    selectedItem = @filteredData[index]
-    @publish [ {message: "selected", item_id: selectedItem.zooniverse_id} ]
 
   select: (itemId) =>
     _.indexOf @filteredData itemId
