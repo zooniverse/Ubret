@@ -153,7 +153,7 @@ class Scatterplot extends BaseTool
         .enter().append('g')
         .attr('class', 'point')
         .attr('transform', (d) =>
-          if (d.x is null) or (d.y is null)
+          if not d.x? or not d.y?
             return
           else
             "translate(#{@x(d.x)}, #{@y(d.y)})")
