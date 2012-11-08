@@ -11,13 +11,15 @@ class Scatterplot extends BaseTool
 
   template:
     """
-    <div id="<%- @channel %>">
+    <div id="<%- selector %>">
       <svg></svg>
     </div>
     """
 
   constructor: ->
     super
+    compiled = _.template @template, {selector: @selector}
+    @el.html compiled
     @height = @height or 480
     @width = @width or 640
     @margin = @margin or { left: 40, top: 20, bottom: 40 } 
@@ -26,10 +28,6 @@ class Scatterplot extends BaseTool
 
     @xFormat = @xFormat or d3.format(',.02f')
     @yFormat = @yFormat or d3.format(',.02f')
-
-  render: =>
-    compiled = _.template @template, @channel
-    @tool_view.html compiled
 
   displayTooltip: (d, i) =>
     xAxis = @prettyKey(@xAxisKey)
@@ -58,7 +56,7 @@ class Scatterplot extends BaseTool
 
   dataToCoordinates: (d) =>
     coordinate = {x: d[@xAxisKey], y: d[@yAxisKey], classification: d['classification']}
-    if @selectedData.length isnt 0 and d in @selectedData
+    if @selectedData? and d in @selectedData
       coordinate['color'] = @selectionColor
     else
       coordinate['color'] = @color
@@ -67,12 +65,15 @@ class Scatterplot extends BaseTool
   createGraph: =>
     if (typeof(@xAxisKey) is 'undefined') and (typeof(@yAxixKey) is 'undefined')
       return
+    console.log 'creating graph'
     @el.find('svg').empty()
+    console.log 'el', @el
+    console.log 'channel', @selector
 
     @graphWidth = @width - @margin.left
     @graphHeight = @height - @margin.top - @margin.bottom
 
-    @svg = d3.select("##{@channel} svg")
+    @svg = d3.select("#{@selector} svg")
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
@@ -82,8 +83,8 @@ class Scatterplot extends BaseTool
     @drawPoints(graphData, @color)
 
   drawAxes: =>
-    if @filteredData.length isnt 0
-      data = _.map(@filteredData, @dataToCoordinates)
+    if @data.length isnt 0
+      data = _.map(@data, @dataToCoordinates)
 
       xDomain = d3.extent(data, (d) -> d.x)
       yDomain = d3.extent(data, (d) -> d.y)

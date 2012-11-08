@@ -138,6 +138,8 @@
     function Histogram(opts) {
       this.start = __bind(this.start, this);
 
+      this.setXVar = __bind(this.setXVar, this);
+
       this.drawBars = __bind(this.drawBars, this);
 
       this.createGraph = __bind(this.createGraph, this);
@@ -297,6 +299,11 @@
       });
     };
 
+    Histogram.prototype.setXVar = function(variable) {
+      this.selectedKey = variable;
+      return this.createGraph();
+    };
+
     Histogram.prototype.start = function() {
       return this.createGraph();
     };
@@ -336,7 +343,7 @@
       }
     };
 
-    Scatterplot.prototype.template = "<div id=\"<%- @channel %>\">\n  <svg></svg>\n</div>";
+    Scatterplot.prototype.template = "<div id=\"<%- selector %>\">\n  <svg></svg>\n</div>";
 
     function Scatterplot() {
       this.start = __bind(this.start, this);
@@ -363,8 +370,12 @@
 
       this.displayTooltip = __bind(this.displayTooltip, this);
 
-      this.render = __bind(this.render, this);
+      var compiled;
       Scatterplot.__super__.constructor.apply(this, arguments);
+      compiled = _.template(this.template, {
+        selector: this.selector
+      });
+      this.el.html(compiled);
       this.height = this.height || 480;
       this.width = this.width || 640;
       this.margin = this.margin || {
@@ -377,12 +388,6 @@
       this.xFormat = this.xFormat || d3.format(',.02f');
       this.yFormat = this.yFormat || d3.format(',.02f');
     }
-
-    Scatterplot.prototype.render = function() {
-      var compiled;
-      compiled = _.template(this.template, this.channel);
-      return this.tool_view.html(compiled);
-    };
 
     Scatterplot.prototype.displayTooltip = function(d, i) {
       var left, tooltip, top, xAxis, xAxisVal, yAxis, yAxisVal;
@@ -432,7 +437,7 @@
         y: d[this.yAxisKey],
         classification: d['classification']
       };
-      if (this.selectedData.length !== 0 && __indexOf.call(this.selectedData, d) >= 0) {
+      if ((this.selectedData != null) && __indexOf.call(this.selectedData, d) >= 0) {
         coordinate['color'] = this.selectionColor;
       } else {
         coordinate['color'] = this.color;
@@ -445,18 +450,21 @@
       if ((typeof this.xAxisKey === 'undefined') && (typeof this.yAxixKey === 'undefined')) {
         return;
       }
+      console.log('creating graph');
       this.el.find('svg').empty();
+      console.log('el', this.el);
+      console.log('channel', this.selector);
       this.graphWidth = this.width - this.margin.left;
       this.graphHeight = this.height - this.margin.top - this.margin.bottom;
-      this.svg = d3.select("#" + this.channel + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
+      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
       graphData = this.drawAxes();
       return this.drawPoints(graphData, this.color);
     };
 
     Scatterplot.prototype.drawAxes = function() {
       var data, xAxis, xDomain, yAxis, yDomain;
-      if (this.filteredData.length !== 0) {
-        data = _.map(this.filteredData, this.dataToCoordinates);
+      if (this.data.length !== 0) {
+        data = _.map(this.data, this.dataToCoordinates);
         xDomain = d3.extent(data, function(d) {
           return d.x;
         });

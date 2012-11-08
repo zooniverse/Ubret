@@ -176,6 +176,10 @@ class Histogram extends BaseTool
       .attr("text-anchor", "middle")
       .text((d) => @formatCount(d.y))
 
+  setXVar: (variable) =>
+    @selectedKey = variable
+    @createGraph()
+
   start: =>
     @createGraph()
 
