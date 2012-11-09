@@ -3,7 +3,6 @@ class BaseTool
   required_opts: ['data', 'selector', 'el', 'keys']
 
   constructor: (opts) ->
-    console.log 'BaseTool'
     
     for opt in @required_opts
       throw "missing option #{opt}" unless _.has opts, opt
@@ -46,11 +45,11 @@ class BaseTool
   spacesToUnderscores: (string) ->
     string.replace /\s/g, "_"
 
-  lowercaseWords: (string) ->
-    string.replace /(\b[A-Z])/g, (char) ->
-      char.toLowerCase()
-
-
+  # Helpers
+  formatKey: (key) ->
+    (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
+      char.toUpperCase()
+      
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = BaseTool
 else

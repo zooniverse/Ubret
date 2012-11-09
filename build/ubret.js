@@ -31,7 +31,7 @@
 
       this.selectKey = __bind(this.selectKey, this);
 
-      this.selectElement = __bind(this.selectElement, this);
+      this.selectElements = __bind(this.selectElements, this);
 
       var opt, _i, _len, _ref;
       console.log('BaseTool');
@@ -42,26 +42,29 @@
           throw "missing option " + opt;
         }
       }
-      this.data = opts.data;
-      this.selector = opts.selector;
-      this.keys = opts.key;
-      this.el = opts.el;
-      this.selectElementCb = opts.selectElementCb || function() {};
+      if (!_.has(opts, 'selector')) {
+        throw 'must provide selector';
+      } else {
+        this.selector = opts.selector;
+      }
+      if (!_.has(opts, 'keys')) {
+        throw 'must provide keys';
+      } else {
+        this.keys = opts.keys;
+      }
+      if (!_.has(opts, 'el')) {
+        throw 'must provde el';
+      } else {
+        this.el = opts.el;
+      }
+      this.selectElementsCb = opts.selectElementsCb || function() {};
       this.selectKeyCb = opts.selectKeyCb || function() {};
-      this.selectedElement = opts.selectedElement || null;
+      this.selectedElements = opts.selectedElements || null;
       this.selectedKey = opts.selectedKey || 'id';
     }
 
-    BaseTool.prototype.selectElement = function(id) {
-      this.selectedElement = id;
-      this.selectElementCb(id);
-      return this.start();
-    };
-
-    BaseTool.prototype.selectKey = function(key) {
-      this.selectedKey = key;
-      this.selectKeyCb(key);
-      return this.start();
+    BaseTool.prototype.getTemplate = function() {
+      return this.template;
     };
 
     BaseTool.prototype.prettyKey = function(key) {
@@ -72,23 +75,21 @@
       return this.spacesToUnderscores(this.lowercaseWords(key));
     };
 
-    BaseTool.prototype.underscoresToSpaces = function(string) {
-      return string.replace(/_/g, " ");
+    BaseTool.prototype.selectElements = function(ids) {
+      this.selectedElements = ids;
+      this.selectElementsCb(ids);
+      return this.start();
     };
 
-    BaseTool.prototype.capitalizeWords = function(string) {
-      return string.replace(/(\b[a-z])/g, function(char) {
+    BaseTool.prototype.selectKey = function(key) {
+      this.selectedKey = key;
+      this.selectKeyCb(key);
+      return this.start();
+    };
+
+    BaseTool.prototype.formatKey = function(key) {
+      return (key.replace(/_/g, " ")).replace(/(\b[a-z])/g, function(char) {
         return char.toUpperCase();
-      });
-    };
-
-    BaseTool.prototype.spacesToUnderscores = function(string) {
-      return string.replace(/\s/g, "_");
-    };
-
-    BaseTool.prototype.lowercaseWords = function(string) {
-      return string.replace(/(\b[A-Z])/g, function(char) {
-        return char.toLowerCase();
       });
     };
 
@@ -1117,14 +1118,12 @@
 
     __extends(Table, _super);
 
-    Table.prototype.template = "<table id=<%- selector %>>\n  <thead></thead>\n  <tbody></tbody>\n</table>";
-
     function Table(opts) {
+      this.selection = __bind(this.selection, this);
+
       this.changeData = __bind(this.changeData, this);
 
-      this.highlightRow = __bind(this.highlightRow, this);
-
-      this.selectColumn = __bind(this.selectColumn, this);
+      this.highlightRows = __bind(this.highlightRows, this);
 
       this.toArray = __bind(this.toArray, this);
 
@@ -1132,27 +1131,24 @@
 
       this.createHeader = __bind(this.createHeader, this);
 
-      this.selectTable = __bind(this.selectTable, this);
+      this.createTable = __bind(this.createTable, this);
 
       this.start = __bind(this.start, this);
       Table.__super__.constructor.call(this, opts);
+      this.createTable();
       this.start();
     }
 
     Table.prototype.start = function() {
-      var compiled;
-      compiled = _.template(this.template, {
-        selector: this.selector
-      });
-      this.el.html(compiled);
-      this.selectTable();
       this.createHeader();
       return this.createRows();
     };
 
-    Table.prototype.selectTable = function() {
-      this.thead = d3.select("" + this.selector + " thead");
-      return this.tbody = d3.select("" + this.selector + " tbody");
+    Table.prototype.createTable = function() {
+      var table;
+      table = d3.select(this.selector).append('table');
+      this.thead = table.append('thead');
+      return this.tbody = table.append('tbody');
     };
 
     Table.prototype.createHeader = function() {
@@ -1178,16 +1174,14 @@
         }
       }).attr('data-id', function(d) {
         return d.id;
-      }).on('click', function(d, i) {
-        return _this.selectElement(d.id);
-      });
+      }).on('click', this.selection);
       tr.selectAll('td').data(function(d) {
         return _this.toArray(d);
       }).enter().append('td').text(function(d) {
         return d;
       });
-      if (this.selectedElement) {
-        return this.highlightRow();
+      if (this.selectedElements) {
+        return this.highlightRows();
       }
     };
 
@@ -1218,23 +1212,37 @@
       return ret;
     };
 
-    Table.prototype.formatKey = function(key) {
-      return (key.replace(/_/g, " ")).replace(/(\b[a-z])/g, function(char) {
-        return char.toUpperCase();
-      });
-    };
-
-    Table.prototype.selectColumn = function(key) {
-      return this.createRows(key);
-    };
-
-    Table.prototype.highlightRow = function() {
-      return this.tbody.select("[data-id=" + this.selectedElement + "]").attr('class', 'selected');
+    Table.prototype.highlightRows = function() {
+      var id, _i, _len, _ref, _results;
+      console.log(this.selectedElements);
+      _ref = this.selectedElements;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        id = _ref[_i];
+        _results.push(this.tbody.select("[data-id=" + id + "]").attr('class', 'selected'));
+      }
+      return _results;
     };
 
     Table.prototype.changeData = function(data) {
       this.data = data;
       return this.createRows();
+    };
+
+    Table.prototype.selection = function(d, i) {
+      var ids, index;
+      ids = this.selectedElements;
+      if (d3.event.shiftKey) {
+        index = _.indexOf(this.selectedElements, d.id);
+        if (index === -1) {
+          ids.push(d.id);
+        } else {
+          ids = _.without(ids, d.id);
+        }
+      } else {
+        ids = [d.id];
+      }
+      return this.selectElements(ids);
     };
 
     return Table;
