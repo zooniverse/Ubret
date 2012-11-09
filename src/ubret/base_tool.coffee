@@ -1,7 +1,5 @@
 class BaseTool
 
-  required_opts: ['data']
-
   constructor: (opts) ->
     unless _.has opts, 'data'
       throw 'must provide data'
@@ -29,15 +27,6 @@ class BaseTool
     @selectedElement = opts.selectedElement || null
     @selectedKey = opts.selectedKey || 'id'
 
-  getTemplate: =>
-    @template
-
-  prettyKey: (key) =>
-    @capitalizeWords(@underscoresToSpaces(key))
-
-  uglifyKey: (key) =>
-    @spacesToUnderscores(@lowercaseWords(key))
-
   selectElement: (id) =>
     @selectedElement = id
     @selectElementCb id
@@ -48,7 +37,14 @@ class BaseTool
     @selectKeyCb key
     @start()
 
+
   # Helpers
+  prettyKey: (key) =>
+    @capitalizeWords(@underscoresToSpaces(key))
+
+  uglifyKey: (key) =>
+    @spacesToUnderscores(@lowercaseWords(key))
+
   underscoresToSpaces: (string) ->
     string.replace /_/g, " "
 
@@ -62,6 +58,7 @@ class BaseTool
   lowercaseWords: (string) ->
     string.replace /(\b[A-Z])/g, (char) ->
       char.toLowerCase()
+
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = BaseTool

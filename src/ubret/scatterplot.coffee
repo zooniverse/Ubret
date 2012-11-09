@@ -5,10 +5,6 @@ catch error
 
 class Scatterplot extends BaseTool
 
-  attributes:
-    currentSubject:
-      name: 'currentSubject'
-
   template:
     """
     <div id="<%- selector %>">
