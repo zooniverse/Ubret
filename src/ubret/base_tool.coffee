@@ -3,6 +3,7 @@ class BaseTool
   required_opts: ['data', 'selector', 'el', 'keys']
 
   constructor: (opts) ->
+    console.log 'BaseTool'
     
     for opt in @required_opts
       throw "missing option #{opt}" unless _.has opts, opt
@@ -27,7 +28,6 @@ class BaseTool
     @selectedKey = key
     @selectKeyCb key
     @start()
-
 
   # Helpers
   prettyKey: (key) =>

@@ -34,6 +34,7 @@
       this.selectElement = __bind(this.selectElement, this);
 
       var opt, _i, _len, _ref;
+      console.log('BaseTool');
       _ref = this.required_opts;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         opt = _ref[_i];
@@ -107,8 +108,7 @@
   var BaseTool, Graph,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   BaseTool = window.Ubret.BaseTool || require('./base_tool');
 
@@ -125,9 +125,8 @@
 
       this.createGraph = __bind(this.createGraph, this);
 
-      this.setup = __bind(this.setup, this);
-
       var compiled;
+      console.log('Graph');
       Graph.__super__.constructor.call(this, opts);
       compiled = _.template(this.template, {
         selector: this.selector
@@ -144,124 +143,16 @@
       this.format = opts.format ? d3.format(opts.format) : d3.format(',.02f');
       this.color = opts.color || '#0172E6';
       this.selectionColor = opts.selectionColor || '#CD3E20';
-      this.setup();
     }
 
-    Graph.prototype.setup = function() {
+    Graph.prototype.createGraph = function() {
       var axis, _i, _ref, _results;
-      console.log(this.el);
+      console.log("selector", this.selector);
       _results = [];
       for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
         _results.push(console.log(axis));
       }
       return _results;
-    };
-
-    Graph.prototype.createGraph = function() {
-      var bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
-        _this = this;
-      this.selectedData = [];
-      if (typeof this.selectedKey === 'undefined') {
-        return;
-      }
-      this.el.find('svg').empty();
-      this.graphWidth = this.width - this.margin.left - this.margin.right;
-      this.graphHeight = this.height - this.margin.top - this.margin.bottom;
-      this.formatCount = d3.format(',.0f');
-      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      if (this.data.length > 1) {
-        data = _.map(this.data, function(d) {
-          return d[_this.selectedKey];
-        });
-        data = _.filter(data, function(d) {
-          return d !== null;
-        });
-        if (this.binNumber != null) {
-          bins = d3.layout.histogram().bins(this.binNumber)(data);
-        } else {
-          bins = d3.layout.histogram()(data);
-        }
-        xDomain = d3.extent(this.data, function(d) {
-          return parseFloat(d[_this.selectedKey]);
-        });
-        yDomain = [
-          0, d3.max(bins, function(d) {
-            return d.y;
-          })
-        ];
-      } else if (this.data.length === 1) {
-        svg.append('text').attr('class', 'data-warning').attr('y', graphHeight / 2).attr('x', graphWidth / 2).attr('text-anchor', 'middle').text('Not Enough Data, Classify More Galaxies!');
-        return;
-      } else {
-        bins = [];
-        xDomain = [0, 1];
-        yDomain = [0, 1];
-      }
-      if (this.selectedData.length !== 0) {
-        binRanges = _.map(bins, function(d) {
-          return d.x;
-        });
-        binFunction = d3.layout.histogram().bins(binRanges);
-        unselectedData = _.filter(this.filteredData, function(d) {
-          return !(__indexOf.call(_this.selectedData, d) >= 0);
-        });
-        selectedData = _.map(this.selectedData, function(d) {
-          return d[_this.selectedKey];
-        });
-        unselectedData = _.map(unselectedData, function(d) {
-          return d[_this.selectedKey];
-        });
-        unselectedBin = binFunction(unselectedData);
-        selectedBin = binFunction(selectedData);
-        yDomain = [
-          0, d3.max([
-            d3.max(unselectedBin, function(d) {
-              return d.y;
-            }), d3.max(selectedBin, function(d) {
-              return d.y;
-            })
-          ])
-        ];
-      }
-      this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
-      this.y = d3.scale.linear().domain(yDomain).range([this.graphHeight, 0]);
-      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-      if (bins.length !== 0) {
-        ticks = new Array;
-        for (_i = 0, _len = bins.length; _i < _len; _i++) {
-          bin = bins[_i];
-          ticks.push(bin.x);
-        }
-        lastBin = _.last(bins);
-        lastTick = lastBin.x + lastBin.dx;
-        ticks.push(lastTick);
-      } else {
-        ticks = [0, 0.25, 0.5, 0.75, 1];
-      }
-      xAxis.tickValues(ticks);
-      xAxis.tickFormat(this.format);
-      yAxis = d3.svg.axis().scale(this.y).orient('left').tickFormat(function(tick) {
-        if (Math.floor(tick) !== tick) {
-          return;
-        }
-        return tick;
-      });
-      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 35).text(this.prettyKey(this.selectedKey));
-      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -40).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.yLabel);
-      if (bins.length !== 0) {
-        if (this.selectedData.length !== 0) {
-          if (unselectedData.length > 1) {
-            this.drawBars(unselectedBin, this.color, true);
-          }
-          if (selectedData.length > 1) {
-            return this.drawBars(selectedBin, this.selectionColor, true, true);
-          }
-        } else {
-          return this.drawBars(bins, this.color);
-        }
-      }
     };
 
     Graph.prototype.drawBars = function(bins, color, halfSize, offset) {
@@ -305,7 +196,7 @@
   })(BaseTool);
 
   if (typeof require === 'function' && typeof module === 'object' && typeof exports === 'object') {
-    module.exports = Histogram;
+    module.exports = Graph;
   } else {
     window.Ubret['Graph'] = Graph;
   }
@@ -516,14 +407,15 @@
   var Graph, Histogram2,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Graph = window.Ubret.BaseTool || require('./Graph');
+  Graph = window.Ubret.Graph || require('./Graph');
 
   Histogram2 = (function(_super) {
 
     __extends(Histogram2, _super);
+
+    Histogram2.prototype.axes = 1;
 
     Histogram2.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
@@ -533,118 +425,10 @@
       this.setXVar = __bind(this.setXVar, this);
 
       this.drawBars = __bind(this.drawBars, this);
-
-      this.createGraph = __bind(this.createGraph, this);
+      console.log('Histogram2');
       Histogram2.__super__.constructor.call(this, opts);
       this.yLabel = opts.yLabel || 'Count';
     }
-
-    Histogram2.prototype.createGraph = function() {
-      var bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
-        _this = this;
-      this.selectedData = [];
-      if (typeof this.selectedKey === 'undefined') {
-        return;
-      }
-      this.el.find('svg').empty();
-      this.graphWidth = this.width - this.margin.left - this.margin.right;
-      this.graphHeight = this.height - this.margin.top - this.margin.bottom;
-      this.formatCount = d3.format(',.0f');
-      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      if (this.data.length > 1) {
-        data = _.map(this.data, function(d) {
-          return d[_this.selectedKey];
-        });
-        data = _.filter(data, function(d) {
-          return d !== null;
-        });
-        if (this.binNumber != null) {
-          bins = d3.layout.histogram().bins(this.binNumber)(data);
-        } else {
-          bins = d3.layout.histogram()(data);
-        }
-        xDomain = d3.extent(this.data, function(d) {
-          return parseFloat(d[_this.selectedKey]);
-        });
-        yDomain = [
-          0, d3.max(bins, function(d) {
-            return d.y;
-          })
-        ];
-      } else if (this.data.length === 1) {
-        svg.append('text').attr('class', 'data-warning').attr('y', graphHeight / 2).attr('x', graphWidth / 2).attr('text-anchor', 'middle').text('Not Enough Data, Classify More Galaxies!');
-        return;
-      } else {
-        bins = [];
-        xDomain = [0, 1];
-        yDomain = [0, 1];
-      }
-      if (this.selectedData.length !== 0) {
-        binRanges = _.map(bins, function(d) {
-          return d.x;
-        });
-        binFunction = d3.layout.histogram().bins(binRanges);
-        unselectedData = _.filter(this.filteredData, function(d) {
-          return !(__indexOf.call(_this.selectedData, d) >= 0);
-        });
-        selectedData = _.map(this.selectedData, function(d) {
-          return d[_this.selectedKey];
-        });
-        unselectedData = _.map(unselectedData, function(d) {
-          return d[_this.selectedKey];
-        });
-        unselectedBin = binFunction(unselectedData);
-        selectedBin = binFunction(selectedData);
-        yDomain = [
-          0, d3.max([
-            d3.max(unselectedBin, function(d) {
-              return d.y;
-            }), d3.max(selectedBin, function(d) {
-              return d.y;
-            })
-          ])
-        ];
-      }
-      this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
-      this.y = d3.scale.linear().domain(yDomain).range([this.graphHeight, 0]);
-      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-      if (bins.length !== 0) {
-        ticks = new Array;
-        for (_i = 0, _len = bins.length; _i < _len; _i++) {
-          bin = bins[_i];
-          ticks.push(bin.x);
-        }
-        lastBin = _.last(bins);
-        lastTick = lastBin.x + lastBin.dx;
-        ticks.push(lastTick);
-      } else {
-        ticks = [0, 0.25, 0.5, 0.75, 1];
-      }
-      xAxis.tickValues(ticks);
-      xAxis.tickFormat(this.format);
-      yAxis = d3.svg.axis().scale(this.y).orient('left').tickFormat(function(tick) {
-        if (Math.floor(tick) !== tick) {
-          return;
-        }
-        return tick;
-      });
-      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 35).text(this.prettyKey(this.selectedKey));
-      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -40).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.yLabel);
-      if (bins.length !== 0) {
-        if (this.selectedData.length !== 0) {
-          if (unselectedData.length > 1) {
-            this.drawBars(unselectedBin, this.color, true);
-          }
-          if (selectedData.length > 1) {
-            return this.drawBars(selectedBin, this.selectionColor, true, true);
-          }
-        } else {
-          return this.drawBars(bins, this.color);
-        }
-      }
-    };
 
     Histogram2.prototype.drawBars = function(bins, color, halfSize, offset) {
       var bar, width, witth,
