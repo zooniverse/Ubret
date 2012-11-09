@@ -3,10 +3,6 @@ BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Scatterplot extends BaseTool
 
-  attributes:
-    currentSubject:
-      name: 'currentSubject'
-
   template:
     """
     <div id="<%- selector %>">

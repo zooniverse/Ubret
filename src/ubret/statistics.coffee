@@ -23,12 +23,11 @@ class Statistics extends BaseTool
 
   constructor: (opts) ->
     super opts
-    @selectKey @keys[0]
     @start()
 
   start: =>
     # Get data
-    data = _.pluck @data, @currentKey
+    data = _.pluck @data, @selectedKey
 
     @stats = []
 
@@ -52,12 +51,6 @@ class Statistics extends BaseTool
 
     compiled = _.template @template, {stats: @stats}
     @el.html compiled
-    
-
-  # Events
-  selectKey: (key) =>
-    @currentKey = key
-    @start()
 
 
   # Statistics
@@ -200,6 +193,7 @@ class Statistics extends BaseTool
         'label': 'Kurtosis',
         'value': kurtosis
       }
+
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Statistics

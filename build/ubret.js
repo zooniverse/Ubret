@@ -25,15 +25,13 @@
     BaseTool.prototype.required_opts = ['data', 'selector', 'el', 'keys'];
 
     function BaseTool(opts) {
-      this.selectKey = __bind(this.selectKey, this);
-
-      this.selectElement = __bind(this.selectElement, this);
-
       this.uglifyKey = __bind(this.uglifyKey, this);
 
       this.prettyKey = __bind(this.prettyKey, this);
 
-      this.getTemplate = __bind(this.getTemplate, this);
+      this.selectKey = __bind(this.selectKey, this);
+
+      this.selectElement = __bind(this.selectElement, this);
 
       var opt, _i, _len, _ref;
       _ref = this.required_opts;
@@ -53,18 +51,6 @@
       this.selectedKey = opts.selectedKey || 'id';
     }
 
-    BaseTool.prototype.getTemplate = function() {
-      return this.template;
-    };
-
-    BaseTool.prototype.prettyKey = function(key) {
-      return this.capitalizeWords(this.underscoresToSpaces(key));
-    };
-
-    BaseTool.prototype.uglifyKey = function(key) {
-      return this.spacesToUnderscores(this.lowercaseWords(key));
-    };
-
     BaseTool.prototype.selectElement = function(id) {
       this.selectedElement = id;
       this.selectElementCb(id);
@@ -75,6 +61,14 @@
       this.selectedKey = key;
       this.selectKeyCb(key);
       return this.start();
+    };
+
+    BaseTool.prototype.prettyKey = function(key) {
+      return this.capitalizeWords(this.underscoresToSpaces(key));
+    };
+
+    BaseTool.prototype.uglifyKey = function(key) {
+      return this.spacesToUnderscores(this.lowercaseWords(key));
     };
 
     BaseTool.prototype.underscoresToSpaces = function(string) {
@@ -713,12 +707,6 @@
 
     __extends(Scatterplot, _super);
 
-    Scatterplot.prototype.attributes = {
-      currentSubject: {
-        name: 'currentSubject'
-      }
-    };
-
     Scatterplot.prototype.template = "<div id=\"<%- selector %>\">\n  <svg></svg>\n</div>";
 
     Scatterplot.prototype.tooltip = "<div class=\"tooltip\">\n  <ul>\n    <li><label><%- xAxis %>:</label><span><%- xAxisVal %></span></li>\n    <li><label><%- yAxis %>:</label><span><%- yAxisVal %></span></li>\n  </ul>\n</div>";
@@ -1061,17 +1049,14 @@
 
       this.getMean = __bind(this.getMean, this);
 
-      this.selectKey = __bind(this.selectKey, this);
-
       this.start = __bind(this.start, this);
       Statistics.__super__.constructor.call(this, opts);
-      this.selectKey(this.keys[0]);
       this.start();
     }
 
     Statistics.prototype.start = function() {
       var compiled, data;
-      data = _.pluck(this.data, this.currentKey);
+      data = _.pluck(this.data, this.selectedKey);
       this.stats = [];
       if (_.any(data, (function(datum) {
         return _.isNaN(parseFloat(datum));
@@ -1095,11 +1080,6 @@
         stats: this.stats
       });
       return this.el.html(compiled);
-    };
-
-    Statistics.prototype.selectKey = function(key) {
-      this.currentKey = key;
-      return this.start();
     };
 
     Statistics.prototype.getMean = function(data) {

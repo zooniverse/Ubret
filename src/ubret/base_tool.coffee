@@ -1,8 +1,7 @@
-
 class BaseTool
 
   required_opts: ['data', 'selector', 'el', 'keys']
-  
+
   constructor: (opts) ->
     
     for opt in @required_opts
@@ -19,15 +18,6 @@ class BaseTool
     @selectedElement = opts.selectedElement or null
     @selectedKey = opts.selectedKey or 'id'
 
-  getTemplate: =>
-    @template
-
-  prettyKey: (key) =>
-    @capitalizeWords(@underscoresToSpaces(key))
-
-  uglifyKey: (key) =>
-    @spacesToUnderscores(@lowercaseWords(key))
-
   selectElement: (id) =>
     @selectedElement = id
     @selectElementCb id
@@ -38,7 +28,14 @@ class BaseTool
     @selectKeyCb key
     @start()
 
+
   # Helpers
+  prettyKey: (key) =>
+    @capitalizeWords(@underscoresToSpaces(key))
+
+  uglifyKey: (key) =>
+    @spacesToUnderscores(@lowercaseWords(key))
+
   underscoresToSpaces: (string) ->
     string.replace /_/g, " "
 

@@ -3,20 +3,9 @@ BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Map extends BaseTool
 
-  attributes:
-    currentSubject:
-      name: 'currentSubject'
-      events: [
-          'selector': 'click .circle' # Placeholder
-          'callback': 'selectSubject'
-          'action': 'click'
-        ]
-
-  name: 'Map'
-
   template:
     """
-    <div id="sky-<%= @['index'] %>" style="width:400px;height:200px;text-align:left;"></div>
+    <div id="<%- selector %>"></div>
     """
 
   @mapOptions =
@@ -40,13 +29,11 @@ class Map extends BaseTool
     }
 
   constructor: ->
-    super
     @circles = []
-    # @subscribe @subChannel, @process
 
   render: =>
-    compiled = _.template @template, @
-    @tool_view.html compiled
+    compiled = _.template @template, { selector: @selector }
+    @el.html compiled
 
   start: =>
     @createSky() unless @map
@@ -134,6 +121,7 @@ class Map extends BaseTool
     circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
 
     @selectSubject circle
+
 
   # Events
   selectSubject: (circle) =>

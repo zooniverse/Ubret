@@ -32,7 +32,7 @@ task 'concat', 'Concat lib/ into one js file', ->
 
       entities.forEach (entity) ->
         stats =  fs.statSync(source_dir + working_dir + entity)
-        if entity is 'base_tool.js' or entity is 'map.js'
+        if entity is 'base_tool.js' # or entity is 'map.js'
           return
         else if stats.isDirectory()
           views_func.gather_views(source_dir, working_dir + entity + '/', views)
@@ -46,6 +46,6 @@ task 'concat', 'Concat lib/ into one js file', ->
   views.forEach (view) ->
     data = fs.readFileSync destination_dir + view
     singleFile = singleFile + data
-  
+
   fs.writeFileSync __dirname + '/build/ubret.js', singleFile
 
