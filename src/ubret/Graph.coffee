@@ -1,32 +1,35 @@
 
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
-class Histogram extends BaseTool
-  
-  template:
-    """
-    <div class="histogram">
-      <div id="<%- selector %>">
-        <svg></svg>
-      </div>
-    </div>
-    """
-  
+
+# Abstract class for plots.  All plots should inherit from this object
+class Graph extends BaseTool
+
   constructor: (opts) ->
-    
     super opts
+    
+    # Load the template
     compiled = _.template @template, {selector: @selector}
     @el.html compiled
     
-    @height = opts.height or 480
-    @width = opts.width or 640
+    @height = opts.width or @el.height()
+    @width  = opts.height or @el.width()
+    
     @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
-    @format = if opts.format then d3.format(opts.format) else d3.format('.3f')
+    
+    @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
+    
     @color = opts.color or '#0172E6'
     @selectionColor = opts.selectionColor or '#CD3E20'
-    @yLabel = opts.yLabel or 'Count'
+    
+    @setup()
+  
+  setup: =>
+    console.log @el
+    # Check that axes are selected
+    for axis in [1..@axes]
+      console.log axis
 
-    @createGraph()
 
   createGraph: =>
     @selectedData = []
@@ -182,8 +185,7 @@ class Histogram extends BaseTool
   start: =>
     @createGraph()
 
-
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram
 else
-  window.Ubret['Histogram'] = Histogram
+  window.Ubret['Graph'] = Graph

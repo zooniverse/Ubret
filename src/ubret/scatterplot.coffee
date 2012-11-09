@@ -1,7 +1,5 @@
-try
-  BaseTool = require './base_tool'
-catch error
-  BaseTool = window.Ubret.BaseTool
+
+BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Scatterplot extends BaseTool
 
@@ -30,6 +28,7 @@ class Scatterplot extends BaseTool
     super
     compiled = _.template @template, {selector: @selector}
     @el.html compiled
+    
     @height = @el.height() or @height
     @width = @el.width() or @width
     @margin = @margin or { top: 17, right: 40, bottom: 55, left: 75 } 

@@ -1,33 +1,23 @@
+
 class BaseTool
 
-  required_opts: ['data']
-
+  required_opts: ['data', 'selector', 'el', 'keys']
+  
   constructor: (opts) ->
-    unless _.has opts, 'data'
-      throw 'must provide data'
-    else
-      @data = opts.data
+    
+    for opt in @required_opts
+      throw "missing option #{opt}" unless _.has opts, opt
+    
+    @data = opts.data
+    @selector = opts.selector
+    @keys = opts.key
+    @el = opts.el
+    
+    @selectElementCb = opts.selectElementCb or ->
+    @selectKeyCb = opts.selectKeyCb or ->
 
-    unless _.has opts, 'selector'
-      throw 'must provide selector'
-    else
-      @selector = opts.selector
-
-    unless _.has opts, 'keys'
-      throw 'must provide keys'
-    else
-      @keys = opts.keys
-
-    unless _.has opts, 'el'
-      throw 'must provde el'
-    else
-      @el = opts.el
-
-    @selectElementCb = opts.selectElementCb || ->
-    @selectKeyCb = opts.selectKeyCb || ->
-
-    @selectedElement = opts.selectedElement || null
-    @selectedKey = opts.selectedKey || 'id'
+    @selectedElement = opts.selectedElement or null
+    @selectedKey = opts.selectedKey or 'id'
 
   getTemplate: =>
     @template
@@ -62,6 +52,7 @@ class BaseTool
   lowercaseWords: (string) ->
     string.replace /(\b[A-Z])/g, (char) ->
       char.toLowerCase()
+
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = BaseTool

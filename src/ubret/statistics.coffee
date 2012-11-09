@@ -1,7 +1,5 @@
-try
-  BaseTool = require './base_tool'
-catch error
-  BaseTool = window.Ubret.BaseTool
+
+BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Statistics extends BaseTool
 

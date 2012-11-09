@@ -1,7 +1,7 @@
 
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
+Graph = window.Ubret.BaseTool or require('./Graph')
 
-class Histogram extends BaseTool
+class Histogram2 extends Graph
   
   template:
     """
@@ -13,20 +13,8 @@ class Histogram extends BaseTool
     """
   
   constructor: (opts) ->
-    
     super opts
-    compiled = _.template @template, {selector: @selector}
-    @el.html compiled
-    
-    @height = opts.height or 480
-    @width = opts.width or 640
-    @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
-    @format = if opts.format then d3.format(opts.format) else d3.format('.3f')
-    @color = opts.color or '#0172E6'
-    @selectionColor = opts.selectionColor or '#CD3E20'
     @yLabel = opts.yLabel or 'Count'
-
-    @createGraph()
 
   createGraph: =>
     @selectedData = []
@@ -184,6 +172,6 @@ class Histogram extends BaseTool
 
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Histogram
+  module.exports = Histogram2
 else
-  window.Ubret['Histogram'] = Histogram
+  window.Ubret['Histogram2'] = Histogram2
