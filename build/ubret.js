@@ -693,17 +693,14 @@
 
       this.getMean = __bind(this.getMean, this);
 
-      this.selectKey = __bind(this.selectKey, this);
-
       this.start = __bind(this.start, this);
       Statistics.__super__.constructor.call(this, opts);
-      this.selectKey(this.keys[0]);
       this.start();
     }
 
     Statistics.prototype.start = function() {
       var compiled, data;
-      data = _.pluck(this.data, this.currentKey);
+      data = _.pluck(this.data, this.selectedKey);
       this.stats = [];
       if (_.any(data, (function(datum) {
         return _.isNaN(parseFloat(datum));
@@ -727,11 +724,6 @@
         stats: this.stats
       });
       return this.el.html(compiled);
-    };
-
-    Statistics.prototype.selectKey = function(key) {
-      this.currentKey = key;
-      return this.start();
     };
 
     Statistics.prototype.getMean = function(data) {
