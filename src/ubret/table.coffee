@@ -1,4 +1,3 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Table extends BaseTool
@@ -30,9 +29,8 @@ class Table extends BaseTool
     @tbody.selectAll('tr').remove()
 
     tr = @tbody.selectAll('tr')
-      .data(@data)
+      .data(@dimensions[@selectedKey].top(Infinity))
       .enter().append('tr')
-        .sort((a, b) => if a is null || b is null then 0 else @compare a[@selectedKey], b[@selectedKey])
         .attr('data-id', (d) -> d.id)
         .on('click', @selection)
     
@@ -57,7 +55,6 @@ class Table extends BaseTool
     return ret
 
   highlightRows: =>
-    console.log @selectedElements
     @tbody.select("[data-id=#{id}]").attr('class', 'selected') for id in @selectedElements
 
   changeData: (data) =>

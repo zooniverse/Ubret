@@ -7,9 +7,9 @@ class BaseTool
     for opt in @required_opts
       throw "missing option #{opt}" unless _.has opts, opt
     
-    @data = opts.data
+    @data = crossfilter(opts.data)
     @selector = opts.selector
-    @keys = opts.key
+    @keys = opts.keys
     @el = opts.el
     
     @selectElementCb = opts.selectElementCb or ->
@@ -18,9 +18,21 @@ class BaseTool
     @selectedElement = opts.selectedElement or null
     @selectedKey = opts.selectedKey or 'id'
 
-  selectElement: (id) =>
-    @selectedElement = id
-    @selectElementCb id
+    console.log @keys
+    @createDimensions()
+
+  getTemplate: =>
+    @template
+
+  prettyKey: (key) =>
+    @capitalizeWords(@underscoresToSpaces(key))
+
+  uglifyKey: (key) =>
+    @spacesToUnderscores(@lowercaseWords(key))
+
+  selectElements: (ids) =>
+    @selectedElements = ids
+    @selectElementsCb ids
     @start()
 
   selectKey: (key) =>
@@ -28,22 +40,13 @@ class BaseTool
     @selectKeyCb key
     @start()
 
-  # Helpers
-  prettyKey: (key) =>
-    @capitalizeWords(@underscoresToSpaces(key))
+  createDimensions: =>
+    @dimensions = new Object
+    for key in @keys
+      @dimensions.id = @data.dimension( (d) -> d.id )
+      @dimensions[key] = @data.dimension( (d) -> d[key] )
 
-  uglifyKey: (key) =>
-    @spacesToUnderscores(@lowercaseWords(key))
-
-  underscoresToSpaces: (string) ->
-    string.replace /_/g, " "
-
-  capitalizeWords: (string) ->
-    string.replace /(\b[a-z])/g, (char) ->
-      char.toUpperCase()
-
-  spacesToUnderscores: (string) ->
-    string.replace /\s/g, "_"
+  addFilters: ->
 
   # Helpers
   formatKey: (key) ->
