@@ -42,12 +42,6 @@ class Table extends BaseTool
     if @selectedElements
       @highlightRows()
 
-  compare: (a, b) ->
-    if typeof a is 'string'
-      return a.localeCompare b
-    else
-      if a < b then -1 else (if a > b then 1 else 0)
-
   toArray: (data) =>
     ret = new Array
     for key in @keys

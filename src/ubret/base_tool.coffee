@@ -18,8 +18,9 @@ class BaseTool
     @selectedElement = opts.selectedElement or null
     @selectedKey = opts.selectedKey or 'id'
 
-    console.log @keys
     @createDimensions()
+    for filter in opts.filters
+      @addFilter filter
 
   getTemplate: =>
     @template
@@ -46,7 +47,8 @@ class BaseTool
       @dimensions.id = @data.dimension( (d) -> d.id )
       @dimensions[key] = @data.dimension( (d) -> d[key] )
 
-  addFilters: ->
+  addFilter: (filter) =>
+    @dimensions[filter.key].filterRange([filter.low, filter.hight])
 
   # Helpers
   formatKey: (key) ->
