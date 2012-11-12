@@ -19,12 +19,14 @@ class Table extends BaseTool
     @tbody = table.append('tbody')
 
   createHeader: =>
+    @thead.selectAll('th').remove()
+
     @thead.selectAll("th")
       .data(@keys)
       .enter().append("th")
         .on('click', (d, i) => @selectKey d)
         .attr('data-key', (d) -> d)
-        .text( (d) => @formatKey d )
+        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow()}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()
@@ -54,7 +56,7 @@ class Table extends BaseTool
 
   changeData: (data) =>
     @data = data
-    @createRows()
+    @start()
 
   selectKey: (key) ->
     if key is @selectedKey and @sortOrder is 'top'
@@ -74,6 +76,12 @@ class Table extends BaseTool
     else
       ids = [d.id]
     @selectElements ids
+
+  arrow: =>
+    if @sortOrder is 'top'
+      return '▲'
+    else
+      return '▼'
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Table

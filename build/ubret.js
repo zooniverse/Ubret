@@ -1280,6 +1280,8 @@
     __extends(Table, _super);
 
     function Table(opts) {
+      this.arrow = __bind(this.arrow, this);
+
       this.selection = __bind(this.selection, this);
 
       this.changeData = __bind(this.changeData, this);
@@ -1315,12 +1317,13 @@
 
     Table.prototype.createHeader = function() {
       var _this = this;
+      this.thead.selectAll('th').remove();
       return this.thead.selectAll("th").data(this.keys).enter().append("th").on('click', function(d, i) {
         return _this.selectKey(d);
       }).attr('data-key', function(d) {
         return d;
       }).text(function(d) {
-        return _this.formatKey(d);
+        return "" + (_this.formatKey(d)) + " " + (d === _this.selectedKey ? _this.arrow() : void 0);
       });
     };
 
@@ -1365,7 +1368,7 @@
 
     Table.prototype.changeData = function(data) {
       this.data = data;
-      return this.createRows();
+      return this.start();
     };
 
     Table.prototype.selectKey = function(key) {
@@ -1391,6 +1394,14 @@
         ids = [d.id];
       }
       return this.selectElements(ids);
+    };
+
+    Table.prototype.arrow = function() {
+      if (this.sortOrder === 'top') {
+        return '▲';
+      } else {
+        return '▼';
+      }
     };
 
     return Table;
