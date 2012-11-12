@@ -29,8 +29,9 @@
 
     selector = '.table'
 
-    opts = { keys: keys, selector: selector, data: data, el: 'asdfasdf' }
+    opts = { keys: keys, selector: selector, data: data, el: 'asdfasdf', selectedKey: 'number', filters: [] }
     table = new Ubret.Table(opts)
+    stats = new Ubret.Statistics(opts)
   </script>
   </body>
 </html>

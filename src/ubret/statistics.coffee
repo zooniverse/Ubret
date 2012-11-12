@@ -1,199 +1,108 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Statistics extends BaseTool
 
-  template:
-    """
-    <div class="stats">
-      <ul>
-        <% _.each(stats, function(stat) { %>
-          <li>
-            <label><%= stat.label %></label>
-            <% if(stat.view) { %>
-              <%= stat.view %>
-            <% } else { %>
-              <%= stat.value %>
-            <% } %>
-          </li>
-        <% }); %>
-      </ul>
-    </div>
-    """
-
   constructor: (opts) ->
     super opts
+    @displayFormat = if opts.format then d3.format(opts.format) else d3.format(',.03f')
+    @createList()
     @start()
 
   start: =>
-    # Get data
-    data = _.pluck @data, @selectedKey
+    @createStats()
+    @displayStats()
 
-    @stats = []
+  createList: =>
+    @ul = d3.select(@selector)
+      .append('ul')
+      .attr('class', 'statistics')
 
-    # Check what kind of data we are looking at
-    if _.any data, ((datum) -> _.isNaN parseFloat datum)
-      # Data is some sort of string
-    else
-      # Data is numerical. Might be in strings though. Convert to floats.
-      data = _.map data, (num) -> parseFloat num
+  createStats: =>
+    @statistics = new Array
+    @statistics.push [stat, @[stat]()] for stat in ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
 
-    @stats.push @getMean data
-    @stats.push @getMedian data
-    @stats.push @getMode data
-    @stats.push @getMin data
-    @stats.push @getMax data
-    @stats.push @getVariance data
-    @stats.push @getStandardDeviation data
-    # @stats.push @getPercentile data
-    @stats.push @getSkew data
-    @stats.push @getKurtosis data
+  displayStats: => 
+    @ul.selectAll('li').remove()
 
-    compiled = _.template @template, {stats: @stats}
-    @el.html compiled
-
+    li = @ul.selectAll('li')
+      .data(@statistics)
+      .enter().append('li')
+      .attr('data-stat', (d) -> d[0])
+      .text( (d) => "#{@formatKey(d[0])}: #{@displayFormat(d[1])}" )
 
   # Statistics
-  getMean: (data) =>
-    average = _.reduce(data, ((memo, num) -> memo + num)) / data.length
-    average_object = {
-        'label': 'Mean',
-        'value': average
-      }
+  mean: =>
+    count = @dimensions.id.groupAll().reduceCount().value()
+    sum = @dimensions.id.groupAll().reduce(((p, v) => p + v[@selectedKey]),
+                                          ((p, v) => p - v[@selectedKey]), 
+                                          ((p, v) -> 0))
+                                            .value()
+    sum / count
 
-  getMedian: (data) =>
-    data = _.sortBy data, (num) -> num
+  median: =>
+    count = @dimensions.id.groupAll().reduceCount().value()
 
     # Check for odd length
-    mid_point = data.length / 2
-    if mid_point % 1
-      median = (data[Math.floor mid_point] + data[Math.ceil mid_point]) / 2
+    midPoint = count / 2
+    if midPoint % 1
+      median = ((@dimensions[@selectedKey].top(Math.floor midPoint) + @dimensions[@selectedKey].top(Math.ceil midPoint)) / 2)
     else
-      median = data[data.length / 2]
+      median = @dimensions[@selectedKey].top(midPoint)
+    _.last(median)[@selectedKey]
 
-    median_object = {
-        'label': 'Median',
-        'value': median
-      }
+  mode: =>
+    mode = @dimensions[@selectedKey].group().reduceCount().top(1)
+    mode[0].key
 
-  getMode: (data) =>
-    # Currently only grabs a single number. Does not record "ties"
-    data = _.groupBy data, (datum) -> datum
-    keys = _.keys data
+  min: =>
+    @dimensions[@selectedKey].bottom(1)[0][@selectedKey]
 
-    mode_data = []
-    for key in keys
-      mode_data.push
-        'key': key,
-        'num': data[key].length
+  max: =>
+    @dimensions[@selectedKey].top(1)[0][@selectedKey]
 
-    mode = _.max mode_data, (datum) -> datum.num
+  variance: =>
+    count = @dimensions.id.groupAll().reduceCount().value()
+    mean = @mean()
 
-    mode_object = {
-        'label': 'Mode',
-        'value': mode.key
-      }
+    varianceFormulaAdd = (p, v) =>
+      p + Math.pow(Math.abs(v[@selectedKey] - mean), 2)
+    varianceFormulaRemove = (p, v) =>
+      p - Math.pow(Math.abs(v[@selectedKey] - mean), 2)
+    variance = @dimensions.id.groupAll().reduce(varianceFormulaAdd, varianceFormulaRemove, (p, v) -> 0).value()
 
-  getMin: (data) =>
-    min_object = {
-        'label': 'Minimum',
-        'value': _.min data
-      }
+    variance / count
 
-  getMax: (data) =>
-    max_object = {
-        'label': 'Maximum',
-        'value': _.max data
-      }
+  standardDeviation: () =>
+    Math.sqrt @variance()
 
-  getVariance: (data) =>
-    data_count = data.length
-    mean = @getMean data
+  skew: =>
+    mean = @mean()
+    standardDeviation = @standardDeviation()
+    count = @dimensions.id.groupAll().reduceCount().value()
 
-    data = _.map data, (datum) ->
-      Math.pow Math.abs(datum - mean.value), 2
+    reduceAdd = (p, v) =>
+      p + Math.pow(v[@selectedKey] - mean, 3)
+    reduceRemove = (p, v) =>
+      p - Math.pow(v[@selectedKey] - mean, 3)
+    sum = @dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
 
-    variance_data = _.reduce data, (memo, datum) ->
-      memo + datum
+    denom = count * Math.pow(standardDeviation, 3)
+    sum / denom
 
-    variance = variance_data / data_count
-    variance_object = {
-        'label': 'Variance',
-        'value': variance
-      }
+  kurtosis: =>
+    mean = @mean()
+    standardDeviation = @standardDeviation()
+    count = @dimensions.id.groupAll().reduceCount().value()
 
-  getStandardDeviation: (data) =>
-    variance = (@getVariance data).value
+    reduceAdd = (p, v) =>
+      p + Math.pow(v[@selectedKey] - mean, 4)
+    reduceRemove = (p, v) =>
+      p - Math.pow(v[@selectedKey] - mean, 4)
+    sum = @dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
 
-    standard_deviation = Math.sqrt variance
-    standard_deviation_object = {
-        'label': 'Standard Deviation',
-        'value': standard_deviation
-      }
-
-  getPercentile: (data) =>
-    data = _.sortBy data, (datum) -> datum
-
-    percentile_data = []
-    # For now, use 10 chunks
-    for i in [1..10]
-      percent = i / 10
-
-      # Get position of the element at the $percent position
-      percentile = data[Math.floor((data.length * percent) - 1)]
-      value_object = {
-          'label': (percent * 100) + 'th',
-          'value': percentile
-        }
-      percentile_data.push value_object
-
-    percentile_view = 
-      """
-      <ul>
-        <% for set, i in @data: %>
-          <li><%- set.label %>: <%- set.value %></li>
-        <% end %>
-      </ul>
-      """
-      
-    percentile_object = {
-        'label': 'Percentile',
-        'value': percentile_data,
-        'view': _.template percentile_view, {data: percentile_data}
-      }
-
-  getSkew: (data) =>
-    mean = (@getMean data).value
-    standard_deviation = (@getStandardDeviation data).value
-
-    sum = _.reduce data, ((memo, datum) ->
-      Math.pow(datum - mean, 3) + memo
-      ), 0
-
-    denom = data.length * Math.pow(standard_deviation, 3)
-
-    skew = sum / denom
-    skew_object = {
-        'label': 'Skew',
-        'value': skew
-      }
-      
-  getKurtosis: (data) =>
-    mean = (@getMean data).value
-    standard_deviation = (@getStandardDeviation data).value
-
-    sum = _.reduce data, ((memo, datum) ->
-      Math.pow(datum - mean, 4) + memo
-      ), 0
-
-    denom = data.length * Math.pow(standard_deviation, 4)
+    denom = count * Math.pow(standardDeviation, 4)
 
     kurtosis = sum / denom
-    kurtosis_object = {
-        'label': 'Kurtosis',
-        'value': kurtosis
-      }
-
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Statistics

@@ -50,7 +50,7 @@ class Graph extends BaseTool
 
     @y = d3.scale.linear()
       .domain(yDomain)
-      .range(0
+      .range(0)
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Graph

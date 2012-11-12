@@ -25,6 +25,8 @@
     BaseTool.prototype.required_opts = ['data', 'selector', 'el', 'keys'];
 
     function BaseTool(opts) {
+      this.addFilter = __bind(this.addFilter, this);
+
       this.createDimensions = __bind(this.createDimensions, this);
 
       this.selectKey = __bind(this.selectKey, this);
@@ -37,8 +39,7 @@
 
       this.getTemplate = __bind(this.getTemplate, this);
 
-      var opt, _i, _len, _ref;
-      console.log('BaseTool');
+      var filter, opt, _i, _j, _len, _len1, _ref, _ref1;
       _ref = this.required_opts;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         opt = _ref[_i];
@@ -54,8 +55,12 @@
       this.selectKeyCb = opts.selectKeyCb || function() {};
       this.selectedElement = opts.selectedElement || null;
       this.selectedKey = opts.selectedKey || 'id';
-      console.log(this.keys);
       this.createDimensions();
+      _ref1 = opts.filters;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        filter = _ref1[_j];
+        this.addFilter(filter);
+      }
     }
 
     BaseTool.prototype.getTemplate = function() {
@@ -99,7 +104,9 @@
       return _results;
     };
 
-    BaseTool.prototype.addFilters = function() {};
+    BaseTool.prototype.addFilter = function(filter) {
+      return this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+    };
 
     BaseTool.prototype.formatKey = function(key) {
       return (key.replace(/_/g, " ")).replace(/(\b[a-z])/g, function(char) {
@@ -132,11 +139,9 @@
     __extends(Graph, _super);
 
     function Graph(opts) {
-      this.start = __bind(this.start, this);
+      this.createYAxis = __bind(this.createYAxis, this);
 
-      this.setXVar = __bind(this.setXVar, this);
-
-      this.drawBars = __bind(this.drawBars, this);
+      this.createXAxis = __bind(this.createXAxis, this);
 
       this.createGraph = __bind(this.createGraph, this);
 
@@ -161,49 +166,33 @@
     }
 
     Graph.prototype.createGraph = function() {
-      var axis, _i, _ref, _results;
-      console.log("selector", this.selector);
-      _results = [];
-      for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
-        _results.push(console.log(axis));
-      }
-      return _results;
+      var graphHeight, graphWidth;
+      graphHeight = this.height - (this.margin.top + this.margin.bottom);
+      graphWidth = this.width - (this.margin.left + this.margin.right);
+      return this.svg = d3.select(this.selector).append('svg').attr('height', graphHeight).attr('width', graphWidth);
     };
 
-    Graph.prototype.drawBars = function(bins, color, halfSize, offset) {
-      var bar, width, witth,
-        _this = this;
-      if (halfSize == null) {
-        halfSize = false;
+    Graph.prototype.createXAxis = function(dataSet, ticks) {
+      var xAxis, xDomain;
+      xDomain = d3.extent(dataSet, d(function() {
+        return d.x;
+      }));
+      if (xDomain.length === 0) {
+        xDomain = [0, 1];
       }
-      if (offset == null) {
-        offset = false;
-      }
-      width = this.x(bins[1].x) - this.x(bins[0].x);
-      width = halfSize ? (width / 2) - 1 : width - 2;
-      witth = offset ? width - 1 : width;
-      bar = this.svg.selectAll(".bar-" + color).data(bins).enter().append('g').attr('class', 'bar').attr('transform', function(d) {
-        if (offset) {
-          return "translate(" + (_this.x(d.x) + width + 1) + ", " + (_this.y(d.y) - 1) + ")";
-        } else {
-          return "translate(" + (_this.x(d.x)) + ", " + (_this.y(d.y) - 1) + ")";
-        }
-      });
-      bar.append('rect').attr('x', 1).attr('width', Math.floor(width)).attr('height', function(d) {
-        return _this.graphHeight - _this.y(d.y);
-      }).attr('fill', color);
-      return bar.append('text').attr("dy", ".75em").attr("y", 6).attr("x", width / 2).attr("text-anchor", "middle").text(function(d) {
-        return _this.formatCount(d.y);
-      });
+      this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
+      return xAxis = d3.svg.axis().scale(this.x).orient('bottom');
     };
 
-    Graph.prototype.setXVar = function(variable) {
-      this.selectedKey = variable;
-      return this.createGraph();
-    };
-
-    Graph.prototype.start = function() {
-      return this.createGraph();
+    Graph.prototype.createYAxis = function(dataSet, ticks) {
+      var yDomain;
+      yDomain = d3.extent(dataSet, d(function() {
+        return d.y;
+      }));
+      if (yDomain.length === 0) {
+        yDomain = [0, 1];
+      }
+      return this.y = d3.scale.linear().domain(yDomain).range(0);
     };
 
     return Graph;
@@ -213,7 +202,7 @@
   if (typeof require === 'function' && typeof module === 'object' && typeof exports === 'object') {
     module.exports = Graph;
   } else {
-    window.Ubret['Graph'] = Graph;
+    window.Ubret.Graph = Graph;
   }
 
 }).call(this);
@@ -1025,209 +1014,167 @@
 
     __extends(Statistics, _super);
 
-    Statistics.prototype.template = "<div class=\"stats\">\n  <ul>\n    <% _.each(stats, function(stat) { %>\n      <li>\n        <label><%= stat.label %></label>\n        <% if(stat.view) { %>\n          <%= stat.view %>\n        <% } else { %>\n          <%= stat.value %>\n        <% } %>\n      </li>\n    <% }); %>\n  </ul>\n</div>";
-
     function Statistics(opts) {
-      this.getKurtosis = __bind(this.getKurtosis, this);
+      this.kurtosis = __bind(this.kurtosis, this);
 
-      this.getSkew = __bind(this.getSkew, this);
+      this.skew = __bind(this.skew, this);
 
-      this.getPercentile = __bind(this.getPercentile, this);
+      this.standardDeviation = __bind(this.standardDeviation, this);
 
-      this.getStandardDeviation = __bind(this.getStandardDeviation, this);
+      this.variance = __bind(this.variance, this);
 
-      this.getVariance = __bind(this.getVariance, this);
+      this.max = __bind(this.max, this);
 
-      this.getMax = __bind(this.getMax, this);
+      this.min = __bind(this.min, this);
 
-      this.getMin = __bind(this.getMin, this);
+      this.mode = __bind(this.mode, this);
 
-      this.getMode = __bind(this.getMode, this);
+      this.median = __bind(this.median, this);
 
-      this.getMedian = __bind(this.getMedian, this);
+      this.mean = __bind(this.mean, this);
 
-      this.getMean = __bind(this.getMean, this);
+      this.displayStats = __bind(this.displayStats, this);
+
+      this.createStats = __bind(this.createStats, this);
+
+      this.createList = __bind(this.createList, this);
 
       this.start = __bind(this.start, this);
       Statistics.__super__.constructor.call(this, opts);
+      this.displayFormat = opts.format ? d3.format(opts.format) : d3.format(',.03f');
+      this.createList();
       this.start();
     }
 
     Statistics.prototype.start = function() {
-      var compiled, data;
-      data = _.pluck(this.data, this.selectedKey);
-      this.stats = [];
-      if (_.any(data, (function(datum) {
-        return _.isNaN(parseFloat(datum));
-      }))) {
+      this.createStats();
+      return this.displayStats();
+    };
 
+    Statistics.prototype.createList = function() {
+      return this.ul = d3.select(this.selector).append('ul').attr('class', 'statistics');
+    };
+
+    Statistics.prototype.createStats = function() {
+      var stat, _i, _len, _ref, _results;
+      this.statistics = new Array;
+      _ref = ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis'];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        stat = _ref[_i];
+        _results.push(this.statistics.push([stat, this[stat]()]));
+      }
+      return _results;
+    };
+
+    Statistics.prototype.displayStats = function() {
+      var li,
+        _this = this;
+      this.ul.selectAll('li').remove();
+      return li = this.ul.selectAll('li').data(this.statistics).enter().append('li').attr('data-stat', function(d) {
+        return d[0];
+      }).text(function(d) {
+        return "" + (_this.formatKey(d[0])) + ": " + (_this.displayFormat(d[1]));
+      });
+    };
+
+    Statistics.prototype.mean = function() {
+      var count, sum,
+        _this = this;
+      count = this.dimensions.id.groupAll().reduceCount().value();
+      sum = this.dimensions.id.groupAll().reduce((function(p, v) {
+        return p + v[_this.selectedKey];
+      }), (function(p, v) {
+        return p - v[_this.selectedKey];
+      }), (function(p, v) {
+        return 0;
+      })).value();
+      return sum / count;
+    };
+
+    Statistics.prototype.median = function() {
+      var count, median, midPoint;
+      count = this.dimensions.id.groupAll().reduceCount().value();
+      midPoint = count / 2;
+      if (midPoint % 1) {
+        median = (this.dimensions[this.selectedKey].top(Math.floor(midPoint)) + this.dimensions[this.selectedKey].top(Math.ceil(midPoint))) / 2;
       } else {
-        data = _.map(data, function(num) {
-          return parseFloat(num);
-        });
+        median = this.dimensions[this.selectedKey].top(midPoint);
       }
-      this.stats.push(this.getMean(data));
-      this.stats.push(this.getMedian(data));
-      this.stats.push(this.getMode(data));
-      this.stats.push(this.getMin(data));
-      this.stats.push(this.getMax(data));
-      this.stats.push(this.getVariance(data));
-      this.stats.push(this.getStandardDeviation(data));
-      this.stats.push(this.getSkew(data));
-      this.stats.push(this.getKurtosis(data));
-      compiled = _.template(this.template, {
-        stats: this.stats
-      });
-      return this.el.html(compiled);
+      return _.last(median)[this.selectedKey];
     };
 
-    Statistics.prototype.getMean = function(data) {
-      var average, average_object;
-      average = _.reduce(data, (function(memo, num) {
-        return memo + num;
-      })) / data.length;
-      return average_object = {
-        'label': 'Mean',
-        'value': average
-      };
+    Statistics.prototype.mode = function() {
+      var mode;
+      mode = this.dimensions[this.selectedKey].group().reduceCount().top(1);
+      return mode[0].key;
     };
 
-    Statistics.prototype.getMedian = function(data) {
-      var median, median_object, mid_point;
-      data = _.sortBy(data, function(num) {
-        return num;
-      });
-      mid_point = data.length / 2;
-      if (mid_point % 1) {
-        median = (data[Math.floor(mid_point)] + data[Math.ceil(mid_point)]) / 2;
-      } else {
-        median = data[data.length / 2];
-      }
-      return median_object = {
-        'label': 'Median',
-        'value': median
-      };
+    Statistics.prototype.min = function() {
+      return this.dimensions[this.selectedKey].bottom(1)[0][this.selectedKey];
     };
 
-    Statistics.prototype.getMode = function(data) {
-      var key, keys, mode, mode_data, mode_object, _i, _len;
-      data = _.groupBy(data, function(datum) {
-        return datum;
-      });
-      keys = _.keys(data);
-      mode_data = [];
-      for (_i = 0, _len = keys.length; _i < _len; _i++) {
-        key = keys[_i];
-        mode_data.push({
-          'key': key,
-          'num': data[key].length
-        });
-      }
-      mode = _.max(mode_data, function(datum) {
-        return datum.num;
-      });
-      return mode_object = {
-        'label': 'Mode',
-        'value': mode.key
-      };
+    Statistics.prototype.max = function() {
+      return this.dimensions[this.selectedKey].top(1)[0][this.selectedKey];
     };
 
-    Statistics.prototype.getMin = function(data) {
-      var min_object;
-      return min_object = {
-        'label': 'Minimum',
-        'value': _.min(data)
+    Statistics.prototype.variance = function() {
+      var count, mean, variance, varianceFormulaAdd, varianceFormulaRemove,
+        _this = this;
+      count = this.dimensions.id.groupAll().reduceCount().value();
+      mean = this.mean();
+      varianceFormulaAdd = function(p, v) {
+        return p + Math.pow(Math.abs(v[_this.selectedKey] - mean), 2);
       };
+      varianceFormulaRemove = function(p, v) {
+        return p - Math.pow(Math.abs(v[_this.selectedKey] - mean), 2);
+      };
+      variance = this.dimensions.id.groupAll().reduce(varianceFormulaAdd, varianceFormulaRemove, function(p, v) {
+        return 0;
+      }).value();
+      return variance / count;
     };
 
-    Statistics.prototype.getMax = function(data) {
-      var max_object;
-      return max_object = {
-        'label': 'Maximum',
-        'value': _.max(data)
-      };
+    Statistics.prototype.standardDeviation = function() {
+      return Math.sqrt(this.variance());
     };
 
-    Statistics.prototype.getVariance = function(data) {
-      var data_count, mean, variance, variance_data, variance_object;
-      data_count = data.length;
-      mean = this.getMean(data);
-      data = _.map(data, function(datum) {
-        return Math.pow(Math.abs(datum - mean.value), 2);
-      });
-      variance_data = _.reduce(data, function(memo, datum) {
-        return memo + datum;
-      });
-      variance = variance_data / data_count;
-      return variance_object = {
-        'label': 'Variance',
-        'value': variance
+    Statistics.prototype.skew = function() {
+      var count, denom, mean, reduceAdd, reduceRemove, standardDeviation, sum,
+        _this = this;
+      mean = this.mean();
+      standardDeviation = this.standardDeviation();
+      count = this.dimensions.id.groupAll().reduceCount().value();
+      reduceAdd = function(p, v) {
+        return p + Math.pow(v[_this.selectedKey] - mean, 3);
       };
+      reduceRemove = function(p, v) {
+        return p - Math.pow(v[_this.selectedKey] - mean, 3);
+      };
+      sum = this.dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, function(p, v) {
+        return 0;
+      }).value();
+      denom = count * Math.pow(standardDeviation, 3);
+      return sum / denom;
     };
 
-    Statistics.prototype.getStandardDeviation = function(data) {
-      var standard_deviation, standard_deviation_object, variance;
-      variance = (this.getVariance(data)).value;
-      standard_deviation = Math.sqrt(variance);
-      return standard_deviation_object = {
-        'label': 'Standard Deviation',
-        'value': standard_deviation
+    Statistics.prototype.kurtosis = function() {
+      var count, denom, kurtosis, mean, reduceAdd, reduceRemove, standardDeviation, sum,
+        _this = this;
+      mean = this.mean();
+      standardDeviation = this.standardDeviation();
+      count = this.dimensions.id.groupAll().reduceCount().value();
+      reduceAdd = function(p, v) {
+        return p + Math.pow(v[_this.selectedKey] - mean, 4);
       };
-    };
-
-    Statistics.prototype.getPercentile = function(data) {
-      var i, percent, percentile, percentile_data, percentile_object, percentile_view, value_object, _i;
-      data = _.sortBy(data, function(datum) {
-        return datum;
-      });
-      percentile_data = [];
-      for (i = _i = 1; _i <= 10; i = ++_i) {
-        percent = i / 10;
-        percentile = data[Math.floor((data.length * percent) - 1)];
-        value_object = {
-          'label': (percent * 100) + 'th',
-          'value': percentile
-        };
-        percentile_data.push(value_object);
-      }
-      percentile_view = "<ul>\n  <% for set, i in @data: %>\n    <li><%- set.label %>: <%- set.value %></li>\n  <% end %>\n</ul>";
-      return percentile_object = {
-        'label': 'Percentile',
-        'value': percentile_data,
-        'view': _.template(percentile_view, {
-          data: percentile_data
-        })
+      reduceRemove = function(p, v) {
+        return p - Math.pow(v[_this.selectedKey] - mean, 4);
       };
-    };
-
-    Statistics.prototype.getSkew = function(data) {
-      var denom, mean, skew, skew_object, standard_deviation, sum;
-      mean = (this.getMean(data)).value;
-      standard_deviation = (this.getStandardDeviation(data)).value;
-      sum = _.reduce(data, (function(memo, datum) {
-        return Math.pow(datum - mean, 3) + memo;
-      }), 0);
-      denom = data.length * Math.pow(standard_deviation, 3);
-      skew = sum / denom;
-      return skew_object = {
-        'label': 'Skew',
-        'value': skew
-      };
-    };
-
-    Statistics.prototype.getKurtosis = function(data) {
-      var denom, kurtosis, kurtosis_object, mean, standard_deviation, sum;
-      mean = (this.getMean(data)).value;
-      standard_deviation = (this.getStandardDeviation(data)).value;
-      sum = _.reduce(data, (function(memo, datum) {
-        return Math.pow(datum - mean, 4) + memo;
-      }), 0);
-      denom = data.length * Math.pow(standard_deviation, 4);
-      kurtosis = sum / denom;
-      return kurtosis_object = {
-        'label': 'Kurtosis',
-        'value': kurtosis
-      };
+      sum = this.dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, function(p, v) {
+        return 0;
+      }).value();
+      denom = count * Math.pow(standardDeviation, 4);
+      return kurtosis = sum / denom;
     };
 
     return Statistics;
@@ -1390,22 +1337,6 @@
       });
       if (this.selectedElements) {
         return this.highlightRows();
-      }
-    };
-
-    Table.prototype.compare = function(a, b) {
-      if (typeof a === 'string') {
-        return a.localeCompare(b);
-      } else {
-        if (a < b) {
-          return -1;
-        } else {
-          if (a > b) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
       }
     };
 
