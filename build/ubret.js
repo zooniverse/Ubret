@@ -127,9 +127,7 @@
     __extends(Graph, _super);
 
     function Graph(opts) {
-      this.createYAxis = __bind(this.createYAxis, this);
-
-      this.createXAxis = __bind(this.createXAxis, this);
+      this.setAxis = __bind(this.setAxis, this);
 
       this.createGraph = __bind(this.createGraph, this);
 
@@ -160,27 +158,8 @@
       return this.svg = d3.select(this.selector).append('svg').attr('height', graphHeight).attr('width', graphWidth);
     };
 
-    Graph.prototype.createXAxis = function(dataSet, ticks) {
-      var xAxis, xDomain;
-      xDomain = d3.extent(dataSet, d(function() {
-        return d.x;
-      }));
-      if (xDomain.length === 0) {
-        xDomain = [0, 1];
-      }
-      this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
-      return xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-    };
-
-    Graph.prototype.createYAxis = function(dataSet, ticks) {
-      var yDomain;
-      yDomain = d3.extent(dataSet, d(function() {
-        return d.y;
-      }));
-      if (yDomain.length === 0) {
-        yDomain = [0, 1];
-      }
-      return this.y = d3.scale.linear().domain(yDomain).range(0);
+    Graph.prototype.setAxis = function(axis, variable) {
+      return console.log(axis, variable);
     };
 
     return Graph;

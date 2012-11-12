@@ -30,25 +30,8 @@ class Graph extends BaseTool
       .attr('height', graphHeight)
       .attr('width', graphWidth)
   
-  createXAxis: (dataSet, ticks) =>
-    xDomain = d3.extent(dataSet, d -> d.x)
-    xDomain = [0, 1] if xDomain.length is 0 
-
-    @x = d3.scale.linear()
-      .domain(xDomain)
-      .range([0, @graphWidth])
-
-    xAxis = d3.svg.axis()
-      .scale(@x)
-      .orient('bottom')
-
-  createYAxis: (dataSet, ticks) =>
-    yDomain = d3.extent(dataSet, d -> d.y)
-    yDomain = [0, 1] if yDomain.length is 0
-
-    @y = d3.scale.linear()
-      .domain(yDomain)
-      .range(0)
+  setAxis: (axis, variable) =>
+    console.log axis, variable
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Graph
