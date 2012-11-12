@@ -25,20 +25,17 @@
     BaseTool.prototype.required_opts = ['data', 'selector', 'el', 'keys'];
 
     function BaseTool(opts) {
+      this.addFilter = __bind(this.addFilter, this);
+
       this.createDimensions = __bind(this.createDimensions, this);
 
       this.selectKey = __bind(this.selectKey, this);
 
       this.selectElements = __bind(this.selectElements, this);
 
-      this.uglifyKey = __bind(this.uglifyKey, this);
-
-      this.prettyKey = __bind(this.prettyKey, this);
-
       this.getTemplate = __bind(this.getTemplate, this);
 
-      var opt, _i, _len, _ref;
-      console.log('BaseTool');
+      var filter, opt, _i, _j, _len, _len1, _ref, _ref1;
       _ref = this.required_opts;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         opt = _ref[_i];
@@ -54,20 +51,16 @@
       this.selectKeyCb = opts.selectKeyCb || function() {};
       this.selectedElement = opts.selectedElement || null;
       this.selectedKey = opts.selectedKey || 'id';
-      console.log(this.keys);
       this.createDimensions();
+      _ref1 = opts.filters;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        filter = _ref1[_j];
+        this.addFilter(filter);
+      }
     }
 
     BaseTool.prototype.getTemplate = function() {
       return this.template;
-    };
-
-    BaseTool.prototype.prettyKey = function(key) {
-      return this.capitalizeWords(this.underscoresToSpaces(key));
-    };
-
-    BaseTool.prototype.uglifyKey = function(key) {
-      return this.spacesToUnderscores(this.lowercaseWords(key));
     };
 
     BaseTool.prototype.selectElements = function(ids) {
@@ -84,7 +77,7 @@
 
     BaseTool.prototype.createDimensions = function() {
       var key, _i, _len, _ref, _results;
-      this.dimensions = new Object;
+      this.dimensions = {};
       _ref = this.keys;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -93,13 +86,15 @@
           return d.id;
         });
         _results.push(this.dimensions[key] = this.data.dimension(function(d) {
-          return d[key];
+          return d.key;
         }));
       }
       return _results;
     };
 
-    BaseTool.prototype.addFilters = function() {};
+    BaseTool.prototype.addFilter = function(filter) {
+      return this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+    };
 
     BaseTool.prototype.formatKey = function(key) {
       return (key.replace(/_/g, " ")).replace(/(\b[a-z])/g, function(char) {
@@ -132,12 +127,6 @@
     __extends(Graph, _super);
 
     function Graph(opts) {
-      this.start = __bind(this.start, this);
-
-      this.setXVar = __bind(this.setXVar, this);
-
-      this.drawBars = __bind(this.drawBars, this);
-
       this.createGraph = __bind(this.createGraph, this);
 
       var compiled;
@@ -161,49 +150,10 @@
     }
 
     Graph.prototype.createGraph = function() {
-      var axis, _i, _ref, _results;
-      console.log("selector", this.selector);
-      _results = [];
-      for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
-        _results.push(console.log(axis));
-      }
-      return _results;
-    };
-
-    Graph.prototype.drawBars = function(bins, color, halfSize, offset) {
-      var bar, width, witth,
-        _this = this;
-      if (halfSize == null) {
-        halfSize = false;
-      }
-      if (offset == null) {
-        offset = false;
-      }
-      width = this.x(bins[1].x) - this.x(bins[0].x);
-      width = halfSize ? (width / 2) - 1 : width - 2;
-      witth = offset ? width - 1 : width;
-      bar = this.svg.selectAll(".bar-" + color).data(bins).enter().append('g').attr('class', 'bar').attr('transform', function(d) {
-        if (offset) {
-          return "translate(" + (_this.x(d.x) + width + 1) + ", " + (_this.y(d.y) - 1) + ")";
-        } else {
-          return "translate(" + (_this.x(d.x)) + ", " + (_this.y(d.y) - 1) + ")";
-        }
-      });
-      bar.append('rect').attr('x', 1).attr('width', Math.floor(width)).attr('height', function(d) {
-        return _this.graphHeight - _this.y(d.y);
-      }).attr('fill', color);
-      return bar.append('text').attr("dy", ".75em").attr("y", 6).attr("x", width / 2).attr("text-anchor", "middle").text(function(d) {
-        return _this.formatCount(d.y);
-      });
-    };
-
-    Graph.prototype.setXVar = function(variable) {
-      this.selectedKey = variable;
-      return this.createGraph();
-    };
-
-    Graph.prototype.start = function() {
-      return this.createGraph();
+      var graphHeight, graphWidth;
+      graphHeight = this.height - (this.margin.top + this.margin.bottom);
+      graphWidth = this.width - (this.margin.left + this.margin.right);
+      return this.svg = d3.select(this.selector).append('svg').attr('height', graphHeight).attr('width', graphWidth);
     };
 
     return Graph;
@@ -264,10 +214,10 @@
     }
 
     Histogram.prototype.createGraph = function() {
-      var bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
+      var allData, bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
         _this = this;
       this.selectedData = [];
-      if (typeof this.selectedKey === 'undefined') {
+      if (this.selectedKey === 'id') {
         return;
       }
       this.el.find('svg').empty();
@@ -275,8 +225,9 @@
       this.graphHeight = this.height - this.margin.top - this.margin.bottom;
       this.formatCount = d3.format(',.0f');
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      if (this.data.length > 1) {
-        data = _.map(this.data, function(d) {
+      allData = this.dimensions[this.selectedKey].top(Infinity);
+      if (allData.length > 1) {
+        data = _.map(allData, function(d) {
           return d[_this.selectedKey];
         });
         data = _.filter(data, function(d) {
@@ -287,7 +238,7 @@
         } else {
           bins = d3.layout.histogram()(data);
         }
-        xDomain = d3.extent(this.data, function(d) {
+        xDomain = d3.extent(allData, function(d) {
           return parseFloat(d[_this.selectedKey]);
         });
         yDomain = [
@@ -295,7 +246,7 @@
             return d.y;
           })
         ];
-      } else if (this.data.length === 1) {
+      } else if (allData.length === 1) {
         svg.append('text').attr('class', 'data-warning').attr('y', graphHeight / 2).attr('x', graphWidth / 2).attr('text-anchor', 'middle').text('Not Enough Data, Classify More Galaxies!');
         return;
       } else {
@@ -354,7 +305,7 @@
       });
       this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
       this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 35).text(this.prettyKey(this.selectedKey));
+      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 35).text(this.formatKey(this.selectedKey));
       this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -40).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.yLabel);
       if (bins.length !== 0) {
         if (this.selectedData.length !== 0) {
@@ -755,10 +706,10 @@
 
     Scatterplot.prototype.displayTooltip = function(d, i) {
       var left, tooltip, top, xAxis, xAxisVal, yAxis, yAxisVal;
-      xAxis = this.prettyKey(this.xAxisKey);
-      yAxis = this.prettyKey(this.yAxisKey);
-      xAxisVal = this.xFormat(d.x);
-      yAxisVal = this.yFormat(d.y);
+      xAxis = this.formatKey(this.xAxisKey);
+      yAxis = this.formatKey(this.yAxisKey);
+      xAxisVal = this.xFormat(d[this.xAxisKey]);
+      yAxisVal = this.yFormat(d[this.yAxisKey]);
       top = d3.event.pageY - 50;
       left = d3.event.pageX + 10;
       tooltip = _.template(this.tooltip, {
@@ -798,71 +749,57 @@
     };
 
     Scatterplot.prototype.createGraph = function() {
-      var graphData;
-      if ((typeof this.xAxisKey === 'undefined') && (typeof this.yAxixKey === 'undefined')) {
+      var data;
+      if (!((this.xAxisKey != null) && (this.yAxisKey != null))) {
         return;
       }
       this.el.find('svg').empty();
       this.graphWidth = this.width - this.margin.left - this.margin.right;
       this.graphHeight = this.height - this.margin.top - this.margin.bottom;
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      graphData = this.drawAxes();
-      return this.drawPoints(graphData, this.color);
+      data = this.drawAxes();
+      return this.drawPoints(data, this.color);
     };
 
     Scatterplot.prototype.drawAxes = function() {
-      var data, xAxis, xDomain, yAxis, yDomain;
-      if (this.data.length !== 0) {
-        data = _.map(this.data, this.dataToCoordinates);
-        xDomain = this.bufferAxes(d3.extent(data, function(d) {
-          return d.x;
-        }));
-        yDomain = this.bufferAxes(d3.extent(data, function(d) {
-          return d.y;
-        }));
-      } else {
-        data = [];
-        xDomain = [0, 10];
-        yDomain = [0, 10];
-      }
-      if (typeof this.xAxisKey !== 'undefined') {
-        this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
-        xAxis = d3.svg.axis().scale(this.x).orient('bottom').tickFormat(this.xFormat);
-        if (data.length !== 0) {
-          xAxis.tickValues(this.calculateTicks(this.x));
-        }
-        this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-        this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.prettyKey(this.xAxisKey));
-      }
-      if (typeof this.yAxisKey !== 'undefined') {
-        this.y = d3.scale.linear().domain(yDomain).range([this.graphHeight, 0]);
-        yAxis = d3.svg.axis().scale(this.y).orient('left').tickFormat(this.yFormat);
-        if (data.length !== 0) {
-          yAxis.tickValues(this.calculateTicks(this.y));
-        }
-        this.svg.append('g').attr('class', 'y axis').attr('transform', 'translate(0, 0)').call(yAxis);
-        this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.prettyKey(this.yAxisKey));
-      }
+      var data, xAxis, xDomain, yAxis, yDomain,
+        _this = this;
+      data = this.dimensions[this.xAxisKey].top(Infinity);
+      data = _.map(data, function(d) {
+        return _.pick(d, _this.xAxisKey, _this.yAxisKey);
+      });
+      xDomain = this.bufferAxes(d3.extent(data, function(d) {
+        return d[_this.xAxisKey];
+      }));
+      yDomain = this.bufferAxes(d3.extent(data, function(d) {
+        return d[_this.yAxisKey];
+      }));
+      this.x = d3.scale.linear().domain(xDomain).range([0, this.graphWidth]);
+      xAxis = d3.svg.axis().scale(this.x).orient('bottom').tickFormat(this.xFormat).tickValues(this.calculateTicks(this.x));
+      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
+      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.xAxisKey));
+      this.y = d3.scale.linear().domain(yDomain).range([this.graphHeight, 0]);
+      yAxis = d3.svg.axis().scale(this.y).orient('left').tickFormat(this.yFormat).tickValues(this.calculateTicks(this.y));
+      this.svg.append('g').attr('class', 'y axis').attr('transform', 'translate(0, 0)').call(yAxis);
+      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.yAxisKey));
       return data;
     };
 
     Scatterplot.prototype.drawPoints = function(data) {
       var point,
         _this = this;
-      if (data.length !== 0) {
-        point = this.svg.selectAll('.point').data(data).enter().append('g').attr('class', 'point').attr('transform', function(d) {
-          if (!(d.x != null) || !(d.y != null)) {
+      point = this.svg.selectAll('.point').data(data).enter().append('g').attr('class', 'point').attr('transform', function(d) {
+        if (!(d[_this.xAxisKey] != null) || !(d[_this.yAxisKey] != null)) {
 
-          } else {
-            return "translate(" + (_this.x(d.x)) + ", " + (_this.y(d.y)) + ")";
-          }
-        }).on('mouseover', this.displayTooltip).on('mouseout', this.removeTooltip);
-        return point.append('circle').attr('r', 3).attr('id', function(d) {
-          return d.x;
-        }).attr('fill', function(d) {
-          return d.color;
-        });
-      }
+        } else {
+          return "translate(" + (_this.x(d[_this.xAxisKey])) + ", " + (_this.y(d[_this.yAxisKey])) + ")";
+        }
+      }).on('mouseover', this.displayTooltip).on('mouseout', this.removeTooltip);
+      return point.append('circle').attr('r', 3).attr('id', function(d) {
+        return d.x;
+      }).attr('fill', function(d) {
+        return d.color;
+      });
     };
 
     Scatterplot.prototype.bufferAxes = function(domain) {
@@ -1390,22 +1327,6 @@
       });
       if (this.selectedElements) {
         return this.highlightRows();
-      }
-    };
-
-    Table.prototype.compare = function(a, b) {
-      if (typeof a === 'string') {
-        return a.localeCompare(b);
-      } else {
-        if (a < b) {
-          return -1;
-        } else {
-          if (a > b) {
-            return 1;
-          } else {
-            return 0;
-          }
-        }
       }
     };
 

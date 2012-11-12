@@ -30,8 +30,7 @@ class Histogram extends BaseTool
 
   createGraph: =>
     @selectedData = []
-    if typeof(@selectedKey) is 'undefined'
-      return
+    return if @selectedKey is 'id'
 
     @el.find('svg').empty()
 
@@ -44,18 +43,21 @@ class Histogram extends BaseTool
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
-
-    if @data.length > 1
-      data = _.map(@data, (d) => d[@selectedKey])
+    
+    # Get data from crossfilter object
+    allData = @dimensions[@selectedKey].top(Infinity)
+    
+    if allData.length > 1
+      data = _.map(allData, (d) => d[@selectedKey])
       data = _.filter(data, (d) => d isnt null)
 
       if @binNumber?
         bins = d3.layout.histogram().bins(@binNumber)(data)
       else
         bins = d3.layout.histogram()(data)
-      xDomain = d3.extent(@data, (d) => parseFloat(d[@selectedKey]))
-      yDomain= [0, d3.max(bins, (d) -> d.y)]
-    else if @data.length is 1
+      xDomain = d3.extent(allData, (d) => parseFloat(d[@selectedKey]))
+      yDomain = [0, d3.max(bins, (d) -> d.y)]
+    else if allData.length is 1
       svg.append('text')
         .attr('class', 'data-warning')
         .attr('y', graphHeight / 2)
@@ -70,7 +72,7 @@ class Histogram extends BaseTool
 
     if @selectedData.length isnt 0
       binRanges = _.map(bins, (d) -> d.x)
-      binFunction= d3.layout.histogram()
+      binFunction = d3.layout.histogram()
         .bins(binRanges)
 
       unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
@@ -130,7 +132,7 @@ class Histogram extends BaseTool
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 35)
-      .text(@prettyKey(@selectedKey))
+      .text(@formatKey(@selectedKey))
 
     @svg.append('text')
       .attr('class', 'y label')
@@ -147,7 +149,7 @@ class Histogram extends BaseTool
       else 
         @drawBars bins, @color
 
-  drawBars: (bins, color, halfSize = false, offset = false) => 
+  drawBars: (bins, color, halfSize = false, offset = false) =>
     width = @x(bins[1].x) - @x(bins[0].x) 
     width = if halfSize then (width / 2) - 1 else width - 2 
     witth = if offset then width - 1 else width

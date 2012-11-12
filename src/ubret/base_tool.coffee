@@ -3,15 +3,15 @@ class BaseTool
   required_opts: ['data', 'selector', 'el', 'keys']
 
   constructor: (opts) ->
-    
+
     for opt in @required_opts
       throw "missing option #{opt}" unless _.has opts, opt
-    
+
     @data = crossfilter(opts.data)
     @selector = opts.selector
     @keys = opts.keys
     @el = opts.el
-    
+
     @selectElementCb = opts.selectElementCb or ->
     @selectKeyCb = opts.selectKeyCb or ->
 
@@ -19,17 +19,12 @@ class BaseTool
     @selectedKey = opts.selectedKey or 'id'
 
     @createDimensions()
+    
     for filter in opts.filters
       @addFilter filter
 
   getTemplate: =>
     @template
-
-  prettyKey: (key) =>
-    @capitalizeWords(@underscoresToSpaces(key))
-
-  uglifyKey: (key) =>
-    @spacesToUnderscores(@lowercaseWords(key))
 
   selectElements: (ids) =>
     @selectedElements = ids
@@ -42,10 +37,10 @@ class BaseTool
     @start()
 
   createDimensions: =>
-    @dimensions = new Object
+    @dimensions = {}
     for key in @keys
       @dimensions.id = @data.dimension( (d) -> d.id )
-      @dimensions[key] = @data.dimension( (d) -> d[key] )
+      @dimensions[key] = @data.dimension( (d) -> d.key )
 
   addFilter: (filter) =>
     @dimensions[filter.key].filterRange([filter.low, filter.hight])
