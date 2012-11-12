@@ -1296,6 +1296,7 @@
 
       this.start = __bind(this.start, this);
       Table.__super__.constructor.call(this, opts);
+      this.sortOrder = 'top';
       this.createTable();
       this.start();
     }
@@ -1327,7 +1328,7 @@
       var tr,
         _this = this;
       this.tbody.selectAll('tr').remove();
-      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey].top(Infinity)).enter().append('tr').attr('data-id', function(d) {
+      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](Infinity)).enter().append('tr').attr('data-id', function(d) {
         return d.id;
       }).on('click', this.selection);
       tr.selectAll('td').data(function(d) {
@@ -1365,6 +1366,15 @@
     Table.prototype.changeData = function(data) {
       this.data = data;
       return this.createRows();
+    };
+
+    Table.prototype.selectKey = function(key) {
+      if (key === this.selectedKey && this.sortOrder === 'top') {
+        this.sortOrder = 'bottom';
+      } else {
+        this.sortOrder = 'top';
+      }
+      return Table.__super__.selectKey.call(this, key);
     };
 
     Table.prototype.selection = function(d, i) {

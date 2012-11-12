@@ -4,6 +4,7 @@ class Table extends BaseTool
 
   constructor: (opts) ->
     super opts
+    @sortOrder = 'top'
     @createTable()
     @start()
 
@@ -29,7 +30,7 @@ class Table extends BaseTool
     @tbody.selectAll('tr').remove()
 
     tr = @tbody.selectAll('tr')
-      .data(@dimensions[@selectedKey].top(Infinity))
+      .data(@dimensions[@selectedKey][@sortOrder](Infinity))
       .enter().append('tr')
         .attr('data-id', (d) -> d.id)
         .on('click', @selection)
@@ -54,6 +55,13 @@ class Table extends BaseTool
   changeData: (data) =>
     @data = data
     @createRows()
+
+  selectKey: (key) ->
+    if key is @selectedKey and @sortOrder is 'top'
+      @sortOrder = 'bottom'
+    else
+      @sortOrder = 'top'
+    super key
 
   selection: (d, i) =>
     ids = @selectedElements
