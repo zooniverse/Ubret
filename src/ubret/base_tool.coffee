@@ -45,6 +45,10 @@ class BaseTool
   addFilter: (filter) =>
     @dimensions[filter.key].filterRange([filter.low, filter.hight])
 
+  receiveSetting: (key, value) =>
+    @[key] = value
+    @start()
+
   # Helpers
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->

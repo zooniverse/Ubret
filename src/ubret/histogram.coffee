@@ -1,22 +1,9 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Histogram extends BaseTool
   
-  template:
-    """
-    <div class="histogram">
-      <div id="<%- selector %>">
-        <svg></svg>
-      </div>
-    </div>
-    """
-  
   constructor: (opts) ->
-    
     super opts
-    compiled = _.template @template, {selector: @selector}
-    @el.html compiled
     
     @height = opts.height or 480
     @width = opts.width or 640
@@ -30,7 +17,7 @@ class Histogram extends BaseTool
 
   createGraph: =>
     @selectedData = []
-    return if @selectedKey is 'id'
+    return if @xAxis is 'id'
 
     @el.find('svg').empty()
 
@@ -45,17 +32,17 @@ class Histogram extends BaseTool
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
     
     # Get data from crossfilter object
-    allData = @dimensions[@selectedKey].top(Infinity)
+    allData = @dimensions[@xAxis].top(Infinity)
     
     if allData.length > 1
-      data = _.map(allData, (d) => d[@selectedKey])
+      data = _.map(allData, (d) => d[@xAxis])
       data = _.filter(data, (d) => d isnt null)
 
       if @binNumber?
         bins = d3.layout.histogram().bins(@binNumber)(data)
       else
         bins = d3.layout.histogram()(data)
-      xDomain = d3.extent(allData, (d) => parseFloat(d[@selectedKey]))
+      xDomain = d3.extent(allData, (d) => parseFloat(d[@xAxis]))
       yDomain = [0, d3.max(bins, (d) -> d.y)]
     else if allData.length is 1
       svg.append('text')
@@ -76,8 +63,8 @@ class Histogram extends BaseTool
         .bins(binRanges)
 
       unselectedData = _.filter(@filteredData, (d) => not (d in @selectedData))
-      selectedData = _.map(@selectedData, (d) => d[@selectedKey])
-      unselectedData = _.map(unselectedData, (d) => d[@selectedKey]) 
+      selectedData = _.map(@selectedData, (d) => d[@xAxis])
+      unselectedData = _.map(unselectedData, (d) => d[@xAxis]) 
 
       unselectedBin = binFunction(unselectedData)
       selectedBin = binFunction(selectedData)
@@ -132,7 +119,7 @@ class Histogram extends BaseTool
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 35)
-      .text(@formatKey(@selectedKey))
+      .text(@formatKey(@xAxis))
 
     @svg.append('text')
       .attr('class', 'y label')
@@ -177,13 +164,8 @@ class Histogram extends BaseTool
       .attr("text-anchor", "middle")
       .text((d) => @formatCount(d.y))
 
-  setXVar: (variable) =>
-    @selectedKey = variable
-    @createGraph()
-
   start: =>
     @createGraph()
-
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram
