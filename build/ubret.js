@@ -147,8 +147,8 @@
         selector: this.selector
       });
       this.el.html(compiled);
-      this.height = opts.width || this.el.height();
-      this.width = opts.height || this.el.width();
+      this.width = opts.width || this.el.width();
+      this.height = opts.height || this.el.height();
       this.margin = opts.margin || {
         left: 60,
         top: 20,
@@ -161,7 +161,7 @@
     }
 
     Graph.prototype.setupAxes = function() {
-      var axis, graphHeight, graphWidth, key, _i, _ref;
+      var axis, key, _i, _ref;
       console.log('Graph setupAxes');
       for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
         key = "axis" + axis;
@@ -170,17 +170,9 @@
         }
       }
       this.el.find('svg').empty();
-      graphHeight = this.height - (this.margin.top + this.margin.bottom);
-      graphWidth = this.width - (this.margin.left + this.margin.right);
+      this.graphHeight = this.height - (this.margin.top + this.margin.bottom);
+      this.graphWidth = this.width - (this.margin.left + this.margin.right);
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      this.x = d3.scale.linear().range([0, graphWidth]);
-      this.xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + graphHeight + ")").call(this.xAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', graphWidth / 2).attr('y', graphHeight + 40).text(this.formatKey(this.axis1));
-      this.y = d3.scale.linear().range([graphHeight, 0]);
-      this.yAxis = d3.svg.axis().scale(this.y).orient('left');
-      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(this.yAxis);
-      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
       return this.draw();
     };
 
@@ -407,14 +399,35 @@
     }
 
     Histogram2.prototype.draw = function() {
-      var data, domain,
+      var binSize, data, extent, group, top, xAxis, yAxis, ymax,
         _this = this;
       console.log('Histogram2 draw');
-      data = this.dimensions[this.axis1].top(Infinity);
-      data = _.map(data, function(d) {
+      top = this.dimensions[this.axis1].top(Infinity);
+      data = _.map(top, function(d) {
         return d[_this.axis1];
       });
-      return domain = d3.extent(data);
+      extent = d3.extent(data);
+      binSize = (extent[1] - extent[0]) / this.bins;
+      group = this.dimensions[this.axis1].group(function(d) {
+        return Math.floor(d / binSize);
+      });
+      data = group.top(Infinity);
+      ymax = data[0].value;
+      this.x = d3.scale.linear().range([0, this.graphWidth]).domain(extent);
+      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
+      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
+      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
+      this.y = d3.scale.linear().range([this.graphHeight, 0]).domain([0, ymax]);
+      yAxis = d3.svg.axis().scale(this.y).orient('left');
+      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
+      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
+      return this.bars = this.svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
+        return _this.x((d.key + 1) * binSize);
+      }).attr('width', this.x(binSize)).attr('y', function(d) {
+        return _this.y(d.value);
+      }).attr('height', function(d) {
+        return _this.graphHeight - _this.y(d.value);
+      });
     };
 
     return Histogram2;

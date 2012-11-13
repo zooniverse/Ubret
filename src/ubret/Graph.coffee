@@ -11,8 +11,8 @@ class Graph extends BaseTool
     compiled = _.template @template, {selector: @selector}
     @el.html compiled
     
-    @height = opts.width or @el.height()
-    @width  = opts.height or @el.width()
+    @width  = opts.width or @el.width()
+    @height = opts.height or @el.height()
     @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
     @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
     
@@ -29,55 +29,14 @@ class Graph extends BaseTool
     
     @el.find('svg').empty()
     
-    graphHeight = @height - (@margin.top + @margin.bottom)
-    graphWidth  = @width - (@margin.left + @margin.right)
+    @graphHeight = @height - (@margin.top + @margin.bottom)
+    @graphWidth  = @width - (@margin.left + @margin.right)
     
     @svg = d3.select("#{@selector} svg")
       .attr('width', @width)
       .attr('height', @height)
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
-
-    # Set up x axis
-    @x = d3.scale.linear()
-      .range([0, graphWidth])
-    
-    @xAxis = d3.svg.axis()
-      .scale(@x)
-      .orient('bottom')
-    
-    @svg.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', "translate(0, #{graphHeight})")
-      .call(@xAxis)
-    
-    @svg.append('text')
-      .attr('class', 'x label')
-      .attr('text-anchor', 'middle')
-      .attr('x', graphWidth / 2)
-      .attr('y', graphHeight + 40)
-      .text(@formatKey(@axis1))
-    
-    # Set up y axis
-    @y = d3.scale.linear()
-      .range([graphHeight, 0])
-    
-    @yAxis = d3.svg.axis()
-      .scale(@y)
-      .orient('left')
-
-    @svg.append('g')
-      .attr('class', 'y axis')
-      .attr('transform', "translate(0, 0)")
-      .call(@yAxis)
-
-    @svg.append('text')
-      .attr('class', 'y label')
-      .attr('text-anchor', 'middle')
-      .attr('y', -60)
-      .attr('x', -(graphHeight / 2))
-      .attr('transform', "rotate(-90)")
-      .text(@formatKey(@axis2))
     
     @draw()
   
