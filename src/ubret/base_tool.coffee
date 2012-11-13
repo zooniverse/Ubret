@@ -37,10 +37,10 @@ class BaseTool
     @start()
 
   createDimensions: =>
-    @dimensions = {}
+    @dimensions = new Object
     for key in @keys
       @dimensions.id = @data.dimension( (d) -> d.id )
-      @dimensions[key] = @data.dimension( (d) -> d.key )
+      @dimensions[key] = @data.dimension( (d) -> d[key] )
 
   addFilter: (filter) =>
     @dimensions[filter.key].filterRange([filter.low, filter.hight])

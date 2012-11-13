@@ -9,7 +9,7 @@ class Statistics extends BaseTool
     @start()
 
   start: =>
-    return is @selectedKey is 'id'
+    return if @selectedKey is 'id'
     @createStats()
     @displayStats()
 
@@ -46,13 +46,21 @@ class Statistics extends BaseTool
     # Check for odd length
     midPoint = count / 2
     if midPoint % 1
-      median = ((@dimensions[@selectedKey].top(Math.floor midPoint) + @dimensions[@selectedKey].top(Math.ceil midPoint)) / 2)
+      topPoint = Math.ceil midPoint
+      bottomPoint = Math.floor midPoint
+      topPoint = _.last(@dimensions[@selectedKey].top(topPoint))[@selectedKey]
+      bottomPoint = _.last(@dimensions[@selectedKey].top(bottomPoint))[@selectedKey]
+
+      median = (topPoint + bottomPoint) / 2
     else
       median = @dimensions[@selectedKey].top(midPoint)
-    _.last(median)[@selectedKey]
+      median = _.last(median)[@selectedKey]
+    console.log @selectedKey, median
+    median
 
   mode: =>
     mode = @dimensions[@selectedKey].group().reduceCount().top(1)
+    console.log mode
     mode[0].key
 
   min: =>

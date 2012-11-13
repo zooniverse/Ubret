@@ -49,10 +49,10 @@
       this.selector = opts.selector;
       this.keys = opts.keys;
       this.el = opts.el;
-      this.selectElementCb = opts.selectElementCb || function() {};
-      this.selectKeyCb = opts.selectKeyCb || function() {};
-      this.selectedElement = opts.selectedElement || null;
+      this.selectedElements = opts.selectedElements || null;
+      this.selectElementsCb = opts.selectElementsCb || function() {};
       this.selectedKey = opts.selectedKey || 'id';
+      this.selectKeyCb = opts.selectKeyCb || function() {};
       this.createDimensions();
       _ref1 = opts.filters;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -79,7 +79,7 @@
 
     BaseTool.prototype.createDimensions = function() {
       var key, _i, _len, _ref, _results;
-      this.dimensions = {};
+      this.dimensions = new Object;
       _ref = this.keys;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -88,7 +88,7 @@
           return d.id;
         });
         _results.push(this.dimensions[key] = this.data.dimension(function(d) {
-          return d.key;
+          return d[key];
         }));
       }
       return _results;
@@ -1043,21 +1043,28 @@
     };
 
     Statistics.prototype.median = function() {
-      var count, median, midPoint;
+      var bottomPoint, count, median, midPoint, topPoint;
       count = this.dimensions.id.groupAll().reduceCount().value();
       midPoint = count / 2;
       if (midPoint % 1) {
-        median = (this.dimensions[this.selectedKey].top(Math.floor(midPoint)) + this.dimensions[this.selectedKey].top(Math.ceil(midPoint))) / 2;
+        topPoint = Math.ceil(midPoint);
+        bottomPoint = Math.floor(midPoint);
+        topPoint = _.last(this.dimensions[this.selectedKey].top(topPoint))[this.selectedKey];
+        bottomPoint = _.last(this.dimensions[this.selectedKey].top(bottomPoint))[this.selectedKey];
+        median = (topPoint + bottomPoint) / 2;
       } else {
         median = this.dimensions[this.selectedKey].top(midPoint);
+        median = _.last(median)[this.selectedKey];
       }
-      return _.last(median)[this.selectedKey];
+      console.log(this.selectedKey, median);
+      return median;
     };
 
     Statistics.prototype.mode = function() {
       var mode;
-      mode = this.dimensions[this.selectedKey].group().reduceCount().top(Infinity);
-      return console.log(mode);
+      mode = this.dimensions[this.selectedKey].group().reduceCount().top(1);
+      console.log(mode);
+      return mode[0].key;
     };
 
     Statistics.prototype.min = function() {
