@@ -13,11 +13,11 @@ class BaseTool
     @keys = opts.keys
     @el = opts.el
 
-    @selectElementCb = opts.selectElementCb or ->
-    @selectKeyCb = opts.selectKeyCb or ->
+    @selectedElements = opts.selectedElements or null
+    @selectElementsCb = opts.selectElementsCb or ->
 
-    @selectedElement = opts.selectedElement or null
     @selectedKey = opts.selectedKey or 'id'
+    @selectKeyCb = opts.selectKeyCb or ->
 
     @createDimensions()
     
@@ -38,13 +38,14 @@ class BaseTool
     @start()
 
   createDimensions: =>
-    @dimensions = {}
+    @dimensions = new Object
     for key in @keys
       @dimensions.id = @data.dimension( (d) -> d.id )
-      @dimensions[key] = @data.dimension( (d) -> d.key )
+      @dimensions[key] = @data.dimension( (d) -> d[key] )
 
   addFilter: (filter) =>
     @dimensions[filter.key].filterRange([filter.low, filter.hight])
+    @start()
 
   receiveSetting: (key, value) =>
     @[key] = value

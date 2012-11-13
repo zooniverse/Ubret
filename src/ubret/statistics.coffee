@@ -9,10 +9,15 @@ class Statistics extends BaseTool
     @start()
 
   start: =>
+    return if @selectedKey is 'id'
     @createStats()
     @displayStats()
 
   createList: =>
+    @title = d3.select(@selector)
+      .append('h3')
+      .attr('class', 'stat-key')
+
     @ul = d3.select(@selector)
       .append('ul')
       .attr('class', 'statistics')
@@ -23,6 +28,8 @@ class Statistics extends BaseTool
 
   displayStats: => 
     @ul.selectAll('li').remove()
+
+    @title.text(@formatKey(@selectedKey))
 
     li = @ul.selectAll('li')
       .data(@statistics)
@@ -45,13 +52,21 @@ class Statistics extends BaseTool
     # Check for odd length
     midPoint = count / 2
     if midPoint % 1
-      median = ((@dimensions[@selectedKey].top(Math.floor midPoint) + @dimensions[@selectedKey].top(Math.ceil midPoint)) / 2)
+      topPoint = Math.ceil midPoint
+      bottomPoint = Math.floor midPoint
+      topPoint = _.last(@dimensions[@selectedKey].top(topPoint))[@selectedKey]
+      bottomPoint = _.last(@dimensions[@selectedKey].top(bottomPoint))[@selectedKey]
+
+      median = (topPoint + bottomPoint) / 2
     else
       median = @dimensions[@selectedKey].top(midPoint)
-    _.last(median)[@selectedKey]
+      median = _.last(median)[@selectedKey]
+    console.log @selectedKey, median
+    median
 
   mode: =>
     mode = @dimensions[@selectedKey].group().reduceCount().top(1)
+    console.log mode
     mode[0].key
 
   min: =>
