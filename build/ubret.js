@@ -1002,6 +1002,7 @@
     };
 
     Statistics.prototype.createList = function() {
+      this.title = d3.select(this.selector).append('h3').attr('class', 'stat-key');
       return this.ul = d3.select(this.selector).append('ul').attr('class', 'statistics');
     };
 
@@ -1021,6 +1022,7 @@
       var li,
         _this = this;
       this.ul.selectAll('li').remove();
+      this.title.text(this.formatKey(this.selectedKey));
       return li = this.ul.selectAll('li').data(this.statistics).enter().append('li').attr('data-stat', function(d) {
         return d[0];
       }).text(function(d) {

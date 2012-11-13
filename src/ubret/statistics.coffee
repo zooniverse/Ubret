@@ -14,6 +14,10 @@ class Statistics extends BaseTool
     @displayStats()
 
   createList: =>
+    @title = d3.select(@selector)
+      .append('h3')
+      .attr('class', 'stat-key')
+
     @ul = d3.select(@selector)
       .append('ul')
       .attr('class', 'statistics')
@@ -24,6 +28,8 @@ class Statistics extends BaseTool
 
   displayStats: => 
     @ul.selectAll('li').remove()
+
+    @title.text(@formatKey(@selectedKey))
 
     li = @ul.selectAll('li')
       .data(@statistics)
