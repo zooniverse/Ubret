@@ -26,7 +26,7 @@ class Table extends BaseTool
       .enter().append("th")
         .on('click', (d, i) => @selectKey d)
         .attr('data-key', (d) -> d)
-        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow()}")
+        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow() else ''}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()

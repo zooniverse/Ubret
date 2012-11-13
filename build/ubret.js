@@ -1332,7 +1332,7 @@
       }).attr('data-key', function(d) {
         return d;
       }).text(function(d) {
-        return "" + (_this.formatKey(d)) + " " + (d === _this.selectedKey ? _this.arrow() : void 0);
+        return "" + (_this.formatKey(d)) + " " + (d === _this.selectedKey ? _this.arrow() : '');
       });
     };
 
