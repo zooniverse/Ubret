@@ -95,7 +95,8 @@
     };
 
     BaseTool.prototype.addFilter = function(filter) {
-      return this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+      this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+      return this.start();
     };
 
     BaseTool.prototype.receiveSetting = function(key, value) {
@@ -993,6 +994,9 @@
     }
 
     Statistics.prototype.start = function() {
+      if (this.selectedKey === 'id') {
+        return;
+      }
       this.createStats();
       return this.displayStats();
     };
@@ -1052,8 +1056,8 @@
 
     Statistics.prototype.mode = function() {
       var mode;
-      mode = this.dimensions[this.selectedKey].group().reduceCount().top(1);
-      return mode[0].key;
+      mode = this.dimensions[this.selectedKey].group().reduceCount().top(Infinity);
+      return console.log(mode);
     };
 
     Statistics.prototype.min = function() {

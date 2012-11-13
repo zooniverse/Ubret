@@ -12,11 +12,11 @@ class BaseTool
     @keys = opts.keys
     @el = opts.el
 
-    @selectElementCb = opts.selectElementCb or ->
-    @selectKeyCb = opts.selectKeyCb or ->
+    @selectedElements = opts.selectedElements or null
+    @selectElementsCb = opts.selectElementsCb or ->
 
-    @selectedElement = opts.selectedElement or null
     @selectedKey = opts.selectedKey or 'id'
+    @selectKeyCb = opts.selectKeyCb or ->
 
     @createDimensions()
     
@@ -44,6 +44,7 @@ class BaseTool
 
   addFilter: (filter) =>
     @dimensions[filter.key].filterRange([filter.low, filter.hight])
+    @start()
 
   receiveSetting: (key, value) =>
     @[key] = value

@@ -1,4 +1,3 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class SubjectViewer extends BaseTool

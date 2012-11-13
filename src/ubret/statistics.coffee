@@ -9,6 +9,7 @@ class Statistics extends BaseTool
     @start()
 
   start: =>
+    return is @selectedKey is 'id'
     @createStats()
     @displayStats()
 
