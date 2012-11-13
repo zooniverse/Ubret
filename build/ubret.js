@@ -46,6 +46,7 @@
         }
       }
       this.data = crossfilter(opts.data);
+      this.count = opts.data.length;
       this.selector = opts.selector;
       this.keys = opts.keys;
       this.el = opts.el;
@@ -134,9 +135,9 @@
     __extends(Graph, _super);
 
     function Graph(opts) {
-      this.setAxis = __bind(this.setAxis, this);
+      this.start = __bind(this.start, this);
 
-      this.createGraph = __bind(this.createGraph, this);
+      this.setupAxes = __bind(this.setupAxes, this);
 
       var compiled;
       console.log('Graph');
@@ -158,15 +159,32 @@
       this.selectionColor = opts.selectionColor || '#CD3E20';
     }
 
-    Graph.prototype.createGraph = function() {
-      var graphHeight, graphWidth;
+    Graph.prototype.setupAxes = function() {
+      var axis, graphHeight, graphWidth, key, _i, _ref;
+      console.log('Graph setupAxes');
+      for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
+        key = "axis" + axis;
+        if (this[key] === "") {
+          return;
+        }
+      }
+      this.el.find('svg').empty();
       graphHeight = this.height - (this.margin.top + this.margin.bottom);
       graphWidth = this.width - (this.margin.left + this.margin.right);
-      return this.svg = d3.select(this.selector).append('svg').attr('height', graphHeight).attr('width', graphWidth);
+      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
+      this.x = d3.scale.linear().range([0, graphWidth]);
+      this.xAxis = d3.svg.axis().scale(this.x).orient('bottom');
+      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + graphHeight + ")").call(this.xAxis);
+      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', graphWidth / 2).attr('y', graphHeight + 40).text(this.formatKey(this.axis1));
+      this.y = d3.scale.linear().range([graphHeight, 0]);
+      this.yAxis = d3.svg.axis().scale(this.y).orient('left');
+      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(this.yAxis);
+      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
+      return this.draw();
     };
 
-    Graph.prototype.setAxis = function(axis, variable) {
-      return console.log(axis, variable);
+    Graph.prototype.start = function() {
+      return this.setupAxes();
     };
 
     return Graph;
@@ -220,7 +238,7 @@
       var allData, bin, binFunction, binRanges, bins, data, lastBin, lastTick, selectedBin, selectedData, ticks, unselectedBin, unselectedData, xAxis, xDomain, yAxis, yDomain, _i, _len,
         _this = this;
       this.selectedData = [];
-      if (this.xAxis === 'id') {
+      if (this.axis1 === '') {
         return;
       }
       this.el.find('svg').empty();
@@ -228,7 +246,7 @@
       this.graphHeight = this.height - this.margin.top - this.margin.bottom;
       this.formatCount = d3.format(',.0f');
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      allData = this.dimensions[this.xAxis].top(Infinity);
+      allData = this.dimensions[this.axis1].top(Infinity);
       if (allData.length > 1) {
         data = _.map(allData, function(d) {
           return d[_this.xAxis];
@@ -236,11 +254,7 @@
         data = _.filter(data, function(d) {
           return d !== null;
         });
-        if (this.binNumber != null) {
-          bins = d3.layout.histogram().bins(this.binNumber)(data);
-        } else {
-          bins = d3.layout.histogram()(data);
-        }
+        bins = this.binNumber != null ? d3.layout.histogram().bins(this.binNumber)(data) : d3.layout.histogram()(data);
         xDomain = d3.extent(allData, function(d) {
           return parseFloat(d[_this.xAxis]);
         });
@@ -287,7 +301,7 @@
       this.y = d3.scale.linear().domain(yDomain).range([this.graphHeight, 0]);
       xAxis = d3.svg.axis().scale(this.x).orient('bottom');
       if (bins.length !== 0) {
-        ticks = new Array;
+        ticks = [];
         for (_i = 0, _len = bins.length; _i < _len; _i++) {
           bin = bins[_i];
           ticks.push(bin.x);
@@ -384,50 +398,22 @@
     Histogram2.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Histogram2(opts) {
-      this.start = __bind(this.start, this);
-
-      this.setXVar = __bind(this.setXVar, this);
-
-      this.drawBars = __bind(this.drawBars, this);
+      this.draw = __bind(this.draw, this);
       console.log('Histogram2');
       Histogram2.__super__.constructor.call(this, opts);
-      this.yLabel = opts.yLabel || 'Count';
+      this.bins = opts.bins ? opts.bins : Math.log(this.count) / Math.log(2) + 1;
+      this.axis2 = opts.yLabel || 'Count';
     }
 
-    Histogram2.prototype.drawBars = function(bins, color, halfSize, offset) {
-      var bar, width, witth,
+    Histogram2.prototype.draw = function() {
+      var data, domain,
         _this = this;
-      if (halfSize == null) {
-        halfSize = false;
-      }
-      if (offset == null) {
-        offset = false;
-      }
-      width = this.x(bins[1].x) - this.x(bins[0].x);
-      width = halfSize ? (width / 2) - 1 : width - 2;
-      witth = offset ? width - 1 : width;
-      bar = this.svg.selectAll(".bar-" + color).data(bins).enter().append('g').attr('class', 'bar').attr('transform', function(d) {
-        if (offset) {
-          return "translate(" + (_this.x(d.x) + width + 1) + ", " + (_this.y(d.y) - 1) + ")";
-        } else {
-          return "translate(" + (_this.x(d.x)) + ", " + (_this.y(d.y) - 1) + ")";
-        }
+      console.log('Histogram2 draw');
+      data = this.dimensions[this.axis1].top(Infinity);
+      data = _.map(data, function(d) {
+        return d[_this.axis1];
       });
-      bar.append('rect').attr('x', 1).attr('width', Math.floor(width)).attr('height', function(d) {
-        return _this.graphHeight - _this.y(d.y);
-      }).attr('fill', color);
-      return bar.append('text').attr("dy", ".75em").attr("y", 6).attr("x", width / 2).attr("text-anchor", "middle").text(function(d) {
-        return _this.formatCount(d.y);
-      });
-    };
-
-    Histogram2.prototype.setXVar = function(variable) {
-      this.selectedKey = variable;
-      return this.createGraph();
-    };
-
-    Histogram2.prototype.start = function() {
-      return this.createGraph();
+      return domain = d3.extent(data);
     };
 
     return Histogram2;
@@ -638,6 +624,57 @@
     module.exports = Map;
   } else {
     window.Ubret['Map'] = Map;
+  }
+
+}).call(this);
+// Generated by CoffeeScript 1.3.3
+(function() {
+  var Graph, Scatter2D,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  Graph = window.Ubret.Graph || require('./Graph');
+
+  Scatter2D = (function(_super) {
+
+    __extends(Scatter2D, _super);
+
+    Scatter2D.prototype.axes = 2;
+
+    Scatter2D.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
+
+    function Scatter2D(opts) {
+      this.draw = __bind(this.draw, this);
+      console.log('Scatter2D');
+      Scatter2D.__super__.constructor.call(this, opts);
+    }
+
+    Scatter2D.prototype.draw = function() {
+      var data, xDomain, yDomain,
+        _this = this;
+      console.log('Scatter2D draw');
+      data = this.dimensions[this.axis1].top(Infinity);
+      data = _.map(data, function(d) {
+        return _.pick(d, d[_this.axis1], d[_this.axis2]);
+      });
+      xDomain = d3.extent(data, function(d) {
+        return d[_this.axis1];
+      });
+      yDomain = d3.extent(data, function(d) {
+        return d[_this.axis2];
+      });
+      return console.log(xDomain, yDomain);
+    };
+
+    return Scatter2D;
+
+  })(Graph);
+
+  if (typeof require === 'function' && typeof module === 'object' && typeof exports === 'object') {
+    module.exports = Scatter2D;
+  } else {
+    window.Ubret['Scatter2D'] = Scatter2D;
   }
 
 }).call(this);

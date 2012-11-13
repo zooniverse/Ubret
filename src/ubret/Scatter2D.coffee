@@ -1,8 +1,8 @@
 
 Graph = window.Ubret.Graph or require('./Graph')
 
-class Histogram2 extends Graph
-  axes: 1
+class Scatter2D extends Graph
+  axes: 2
   
   template:
     """
@@ -14,25 +14,22 @@ class Histogram2 extends Graph
     """
   
   constructor: (opts) ->
-    console.log 'Histogram2'
+    console.log 'Scatter2D'
     super opts
-    
-    # Compute the number of bins for the unfiltered dataset
-    @bins = if opts.bins then opts.bins else Math.log(@count) / Math.log(2) + 1
-    @axis2 = opts.yLabel or 'Count'
   
   draw: =>
-    console.log 'Histogram2 draw'
+    console.log 'Scatter2D draw'
     
     # Get data from crossfilter object
     data = @dimensions[@axis1].top(Infinity)
-    data = _.map(data, (d) => d[@axis1])
+    data = _.map(data, (d) => _.pick(d, d[@axis1], d[@axis2]))
     
-    domain = d3.extent(data)
+    xDomain = d3.extent(data, (d) => d[@axis1])
+    yDomain = d3.extent(data, (d) => d[@axis2])
     
+    console.log xDomain, yDomain
     
-
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Histogram2
+  module.exports = Scatter2D
 else
-  window.Ubret['Histogram2'] = Histogram2
+  window.Ubret['Scatter2D'] = Scatter2D

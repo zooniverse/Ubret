@@ -1,7 +1,7 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Histogram extends BaseTool
-  
+
   constructor: (opts) ->
     super opts
     
@@ -12,13 +12,13 @@ class Histogram extends BaseTool
     @color = opts.color or '#0172E6'
     @selectionColor = opts.selectionColor or '#CD3E20'
     @yLabel = opts.yLabel or 'Count'
-
+    
     @createGraph()
 
   createGraph: =>
     @selectedData = []
-    return if @xAxis is 'id'
-
+    return if @axis1 is ''
+    
     @el.find('svg').empty()
 
     @graphWidth = @width - @margin.left - @margin.right
@@ -32,16 +32,14 @@ class Histogram extends BaseTool
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
     
     # Get data from crossfilter object
-    allData = @dimensions[@xAxis].top(Infinity)
+    allData = @dimensions[@axis1].top(Infinity)
     
     if allData.length > 1
       data = _.map(allData, (d) => d[@xAxis])
       data = _.filter(data, (d) => d isnt null)
 
-      if @binNumber?
-        bins = d3.layout.histogram().bins(@binNumber)(data)
-      else
-        bins = d3.layout.histogram()(data)
+      bins = if @binNumber? then d3.layout.histogram().bins(@binNumber)(data) else d3.layout.histogram()(data)
+
       xDomain = d3.extent(allData, (d) => parseFloat(d[@xAxis]))
       yDomain = [0, d3.max(bins, (d) -> d.y)]
     else if allData.length is 1
@@ -84,7 +82,7 @@ class Histogram extends BaseTool
       .orient('bottom')
 
     if bins.length isnt 0
-      ticks = new Array
+      ticks = []
       ticks.push bin.x for bin in bins
 
       lastBin = _.last bins

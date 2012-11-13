@@ -8,6 +8,7 @@ class BaseTool
       throw "missing option #{opt}" unless _.has opts, opt
 
     @data = crossfilter(opts.data)
+    @count = opts.data.length
     @selector = opts.selector
     @keys = opts.keys
     @el = opts.el
