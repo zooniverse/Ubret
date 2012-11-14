@@ -87,7 +87,6 @@ class Histogram2 extends Graph
         .attr('y', (d) => return @y(d.value))
         .attr('height', (d) => return @graphHeight - @y(d.value))
 
-
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram2
 else

@@ -25,7 +25,7 @@ class Graph extends BaseTool
     # Check that all axes are defined
     for axis in [1..@axes]
       key = "axis#{axis}"
-      return if @[key] is ""
+      return if @[key] in ["", undefined]
     
     @el.find('svg').empty()
     
@@ -41,6 +41,14 @@ class Graph extends BaseTool
     @draw()
   
   start: => @setupAxes()
+
+
+  bufferAxes: (domain) ->
+    for border, i in domain
+      if border > 0
+        border = border - (border * 0.15)
+      else
+        border = border + (border * 0.15)
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Graph
