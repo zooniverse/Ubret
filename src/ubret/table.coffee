@@ -26,13 +26,13 @@ class Table extends BaseTool
       .enter().append("th")
         .on('click', (d, i) => @selectKey d)
         .attr('data-key', (d) -> d)
-        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow()}")
+        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow() else ''}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()
 
     tr = @tbody.selectAll('tr')
-      .data(@dimensions[@selectedKey][@sortOrder](Infinity))
+      .data(@dimensions[@selectedKey][@sortOrder](20))
       .enter().append('tr')
         .attr('data-id', (d) -> d.id)
         .on('click', @selection)
@@ -42,7 +42,7 @@ class Table extends BaseTool
       .enter().append('td')
         .text( (d) -> return d)
 
-    if @selectedElements
+    if @selectedElements.length isnt 0
       @highlightRows()
 
   toArray: (data) =>
@@ -52,7 +52,7 @@ class Table extends BaseTool
     return ret
 
   highlightRows: =>
-    @tbody.select("[data-id=#{id}]").attr('class', 'selected') for id in @selectedElements
+    @tbody.select("[data-id=\"#{id}\"]").attr('class', 'selected') for id in @selectedElements
 
   changeData: (data) =>
     @data = data

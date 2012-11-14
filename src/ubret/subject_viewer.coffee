@@ -4,10 +4,6 @@ class SubjectViewer extends BaseTool
 
   template:
     """
-    <% if(subject.image) { %>
-      <img src="<%- subject.image %>" />
-    <% } %>
-
     <ul>
       <% for(i = 0; i < keys.length; i++) { %>
         <li>
@@ -19,31 +15,21 @@ class SubjectViewer extends BaseTool
 
   constructor: (opts) ->
     super
-    @count = 0
     @start()
 
   start: =>
-    if @selectedElement
-      for datum, i in @data
-        if @selectedElement is datum.id
-          @count = i
+    data = @dimensions.id.top(Infinity)
     @render()
 
   render: =>
-    compiled = _.template @template, { subject: @data[@count], keys: @keys }
+    if @selectedElements
+      subject = _.find @dimensions.id.top(Infinity), (record) =>
+        record.id == @selectedElements[0]
+    else
+      subject = @dimensions.id.top(Infinity)[0]
+
+    compiled = _.template @template, { subject: subject, keys: @keys }
     @el.html compiled
-
-  prevSubject: =>
-    @count -= 1
-    if @count < 0
-      @count = @data.length - 1
-    @selectElementCb @data[@count].id
-
-  nextSubject: =>
-    @count += 1
-    if @count >= @data.length
-      @count = 0
-    @selectElementCb @data[@count].id
 
     
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
