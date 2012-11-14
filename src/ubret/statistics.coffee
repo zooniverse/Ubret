@@ -9,7 +9,9 @@ class Statistics extends BaseTool
     @start()
 
   start: =>
-    return if @selectedKey is 'id'
+    # Assign a selected key so the tool renders immediately.
+    if @selectedKey is 'id'
+      @selectedKey = @keys[0]
     @createStats()
     @displayStats()
 

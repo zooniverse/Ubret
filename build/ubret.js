@@ -1080,7 +1080,7 @@
 
     Statistics.prototype.start = function() {
       if (this.selectedKey === 'id') {
-        return;
+        this.selectedKey = this.keys[0];
       }
       this.createStats();
       return this.displayStats();
