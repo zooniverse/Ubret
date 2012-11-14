@@ -27,7 +27,7 @@
     function BaseTool(opts) {
       this.receiveSetting = __bind(this.receiveSetting, this);
 
-      this.addFilter = __bind(this.addFilter, this);
+      this.addFilters = __bind(this.addFilters, this);
 
       this.createDimensions = __bind(this.createDimensions, this);
 
@@ -37,7 +37,7 @@
 
       this.getTemplate = __bind(this.getTemplate, this);
 
-      var filter, opt, _i, _j, _len, _len1, _ref, _ref1;
+      var opt, _i, _len, _ref;
       _ref = this.required_opts;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         opt = _ref[_i];
@@ -55,11 +55,8 @@
       this.selectedKey = opts.selectedKey || 'id';
       this.selectKeyCb = opts.selectKeyCb || function() {};
       this.createDimensions();
-      _ref1 = opts.filters;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        filter = _ref1[_j];
-        this.addFilter(filter);
-      }
+      this.addFilters(opts.filters);
+      this.intialized = true;
     }
 
     BaseTool.prototype.getTemplate = function() {
@@ -95,9 +92,15 @@
       return _results;
     };
 
-    BaseTool.prototype.addFilter = function(filter) {
-      this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
-      return this.start();
+    BaseTool.prototype.addFilters = function(filters) {
+      var filter, _i, _len;
+      for (_i = 0, _len = filters.length; _i < _len; _i++) {
+        filter = filters[_i];
+        this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+      }
+      if (this.initialized) {
+        return this.start();
+      }
     };
 
     BaseTool.prototype.receiveSetting = function(key, value) {
@@ -136,12 +139,13 @@
     __extends(Graph, _super);
 
     function Graph(opts) {
+      this.drawAxes = __bind(this.drawAxes, this);
+
       this.start = __bind(this.start, this);
 
-      this.setupAxes = __bind(this.setupAxes, this);
+      this.setupGraph = __bind(this.setupGraph, this);
 
       var compiled;
-      console.log('Graph');
       Graph.__super__.constructor.call(this, opts);
       compiled = _.template(this.template, {
         selector: this.selector
@@ -160,9 +164,8 @@
       this.selectionColor = opts.selectionColor || '#CD3E20';
     }
 
-    Graph.prototype.setupAxes = function() {
+    Graph.prototype.setupGraph = function() {
       var axis, key, _i, _ref, _ref1;
-      console.log('Graph setupAxes');
       for (axis = _i = 1, _ref = this.axes; 1 <= _ref ? _i <= _ref : _i >= _ref; axis = 1 <= _ref ? ++_i : --_i) {
         key = "axis" + axis;
         if ((_ref1 = this[key]) === "" || _ref1 === (void 0)) {
@@ -173,11 +176,25 @@
       this.graphHeight = this.height - (this.margin.top + this.margin.bottom);
       this.graphWidth = this.width - (this.margin.left + this.margin.right);
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      return this.draw();
+      this.setupData();
+      this.drawAxes();
+      return this.drawData();
     };
 
     Graph.prototype.start = function() {
-      return this.setupAxes();
+      return this.setupGraph();
+    };
+
+    Graph.prototype.drawAxes = function() {
+      var xAxis, yAxis;
+      this.x = d3.scale.linear().range([0, this.graphWidth]).domain(this.xDomain);
+      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
+      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
+      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
+      this.y = d3.scale.linear().range([this.graphHeight, 0]).domain(this.yDomain);
+      yAxis = d3.svg.axis().scale(this.y).orient('left');
+      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
+      return this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
     };
 
     Graph.prototype.bufferAxes = function(domain) {
@@ -405,39 +422,35 @@
     Histogram2.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Histogram2(opts) {
-      this.draw = __bind(this.draw, this);
-      console.log('Histogram2');
+      this.drawData = __bind(this.drawData, this);
+
+      this.setupData = __bind(this.setupData, this);
       Histogram2.__super__.constructor.call(this, opts);
       this.bins = opts.bins ? opts.bins : Math.log(this.count) / Math.log(2) + 1;
       this.axis2 = opts.yLabel || 'Count';
     }
 
-    Histogram2.prototype.draw = function() {
-      var binSize, data, extent, group, top, xAxis, yAxis, ymax,
+    Histogram2.prototype.setupData = function() {
+      var data, group, top,
         _this = this;
-      console.log('Histogram2 draw');
       top = this.dimensions[this.axis1].top(Infinity);
       data = _.map(top, function(d) {
         return d[_this.axis1];
       });
-      extent = d3.extent(data);
-      binSize = (extent[1] - extent[0]) / this.bins;
+      this.xDomain = d3.extent(data);
+      this.binSize = (this.xDomain[1] - this.xDomain[0]) / this.bins;
       group = this.dimensions[this.axis1].group(function(d) {
-        return Math.floor(d / binSize);
+        return Math.floor(d / _this.binSize);
       });
-      data = group.top(Infinity);
-      ymax = data[0].value;
-      this.x = d3.scale.linear().range([0, this.graphWidth]).domain(extent);
-      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
-      this.y = d3.scale.linear().range([this.graphHeight, 0]).domain([0, ymax]);
-      yAxis = d3.svg.axis().scale(this.y).orient('left');
-      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
-      return this.bars = this.svg.selectAll('.bar').data(data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
-        return _this.x((d.key + 1) * binSize);
-      }).attr('width', this.x(binSize)).attr('y', function(d) {
+      this.data = group.top(Infinity);
+      return this.yDomain = [0, this.data[0].value];
+    };
+
+    Histogram2.prototype.drawData = function() {
+      var _this = this;
+      return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
+        return _this.x((d.key + 1) * _this.binSize);
+      }).attr('width', this.x(this.binSize)).attr('y', function(d) {
         return _this.y(d.value);
       }).attr('height', function(d) {
         return _this.graphHeight - _this.y(d.value);
@@ -673,34 +686,30 @@
     Scatter2D.prototype.template = "<div class=\"scatter-2d\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Scatter2D(opts) {
-      this.draw = __bind(this.draw, this);
-      console.log('Scatter2D');
+      this.drawData = __bind(this.drawData, this);
+
+      this.setupData = __bind(this.setupData, this);
       Scatter2D.__super__.constructor.call(this, opts);
     }
 
-    Scatter2D.prototype.draw = function() {
-      var data, xAxis, xDomain, yAxis, yDomain,
+    Scatter2D.prototype.setupData = function() {
+      var data,
         _this = this;
-      console.log('Scatter2D draw');
       data = this.dimensions[this.axis1].top(Infinity);
-      data = _.map(data, function(d) {
+      this.data = _.map(data, function(d) {
         return _.pick(d, _this.axis1, _this.axis2);
       });
-      xDomain = this.bufferAxes(d3.extent(data, function(d) {
+      this.xDomain = this.bufferAxes(d3.extent(this.data, function(d) {
         return d[_this.axis1];
       }));
-      yDomain = this.bufferAxes(d3.extent(data, function(d) {
+      return this.yDomain = this.bufferAxes(d3.extent(this.data, function(d) {
         return d[_this.axis2];
       }));
-      this.x = d3.scale.linear().range([0, this.graphWidth]).domain(xDomain);
-      xAxis = d3.svg.axis().scale(this.x).orient('bottom');
-      this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
-      this.y = d3.scale.linear().range([this.graphHeight, 0]).domain(yDomain);
-      yAxis = d3.svg.axis().scale(this.y).orient('left');
-      this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
-      return this.points = this.svg.append('g').selectAll('circle').data(data).enter().append('circle').attr('class', 'dot').attr('r', 1.5).attr('cx', function(d) {
+    };
+
+    Scatter2D.prototype.drawData = function() {
+      var _this = this;
+      return this.points = this.svg.append('g').selectAll('circle').data(this.data).enter().append('circle').attr('class', 'dot').attr('r', 1.5).attr('cx', function(d) {
         return _this.x(d[_this.axis1]);
       }).attr('cy', function(d) {
         return _this.y(d[_this.axis2]);

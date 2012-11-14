@@ -4,7 +4,6 @@ BaseTool = window.Ubret.BaseTool or require('./base_tool')
 class Graph extends BaseTool
 
   constructor: (opts) ->
-    console.log 'Graph'
     super opts
     
     # Load the template
@@ -19,8 +18,7 @@ class Graph extends BaseTool
     @color = opts.color or '#0172E6'
     @selectionColor = opts.selectionColor or '#CD3E20'
 
-  setupAxes: =>
-    console.log 'Graph setupAxes'
+  setupGraph: =>
     
     # Check that all axes are defined
     for axis in [1..@axes]
@@ -38,9 +36,56 @@ class Graph extends BaseTool
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
     
-    @draw()
+    @setupData()  # Implemented by subclasses
+    @drawAxes()
+    @drawData()   # Implemented by subclasses
   
-  start: => @setupAxes()
+  start: => @setupGraph()
+  
+  drawAxes: =>
+    
+    # Set up x axis
+    @x = d3.scale.linear()
+      .range([0, @graphWidth])
+      .domain(@xDomain)
+    
+    xAxis = d3.svg.axis()
+      .scale(@x)
+      .orient('bottom')
+    
+    @svg.append('g')
+      .attr('class', 'x axis')
+      .attr('transform', "translate(0, #{@graphHeight})")
+      .call(xAxis)
+    
+    @svg.append('text')
+      .attr('class', 'x label')
+      .attr('text-anchor', 'middle')
+      .attr('x', @graphWidth / 2)
+      .attr('y', @graphHeight + 40)
+      .text(@formatKey(@axis1))
+    
+    # Set up y axis
+    @y = d3.scale.linear()
+      .range([@graphHeight, 0])
+      .domain(@yDomain)
+    
+    yAxis = d3.svg.axis()
+      .scale(@y)
+      .orient('left')
+
+    @svg.append('g')
+      .attr('class', 'y axis')
+      .attr('transform', "translate(0, 0)")
+      .call(yAxis)
+
+    @svg.append('text')
+      .attr('class', 'y label')
+      .attr('text-anchor', 'middle')
+      .attr('y', -60)
+      .attr('x', -(@graphHeight / 2))
+      .attr('transform', "rotate(-90)")
+      .text(@formatKey(@axis2))
 
 
   bufferAxes: (domain) ->
