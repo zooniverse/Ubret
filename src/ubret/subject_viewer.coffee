@@ -22,7 +22,7 @@ class SubjectViewer extends BaseTool
     @render()
 
   render: =>
-    if @selectedElements
+    if @selectedElements.length
       subject = _.find @dimensions.id.top(Infinity), (record) =>
         record.id == @selectedElements[0]
     else
