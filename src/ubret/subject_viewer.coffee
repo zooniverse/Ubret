@@ -2,50 +2,49 @@ BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class SubjectViewer extends BaseTool
 
-  template:
-    """
-    <% if(subject.image) { %>
-      <img src="<%- subject.image %>" />
-    <% } %>
-
-    <ul>
-      <% for(i = 0; i < keys.length; i++) { %>
-        <li>
-          <%- keys[i] %>: <%- subject[keys[i]] %>
-        </li>
-      <% } %>
-    </ul>
-    """
-
   constructor: (opts) ->
     super
     @count = 0
+    @div = d3.select(@selector)
     @start()
 
   start: =>
-    if @selectedElement
-      for datum, i in @data
-        if @selectedElement is datum.id
-          @count = i
-    @render()
+    subjects = new Array
+    if @selectedElements.length isnt 0
+      subjects = @dimensions.id.top(Infinity).filter (item) =>
+        item.id in @selectedElements
+    else
+      subjects = [@dimensions.id.top(1)[0]]
+      @selectElements subjects
+    @render(subjects)
 
-  render: =>
-    compiled = _.template @template, { subject: @data[@count], keys: @keys }
-    @el.html compiled
+  render: (subjects) =>
+    @div.selectAll('div.subject').remove()
 
-  prevSubject: =>
-    @count -= 1
-    if @count < 0
-      @count = @data.length - 1
-    @selectElementCb @data[@count].id
+    subject = @div.selectAll('div')
+      .data(subjects).enter()
+        .append('div')
+        .attr('class', 'subject')
 
-  nextSubject: =>
-    @count += 1
-    if @count >= @data.length
-      @count = 0
-    @selectElementCb @data[@count].id
+    subject.selectAll('img')
+      .append('img')
+        .attr('src', (d) -> d.image)
 
-    
+    subject.selectAll('ul')
+      .append('ul')
+      .data((d) => @toArray(d)).enter()
+        .append('li')
+        .attr('data-key', (d) -> d[0])
+        .text((d) => "#{@formatKey(d[0])}: #{d[1]}")
+
+    subject.select("[data-key=\"#{@selectedKey}\"]")
+      .attr('class', 'selected')
+
+  toArray: (data) =>
+    arrayedData = new Array
+    arrayedData.push [key, data[key]] for key in @keys
+    arrayedData
+
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = SubjectViewer
 else

@@ -13,7 +13,7 @@ class BaseTool
     @keys = opts.keys
     @el = opts.el
 
-    @selectedElements = opts.selectedElements or null
+    @selectedElements = opts.selectedElements or []
     @selectElementsCb = opts.selectElementsCb or ->
 
     @selectedKey = opts.selectedKey or 'id'

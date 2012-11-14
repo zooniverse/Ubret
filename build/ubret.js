@@ -50,7 +50,7 @@
       this.selector = opts.selector;
       this.keys = opts.keys;
       this.el = opts.el;
-      this.selectedElements = opts.selectedElements || null;
+      this.selectedElements = opts.selectedElements || [];
       this.selectElementsCb = opts.selectElementsCb || function() {};
       this.selectedKey = opts.selectedKey || 'id';
       this.selectKeyCb = opts.selectKeyCb || function() {};
@@ -1202,7 +1202,8 @@
   var BaseTool, SubjectViewer,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   BaseTool = window.Ubret.BaseTool || require('./base_tool');
 
@@ -1210,58 +1211,61 @@
 
     __extends(SubjectViewer, _super);
 
-    SubjectViewer.prototype.template = "<% if(subject.image) { %>\n  <img src=\"<%- subject.image %>\" />\n<% } %>\n\n<ul>\n  <% for(i = 0; i < keys.length; i++) { %>\n    <li>\n      <%- keys[i] %>: <%- subject[keys[i]] %>\n    </li>\n  <% } %>\n</ul>";
-
     function SubjectViewer(opts) {
-      this.nextSubject = __bind(this.nextSubject, this);
-
-      this.prevSubject = __bind(this.prevSubject, this);
+      this.toArray = __bind(this.toArray, this);
 
       this.render = __bind(this.render, this);
 
       this.start = __bind(this.start, this);
       SubjectViewer.__super__.constructor.apply(this, arguments);
       this.count = 0;
+      this.div = d3.select(this.selector);
       this.start();
     }
 
     SubjectViewer.prototype.start = function() {
-      var datum, i, _i, _len, _ref;
-      if (this.selectedElement) {
-        _ref = this.data;
-        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-          datum = _ref[i];
-          if (this.selectedElement === datum.id) {
-            this.count = i;
-          }
-        }
+      var subjects,
+        _this = this;
+      subjects = new Array;
+      if (this.selectedElements.length !== 0) {
+        subjects = this.dimensions.id.top(Infinity).filter(function(item) {
+          var _ref;
+          return _ref = item.id, __indexOf.call(_this.selectedElements, _ref) >= 0;
+        });
+      } else {
+        subjects = [this.dimensions.id.top(1)[0]];
+        this.selectElements(subjects);
       }
-      return this.render();
+      return this.render(subjects);
     };
 
-    SubjectViewer.prototype.render = function() {
-      var compiled;
-      compiled = _.template(this.template, {
-        subject: this.data[this.count],
-        keys: this.keys
+    SubjectViewer.prototype.render = function(subjects) {
+      var subject,
+        _this = this;
+      this.div.selectAll('div.subject').remove();
+      subject = this.div.selectAll('div').data(subjects).enter().append('div').attr('class', 'subject');
+      subject.selectAll('img').append('img').attr('src', function(d) {
+        return d.image;
       });
-      return this.el.html(compiled);
+      subject.selectAll('ul').append('ul').data(function(d) {
+        return _this.toArray(d);
+      }).enter().append('li').attr('data-key', function(d) {
+        return d[0];
+      }).text(function(d) {
+        return "" + (_this.formatKey(d[0])) + ": " + d[1];
+      });
+      return subject.select("[data-key=\"" + this.selectedKey + "\"]").attr('class', 'selected');
     };
 
-    SubjectViewer.prototype.prevSubject = function() {
-      this.count -= 1;
-      if (this.count < 0) {
-        this.count = this.data.length - 1;
+    SubjectViewer.prototype.toArray = function(data) {
+      var arrayedData, key, _i, _len, _ref;
+      arrayedData = new Array;
+      _ref = this.keys;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        key = _ref[_i];
+        arrayedData.push([key, data[key]]);
       }
-      return this.selectElementCb(this.data[this.count].id);
-    };
-
-    SubjectViewer.prototype.nextSubject = function() {
-      this.count += 1;
-      if (this.count >= this.data.length) {
-        this.count = 0;
-      }
-      return this.selectElementCb(this.data[this.count].id);
+      return arrayedData;
     };
 
     return SubjectViewer;
@@ -1340,7 +1344,7 @@
       var tr,
         _this = this;
       this.tbody.selectAll('tr').remove();
-      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](Infinity)).enter().append('tr').attr('data-id', function(d) {
+      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](20)).enter().append('tr').attr('data-id', function(d) {
         return d.id;
       }).on('click', this.selection);
       tr.selectAll('td').data(function(d) {
@@ -1348,7 +1352,7 @@
       }).enter().append('td').text(function(d) {
         return d;
       });
-      if (this.selectedElements) {
+      if (this.selectedElements.length !== 0) {
         return this.highlightRows();
       }
     };
@@ -1370,7 +1374,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         id = _ref[_i];
-        _results.push(this.tbody.select("[data-id=" + id + "]").attr('class', 'selected'));
+        _results.push(this.tbody.select("[data-id=\"" + id + "\"]").attr('class', 'selected'));
       }
       return _results;
     };
