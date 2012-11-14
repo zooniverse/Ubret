@@ -20,9 +20,9 @@ class BaseTool
     @selectKeyCb = opts.selectKeyCb or ->
 
     @createDimensions()
-    
-    for filter in opts.filters
-      @addFilter filter
+
+    @addFilters opts.filters
+    @intialized = true
 
   getTemplate: =>
     @template
@@ -43,9 +43,9 @@ class BaseTool
       @dimensions.id = @data.dimension( (d) -> d.id )
       @dimensions[key] = @data.dimension( (d) -> d[key] )
 
-  addFilter: (filter) =>
-    @dimensions[filter.key].filterRange([filter.low, filter.hight])
-    @start()
+  addFilters: (filters) =>
+    @dimensions[filter.key].filterRange([filter.low, filter.hight]) for filter in filters
+    @start() if @initialized
 
   receiveSetting: (key, value) =>
     @[key] = value

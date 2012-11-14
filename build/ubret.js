@@ -50,7 +50,7 @@
       this.selector = opts.selector;
       this.keys = opts.keys;
       this.el = opts.el;
-      this.selectedElements = opts.selectedElements || null;
+      this.selectedElements = opts.selectedElements || [];
       this.selectElementsCb = opts.selectElementsCb || function() {};
       this.selectedKey = opts.selectedKey || 'id';
       this.selectKeyCb = opts.selectKeyCb || function() {};
@@ -1345,7 +1345,7 @@
       var tr,
         _this = this;
       this.tbody.selectAll('tr').remove();
-      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](Infinity)).enter().append('tr').attr('data-id', function(d) {
+      tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](20)).enter().append('tr').attr('data-id', function(d) {
         return d.id;
       }).on('click', this.selection);
       tr.selectAll('td').data(function(d) {
@@ -1353,7 +1353,7 @@
       }).enter().append('td').text(function(d) {
         return d;
       });
-      if (this.selectedElements) {
+      if (this.selectedElements.length !== 0) {
         return this.highlightRows();
       }
     };
@@ -1375,7 +1375,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         id = _ref[_i];
-        _results.push(this.tbody.select("[data-id=" + id + "]").attr('class', 'selected'));
+        _results.push(this.tbody.select("[data-id=\"" + id + "\"]").attr('class', 'selected'));
       }
       return _results;
     };
