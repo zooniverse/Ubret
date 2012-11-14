@@ -22,7 +22,7 @@ class BaseTool
     @createDimensions()
 
     @addFilters opts.filters
-    @intialized = true
+    @initialized = true
 
   getTemplate: =>
     @template
@@ -44,7 +44,7 @@ class BaseTool
       @dimensions[key] = @data.dimension( (d) -> d[key] )
 
   addFilters: (filters) =>
-    @dimensions[filter.key].filterRange([filter.low, filter.hight]) for filter in filters
+    @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters
     @start() if @initialized
 
   receiveSetting: (key, value) =>

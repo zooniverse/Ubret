@@ -56,7 +56,7 @@
       this.selectKeyCb = opts.selectKeyCb || function() {};
       this.createDimensions();
       this.addFilters(opts.filters);
-      this.intialized = true;
+      this.initialized = true;
     }
 
     BaseTool.prototype.getTemplate = function() {
@@ -96,7 +96,7 @@
       var filter, _i, _len;
       for (_i = 0, _len = filters.length; _i < _len; _i++) {
         filter = filters[_i];
-        this.dimensions[filter.key].filterRange([filter.low, filter.hight]);
+        this.dimensions[filter.key].filterRange([filter.min, filter.max]);
       }
       if (this.initialized) {
         return this.start();
