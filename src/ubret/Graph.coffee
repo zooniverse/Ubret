@@ -39,7 +39,7 @@ class Graph extends BaseTool
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
-    @drawBrush() if @drawBrush?
+    @drawBrush()
   
   start: => @setupGraph()
   
@@ -87,8 +87,7 @@ class Graph extends BaseTool
       .attr('x', -(@graphHeight / 2))
       .attr('transform', "rotate(-90)")
       .text(@formatKey(@axis2))
-
-
+  
   bufferAxes: (domain) ->
     for border, i in domain
       if border > 0

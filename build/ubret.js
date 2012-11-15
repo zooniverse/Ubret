@@ -179,9 +179,7 @@
       this.setupData();
       this.drawAxes();
       this.drawData();
-      if (this.drawBrush != null) {
-        return this.drawBrush();
-      }
+      return this.drawBrush();
     };
 
     Graph.prototype.start = function() {
@@ -471,7 +469,7 @@
     Histogram2.prototype.brushend = function() {
       var data, top,
         _this = this;
-      this.dimensions[this.axis1].filterRange(d3.event.target.extent());
+      this.dimensions[this.axis1].filter(d3.event.target.extent());
       top = this.dimensions[this.axis1].top(Infinity);
       data = _.map(top, function(d) {
         return d[_this.axis1];
@@ -708,6 +706,10 @@
     Scatter2D.prototype.template = "<div class=\"scatter-2d\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Scatter2D(opts) {
+      this.brushend = __bind(this.brushend, this);
+
+      this.drawBrush = __bind(this.drawBrush, this);
+
       this.drawData = __bind(this.drawData, this);
 
       this.setupData = __bind(this.setupData, this);
@@ -736,6 +738,29 @@
       }).attr('cy', function(d) {
         return _this.y(d[_this.axis2]);
       }).on('mouseover', this.displayTooltip).on('mouseout', this.removeTooltip);
+    };
+
+    Scatter2D.prototype.drawBrush = function() {
+      return this.svg.append('g').attr('class', 'brush').attr('width', this.graphWidth).attr('height', this.graphHeight).attr('height', this.graphHeight).attr('opacity', 0.5).attr('fill', '#CD3E20').call(d3.svg.brush().x(this.x).y(this.y).on('brushend', this.brushend));
+    };
+
+    Scatter2D.prototype.brushend = function() {
+      var d, data, top, x, y,
+        _this = this;
+      d = d3.event.target.extent();
+      x = d.map(function(x) {
+        return x[0];
+      });
+      y = d.map(function(x) {
+        return x[1];
+      });
+      this.dimensions[this.axis1].filter(x);
+      this.dimensions[this.axis2].filter(y);
+      top = this.dimensions[this.axis1].top(Infinity);
+      data = _.map(top, function(d) {
+        return _.pick(d, _this.axis1, _this.axis2);
+      });
+      return console.log(data);
     };
 
     return Scatter2D;

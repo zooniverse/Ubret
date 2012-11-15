@@ -57,7 +57,7 @@ class Histogram2 extends Graph
 
   brushend: =>
     # Apply the filter
-    @dimensions[@axis1].filterRange(d3.event.target.extent())
+    @dimensions[@axis1].filter(d3.event.target.extent())
     
     # Select all items within the range
     # TODO: Pass these data down the chain
