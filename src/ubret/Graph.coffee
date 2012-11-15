@@ -39,6 +39,7 @@ class Graph extends BaseTool
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
+    @drawBrush() if @drawBrush?
   
   start: => @setupGraph()
   

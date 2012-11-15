@@ -1,5 +1,5 @@
 
-Graph = window.Ubret.Graph or require('./Graph')
+Graph   = window.Ubret.Graph or require('./Graph')
 
 class Histogram2 extends Graph
   axes: 1
@@ -38,10 +38,32 @@ class Histogram2 extends Graph
         .data(@data)
       .enter().append('rect')
         .attr('class', 'bar')
-        .attr('x', (d) => return @x((d.key + 1) * @binSize))
+        .attr('x', (d) => return @x((d.key) * @binSize))
         .attr('width', @x(@binSize))
         .attr('y', (d) => return @y(d.value))
         .attr('height', (d) => return @graphHeight - @y(d.value))
+
+  drawBrush: =>
+    @brush = @svg.append('g')
+      .attr('class', 'brush')
+      .attr('width', @graphWidth)
+      .attr('height', @graphHeight)
+      .call(d3.svg.brush().x(@x)
+      .on('brushend', @brushend))
+      .selectAll('rect')
+      .attr('height', @graphHeight)
+      .attr('opacity', 0.5)
+      .attr('fill', '#CD3E20')
+
+  brushend: =>
+    # Apply the filter
+    @dimensions[@axis1].filterRange(d3.event.target.extent())
+    
+    # Select all items within the range
+    # TODO: Pass these data down the chain
+    top   = @dimensions[@axis1].top(Infinity)
+    data  = _.map(top, (d) => d[@axis1])
+    console.log data
 
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'

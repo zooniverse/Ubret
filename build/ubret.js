@@ -178,7 +178,10 @@
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
       this.setupData();
       this.drawAxes();
-      return this.drawData();
+      this.drawData();
+      if (this.drawBrush != null) {
+        return this.drawBrush();
+      }
     };
 
     Graph.prototype.start = function() {
@@ -422,6 +425,10 @@
     Histogram2.prototype.template = "<div class=\"histogram\">\n  <div id=\"<%- selector %>\">\n    <svg></svg>\n  </div>\n</div>";
 
     function Histogram2(opts) {
+      this.brushend = __bind(this.brushend, this);
+
+      this.drawBrush = __bind(this.drawBrush, this);
+
       this.drawData = __bind(this.drawData, this);
 
       this.setupData = __bind(this.setupData, this);
@@ -449,12 +456,27 @@
     Histogram2.prototype.drawData = function() {
       var _this = this;
       return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
-        return _this.x((d.key + 1) * _this.binSize);
+        return _this.x(d.key * _this.binSize);
       }).attr('width', this.x(this.binSize)).attr('y', function(d) {
         return _this.y(d.value);
       }).attr('height', function(d) {
         return _this.graphHeight - _this.y(d.value);
       });
+    };
+
+    Histogram2.prototype.drawBrush = function() {
+      return this.brush = this.svg.append('g').attr('class', 'brush').attr('width', this.graphWidth).attr('height', this.graphHeight).call(d3.svg.brush().x(this.x).on('brushend', this.brushend)).selectAll('rect').attr('height', this.graphHeight).attr('opacity', 0.5).attr('fill', '#CD3E20');
+    };
+
+    Histogram2.prototype.brushend = function() {
+      var data, top,
+        _this = this;
+      this.dimensions[this.axis1].filterRange(d3.event.target.extent());
+      top = this.dimensions[this.axis1].top(Infinity);
+      data = _.map(top, function(d) {
+        return d[_this.axis1];
+      });
+      return console.log(data);
     };
 
     return Histogram2;
