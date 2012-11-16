@@ -47,6 +47,11 @@ class Scatter2D extends Graph
       .on('brushend', @brushend))
   
   brushend: =>
+    
+    # Clear existing filters
+    for axis, dimension of @dimensions
+      dimension.filterAll()
+      
     d = d3.event.target.extent()
     x = d.map( (x) -> return x[0])
     y = d.map( (x) -> return x[1])

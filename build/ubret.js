@@ -452,9 +452,14 @@
     };
 
     Histogram2.prototype.drawData = function() {
-      var _this = this;
+      var offset,
+        _this = this;
+      offset = Math.abs(_.min(this.data, function(d) {
+        return d.key;
+      }).key);
+      console.log("offset = ", offset);
       return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
-        return _this.x(d.key * _this.binSize);
+        return _this.x((d.key + offset) * _this.binSize);
       }).attr('width', this.x(this.binSize)).attr('y', function(d) {
         return _this.y(d.value);
       }).attr('height', function(d) {
@@ -479,7 +484,9 @@
       data = _.map(top, function(d) {
         return d[_this.axis1];
       });
-      return console.log(data);
+      console.log("min = ", Math.min.apply(Math, data));
+      console.log("max = ", Math.max.apply(Math, data));
+      return console.log("len = ", data.length);
     };
 
     return Histogram2;
@@ -750,8 +757,13 @@
     };
 
     Scatter2D.prototype.brushend = function() {
-      var d, data, top, x, y,
+      var axis, d, data, dimension, top, x, y, _ref,
         _this = this;
+      _ref = this.dimensions;
+      for (axis in _ref) {
+        dimension = _ref[axis];
+        dimension.filterAll();
+      }
       d = d3.event.target.extent();
       x = d.map(function(x) {
         return x[0];
