@@ -56,6 +56,11 @@ class Histogram2 extends Graph
       .attr('fill', '#CD3E20')
 
   brushend: =>
+    
+    # Clear existing filters
+    for axis, dimension of @dimensions
+      dimension.filterAll()
+    
     # Apply the filter
     @dimensions[@axis1].filter(d3.event.target.extent())
     

@@ -467,8 +467,13 @@
     };
 
     Histogram2.prototype.brushend = function() {
-      var data, top,
+      var axis, data, dimension, top, _ref,
         _this = this;
+      _ref = this.dimensions;
+      for (axis in _ref) {
+        dimension = _ref[axis];
+        dimension.filterAll();
+      }
       this.dimensions[this.axis1].filter(d3.event.target.extent());
       top = this.dimensions[this.axis1].top(Infinity);
       data = _.map(top, function(d) {

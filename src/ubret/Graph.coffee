@@ -23,7 +23,7 @@ class Graph extends BaseTool
     # Check that all axes are defined
     for axis in [1..@axes]
       key = "axis#{axis}"
-      return if @[key] in ["", undefined]
+      return if @[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
     
     @el.find('svg').empty()
     
