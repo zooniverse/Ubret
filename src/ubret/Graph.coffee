@@ -40,7 +40,7 @@ class Graph extends BaseTool
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
-    @drawBrush()
+    @drawBrush()  # Implemented by subclasses
   
   start: =>
     @setupGraph()
@@ -65,7 +65,8 @@ class Graph extends BaseTool
       .attr('transform', "translate(0, #{@graphHeight})")
       .call(xAxis)
     
-    @svg.append('text')
+    @svg.append('g')
+      .append('text')
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
@@ -86,7 +87,8 @@ class Graph extends BaseTool
       .attr('transform', "translate(0, 0)")
       .call(yAxis)
 
-    @svg.append('text')
+    @svg.append('g')
+      .append('text')
       .attr('class', 'y label')
       .attr('text-anchor', 'middle')
       .attr('y', -60)

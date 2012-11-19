@@ -205,11 +205,11 @@
       this.x = d3.scale.linear().range([0, this.graphWidth]).domain(this.xDomain);
       xAxis = d3.svg.axis().scale(this.x).orient('bottom');
       this.svg.append('g').attr('class', 'x axis').attr('transform', "translate(0, " + this.graphHeight + ")").call(xAxis);
-      this.svg.append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
+      this.svg.append('g').append('text').attr('class', 'x label').attr('text-anchor', 'middle').attr('x', this.graphWidth / 2).attr('y', this.graphHeight + 40).text(this.formatKey(this.axis1));
       this.y = d3.scale.linear().range([this.graphHeight, 0]).domain(this.yDomain);
       yAxis = d3.svg.axis().scale(this.y).orient('left');
       this.svg.append('g').attr('class', 'y axis').attr('transform', "translate(0, 0)").call(yAxis);
-      return this.svg.append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
+      return this.svg.append('g').append('text').attr('class', 'y label').attr('text-anchor', 'middle').attr('y', -60).attr('x', -(this.graphHeight / 2)).attr('transform', "rotate(-90)").text(this.formatKey(this.axis2));
     };
 
     Graph.prototype.bufferAxes = function(domain) {
@@ -445,21 +445,22 @@
 
       this.setupData = __bind(this.setupData, this);
       Histogram2.__super__.constructor.call(this, opts);
-      this.bins = opts.bins ? opts.bins : Math.floor(Math.log(this.count) / Math.log(2) + 1);
+      this.bins = opts.bins ? opts.bins : 2 * Math.floor(Math.log(this.count) / Math.log(2) + 1);
       this.axis2 = opts.yLabel || 'Count';
     }
 
     Histogram2.prototype.setupData = function() {
-      var data, group, top,
+      var data, group, min, top,
         _this = this;
       top = this.dimensions[this.axis1].top(Infinity);
       data = _.map(top, function(d) {
         return d[_this.axis1];
       });
       this.xDomain = d3.extent(data);
-      this.binSize = (this.xDomain[1] - this.xDomain[0]) / this.bins;
+      this.binSize = (Math.ceil(this.xDomain[1]) - Math.floor(this.xDomain[0])) / this.bins;
+      min = this.xDomain[0];
       group = this.dimensions[this.axis1].group(function(d) {
-        return Math.floor(d / _this.binSize);
+        return Math.floor((d - min) / _this.binSize);
       });
       this.data = group.top(Infinity);
       return this.yDomain = [0, this.data[0].value];
@@ -467,13 +468,13 @@
 
     Histogram2.prototype.drawData = function() {
       var _this = this;
-      return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
+      return this.bars = this.svg.append('g').selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
         return _this.x(d.key * _this.binSize);
       }).attr('width', this.x(this.binSize)).attr('y', function(d) {
         return _this.y(d.value);
       }).attr('height', function(d) {
         return _this.graphHeight - _this.y(d.value);
-      });
+      }).attr('fill', '#0071E5').attr('stroke', '#FAFAFA');
     };
 
     Histogram2.prototype.drawBrush = function() {
