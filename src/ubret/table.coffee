@@ -5,10 +5,10 @@ class Table extends BaseTool
   constructor: (opts) ->
     super opts
     @sortOrder = 'top'
-    @createTable()
-    @start()
 
   start: =>
+    super
+    @createTable()
     @createHeader()
     @createRows()
 
@@ -31,6 +31,9 @@ class Table extends BaseTool
   createRows: => 
     @tbody.selectAll('tr').remove()
 
+    unless @selectedKey
+      @selectedKey = @keys[0]
+
     tr = @tbody.selectAll('tr')
       .data(@dimensions[@selectedKey][@sortOrder](20))
       .enter().append('tr')
@@ -42,7 +45,7 @@ class Table extends BaseTool
       .enter().append('td')
         .text( (d) -> return d)
 
-    if @selectedElements.length isnt 0
+    if @selectedElements and @selectedElements.length isnt 0
       @highlightRows()
 
   toArray: (data) =>

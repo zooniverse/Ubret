@@ -1,31 +1,33 @@
 class BaseTool
 
-  required_opts: ['data', 'selector', 'el', 'keys']
+  required_init_opts: ['selector', 'el']
+  required_render_opts: ['selector', 'el', 'data', 'keys']
 
   constructor: (opts) ->
+    @setOpts opts
+    @checkOpts @required_init_opts
 
-    for opt in @required_opts
-      throw "missing option #{opt}" unless _.has opts, opt
+  setOpts: (opts) =>
+    for opt of opts
+      switch opt
+        when 'data'
+          @data = crossfilter(opts.data)
+          @count = opts.data.length
+        when 'filters'
+          @addFilters opts.filters
+        else
+          @[opt] = opts[opt]
 
-    @data = crossfilter(opts.data)
-    @count = opts.data.length
-    @selector = opts.selector
-    @keys = opts.keys
-    @el = opts.el
-
-    @selectedElements = opts.selectedElements or []
-    @selectElementsCb = opts.selectElementsCb or ->
-
-    @selectedKey = opts.selectedKey or 'id'
-    @selectKeyCb = opts.selectKeyCb or ->
-
-    @createDimensions()
-
-    @addFilters opts.filters
-    @initialized = true
+    if @data and @keys
+      @createDimensions()
+      @initialized = true
 
   getTemplate: =>
     @template
+
+  start: =>
+    @el.html ''
+    @checkOpts @required_render_opts
 
   selectElements: (ids) =>
     @selectedElements = ids
@@ -55,7 +57,12 @@ class BaseTool
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
+
+  checkOpts: (required_opts = @required_data_opts) =>
+    for opt in required_opts
+      throw "missing option #{opt}" unless _.has @, opt
       
+
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = BaseTool
 else

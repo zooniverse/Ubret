@@ -22,9 +22,13 @@
 
   BaseTool = (function() {
 
-    BaseTool.prototype.required_opts = ['data', 'selector', 'el', 'keys'];
+    BaseTool.prototype.required_init_opts = ['selector', 'el'];
+
+    BaseTool.prototype.required_render_opts = ['selector', 'el', 'data', 'keys'];
 
     function BaseTool(opts) {
+      this.checkOpts = __bind(this.checkOpts, this);
+
       this.receiveSetting = __bind(this.receiveSetting, this);
 
       this.addFilters = __bind(this.addFilters, this);
@@ -35,32 +39,43 @@
 
       this.selectElements = __bind(this.selectElements, this);
 
+      this.start = __bind(this.start, this);
+
       this.getTemplate = __bind(this.getTemplate, this);
 
-      var opt, _i, _len, _ref;
-      _ref = this.required_opts;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        opt = _ref[_i];
-        if (!_.has(opts, opt)) {
-          throw "missing option " + opt;
+      this.setOpts = __bind(this.setOpts, this);
+      this.setOpts(opts);
+      this.checkOpts(this.required_init_opts);
+    }
+
+    BaseTool.prototype.setOpts = function(opts) {
+      var opt;
+      for (opt in opts) {
+        switch (opt) {
+          case 'data':
+            this.data = crossfilter(opts.data);
+            this.count = opts.data.length;
+            break;
+          case 'filters':
+            this.addFilters(opts.filters);
+            break;
+          default:
+            this[opt] = opts[opt];
         }
       }
-      this.data = crossfilter(opts.data);
-      this.count = opts.data.length;
-      this.selector = opts.selector;
-      this.keys = opts.keys;
-      this.el = opts.el;
-      this.selectedElements = opts.selectedElements || [];
-      this.selectElementsCb = opts.selectElementsCb || function() {};
-      this.selectedKey = opts.selectedKey || 'id';
-      this.selectKeyCb = opts.selectKeyCb || function() {};
-      this.createDimensions();
-      this.addFilters(opts.filters);
-      this.initialized = true;
-    }
+      if (this.data && this.keys) {
+        this.createDimensions();
+        return this.initialized = true;
+      }
+    };
 
     BaseTool.prototype.getTemplate = function() {
       return this.template;
+    };
+
+    BaseTool.prototype.start = function() {
+      this.el.html('');
+      return this.checkOpts(this.required_render_opts);
     };
 
     BaseTool.prototype.selectElements = function(ids) {
@@ -114,6 +129,23 @@
       });
     };
 
+    BaseTool.prototype.checkOpts = function(required_opts) {
+      var opt, _i, _len, _results;
+      if (required_opts == null) {
+        required_opts = this.required_data_opts;
+      }
+      _results = [];
+      for (_i = 0, _len = required_opts.length; _i < _len; _i++) {
+        opt = required_opts[_i];
+        if (!_.has(this, opt)) {
+          throw "missing option " + opt;
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
     return BaseTool;
 
   })();
@@ -144,15 +176,7 @@
       this.start = __bind(this.start, this);
 
       this.setupGraph = __bind(this.setupGraph, this);
-
-      var compiled;
       Graph.__super__.constructor.call(this, opts);
-      compiled = _.template(this.template, {
-        selector: this.selector
-      });
-      this.el.html(compiled);
-      this.width = opts.width || this.el.width();
-      this.height = opts.height || this.el.height();
       this.margin = opts.margin || {
         left: 60,
         top: 20,
@@ -172,10 +196,9 @@
           return;
         }
       }
-      this.el.find('svg').empty();
-      this.graphHeight = this.height - (this.margin.top + this.margin.bottom);
-      this.graphWidth = this.width - (this.margin.left + this.margin.right);
-      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
+      this.graphHeight = this.el.height() - (this.margin.top + this.margin.bottom);
+      this.graphWidth = this.el.width() - (this.margin.left + this.margin.right);
+      this.svg = d3.select("" + this.selector + " svg").attr('width', this.el.width()).attr('height', this.el.height()).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
       this.setupData();
       this.drawAxes();
       this.drawData();
@@ -183,6 +206,8 @@
     };
 
     Graph.prototype.start = function() {
+      Graph.__super__.start.apply(this, arguments);
+      this.el.append('<svg></svg>');
       return this.setupGraph();
     };
 
@@ -442,6 +467,7 @@
       data = _.map(top, function(d) {
         return d[_this.axis1];
       });
+      this.bins = this.bins ? this.bins : Math.log(this.count) / Math.log(2) + 1;
       this.xDomain = d3.extent(data);
       this.binSize = (this.xDomain[1] - this.xDomain[0]) / this.bins;
       group = this.dimensions[this.axis1].group(function(d) {
@@ -457,7 +483,6 @@
       offset = Math.abs(_.min(this.data, function(d) {
         return d.key;
       }).key);
-      console.log("offset = ", offset);
       return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
         return _this.x((d.key + offset) * _this.binSize);
       }).attr('width', this.x(this.binSize)).attr('y', function(d) {
@@ -513,29 +538,29 @@
 
     __extends(Map, _super);
 
-    Map.prototype.template = "<div id=\"<%- selector %>\"></div>";
+    Map.prototype.template = "<div id=\"<%- selector %>\" class=\"map\"></div>";
 
     Map.mapOptions = {
       attributionControl: false
     };
 
-    L.Icon.Default.imagePath = 'css/images';
+    L.Icon.Default.imagePath = '/images';
 
     Map.prototype.default_icon = new L.icon({
       className: 'default_icon',
-      iconUrl: '/css/images/marker-icon.png',
+      iconUrl: '/images/marker-icon.png',
       iconSize: [25, 41],
       iconAnchor: [13, 41]
     });
 
     Map.prototype.selected_icon = new L.icon({
       className: 'selected_icon',
-      iconUrl: '/css/images/marker-icon-orange.png',
+      iconUrl: '/images/marker-icon-orange.png',
       iconSize: [25, 41],
       iconAnchor: [13, 41]
     });
 
-    function Map() {
+    function Map(opts) {
       this.selectSubject = __bind(this.selectSubject, this);
 
       this.selected = __bind(this.selected, this);
@@ -549,28 +574,31 @@
       this.start = __bind(this.start, this);
 
       this.render = __bind(this.render, this);
+      Map.__super__.constructor.call(this, opts);
       this.circles = [];
     }
 
     Map.prototype.render = function() {
-      var compiled;
-      compiled = _.template(this.template, {
+      return this.el.html(_.template(this.template, {
         selector: this.selector
-      });
-      return this.el.html(compiled);
+      }));
     };
 
     Map.prototype.start = function() {
+      this.render();
       if (!this.map) {
         this.createSky();
       }
-      if (this.data) {
+      if (this.dimensions.id.top(Infinity)) {
         return this.plotObjects();
       }
     };
 
     Map.prototype.createSky = function() {
-      this.map = L.map("sky-" + this.index, Map.mapOptions).setView([0, 180], 6);
+      if (this.el.context._leaflet) {
+        console.log(this.el);
+      }
+      this.map = L.map(this.selector, Map.mapOptions).setView([0, 180], 6);
       this.layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg', {
         maxZoom: 7
       });
@@ -613,14 +641,13 @@
           };
         };
         url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom);
-        return "/tiles/" + zoom + "/" + url.src + ".jpg";
+        return "/images/tiles/" + zoom + "/" + url.src + ".jpg";
       };
       return this.layer.addTo(this.map);
     };
 
     Map.prototype.plotObject = function(subject, options) {
-      var circle, coords, icon, subject_viewer,
-        _this = this;
+      var circle, coords, icon;
       coords = [subject.dec, subject.ra];
       options = icon = new L.icon({
         iconSize: [25, 41],
@@ -629,33 +656,23 @@
       circle = new L.marker(coords, options);
       circle.zooniverse_id = subject.zooniverse_id;
       circle.addTo(this.map);
-      subject_viewer = new SubjectViewer;
-      subject_viewer.receiveData([subject]);
-      subject_viewer.render();
-      circle.bindPopup(subject_viewer.el.get(0).outerHTML, {
-        maxWidth: 460
-      });
-      circle.on('click', function() {
-        return _this.selectSubject(circle);
-      });
       return this.circles.push(circle);
     };
 
     Map.prototype.plotObjects = function() {
-      var latlng, marker, subject, _i, _j, _len, _len1, _ref, _ref1;
+      var data, latlng, marker, subject, _i, _j, _len, _len1, _ref;
+      data = this.dimensions.id.top(30);
       _ref = this.circles;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         marker = _ref[_i];
         this.map.removeLayer(marker);
       }
       this.circles = new Array;
-      this.filterData();
-      _ref1 = this.filteredData;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        subject = _ref1[_j];
+      for (_j = 0, _len1 = data.length; _j < _len1; _j++) {
+        subject = data[_j];
         this.plotObject(subject);
       }
-      latlng = new L.LatLng(this.data[0].dec, this.data[0].ra);
+      latlng = new L.LatLng(data[0].dec, data[0].ra);
       return this.map.panTo(latlng);
     };
 
@@ -1138,14 +1155,14 @@
       this.start = __bind(this.start, this);
       Statistics.__super__.constructor.call(this, opts);
       this.displayFormat = opts.format ? d3.format(opts.format) : d3.format(',.03f');
-      this.createList();
-      this.start();
     }
 
     Statistics.prototype.start = function() {
-      if (this.selectedKey === 'id') {
+      Statistics.__super__.start.apply(this, arguments);
+      if (!this.selectedKey) {
         this.selectedKey = this.keys[0];
       }
+      this.createList();
       this.createStats();
       return this.displayStats();
     };
@@ -1207,14 +1224,12 @@
         median = this.dimensions[this.selectedKey].top(midPoint);
         median = _.last(median)[this.selectedKey];
       }
-      console.log(this.selectedKey, median);
       return median;
     };
 
     Statistics.prototype.mode = function() {
       var mode;
       mode = this.dimensions[this.selectedKey].group().reduceCount().top(1);
-      console.log(mode);
       return mode[0].key;
     };
 
@@ -1309,31 +1324,23 @@
 
     __extends(SubjectViewer, _super);
 
-    SubjectViewer.prototype.template = "<ul>\n  <% for(i = 0; i < keys.length; i++) { %>\n    <li>\n      <%- keys[i] %>: <%- subject[keys[i]] %>\n    </li>\n  <% } %>\n</ul>";
-
-    function SubjectViewer(opts) {
-      this.render = __bind(this.render, this);
-
+    function SubjectViewer() {
       this.start = __bind(this.start, this);
-      SubjectViewer.__super__.constructor.apply(this, arguments);
-      this.start();
+      return SubjectViewer.__super__.constructor.apply(this, arguments);
     }
 
-    SubjectViewer.prototype.start = function() {
-      var data;
-      data = this.dimensions.id.top(Infinity);
-      return this.render();
-    };
+    SubjectViewer.prototype.template = "<ul>\n  <% for(i = 0; i < keys.length; i++) { %>\n    <li>\n      <%- keys[i] %>: <%- subject[keys[i]] %>\n    </li>\n  <% } %>\n</ul>";
 
-    SubjectViewer.prototype.render = function() {
-      var compiled, subject,
+    SubjectViewer.prototype.start = function() {
+      var compiled, data, subject,
         _this = this;
-      if (this.selectedElements.length) {
-        subject = _.find(this.dimensions.id.top(Infinity), function(record) {
+      data = this.dimensions.id.top(Infinity);
+      if (!this.selectedElements) {
+        subject = data[0];
+      } else {
+        subject = _.find(data, function(record) {
           return record.id === _this.selectedElements[0];
         });
-      } else {
-        subject = this.dimensions.id.top(Infinity)[0];
       }
       compiled = _.template(this.template, {
         subject: subject,
@@ -1386,11 +1393,11 @@
       this.start = __bind(this.start, this);
       Table.__super__.constructor.call(this, opts);
       this.sortOrder = 'top';
-      this.createTable();
-      this.start();
     }
 
     Table.prototype.start = function() {
+      Table.__super__.start.apply(this, arguments);
+      this.createTable();
       this.createHeader();
       return this.createRows();
     };
@@ -1418,6 +1425,9 @@
       var tr,
         _this = this;
       this.tbody.selectAll('tr').remove();
+      if (!this.selectedKey) {
+        this.selectedKey = this.keys[0];
+      }
       tr = this.tbody.selectAll('tr').data(this.dimensions[this.selectedKey][this.sortOrder](20)).enter().append('tr').attr('data-id', function(d) {
         return d.id;
       }).on('click', this.selection);
@@ -1426,7 +1436,7 @@
       }).enter().append('td').text(function(d) {
         return d;
       });
-      if (this.selectedElements.length !== 0) {
+      if (this.selectedElements && this.selectedElements.length !== 0) {
         return this.highlightRows();
       }
     };

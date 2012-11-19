@@ -24,6 +24,7 @@ class Histogram2 extends Graph
     # Get data from crossfilter object
     top       = @dimensions[@axis1].top(Infinity)
     data      = _.map(top, (d) => d[@axis1])
+    @bins     = if @bins then @bins else Math.log(@count) / Math.log(2) + 1
     @xDomain  = d3.extent(data)
     @binSize  = (@xDomain[1] - @xDomain[0]) / @bins
     
@@ -34,7 +35,6 @@ class Histogram2 extends Graph
   
   drawData: =>
     offset = Math.abs(_.min(@data, (d) -> return d.key).key)
-    console.log "offset = ", offset
     @bars = @svg.selectAll('.bar')
         .data(@data)
       .enter().append('rect')

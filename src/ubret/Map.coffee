@@ -1,46 +1,48 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Map extends BaseTool
 
   template:
     """
-    <div id="<%- selector %>"></div>
+    <div id="<%- selector %>" class="map"></div>
     """
 
   @mapOptions =
     attributionControl: false
     
   # Set the default image path for Leaflet
-  L.Icon.Default.imagePath = 'css/images'
+  L.Icon.Default.imagePath = '/images'
 
   default_icon: new L.icon {
       className: 'default_icon'
-      iconUrl: '/css/images/marker-icon.png'
+      iconUrl: '/images/marker-icon.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
     }
 
   selected_icon: new L.icon {
       className: 'selected_icon'
-      iconUrl: '/css/images/marker-icon-orange.png'
+      iconUrl: '/images/marker-icon-orange.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
     }
 
-  constructor: ->
+  constructor: (opts) ->
+    super opts
     @circles = []
 
   render: =>
-    compiled = _.template @template, { selector: @selector }
-    @el.html compiled
+    @el.html _.template(@template, { selector: @selector })
 
   start: =>
+    @render()
     @createSky() unless @map
-    @plotObjects() if @data
+    @plotObjects() if @dimensions.id.top(Infinity)
     
   createSky: =>
-    @map = L.map("sky-#{@index}", Map.mapOptions).setView([0, 180], 6)
+    if @el.context._leaflet
+      console.log @el
+    @map = L.map(@selector, Map.mapOptions).setView([0, 180], 6)
     @layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg',
       maxZoom: 7
     )
@@ -75,7 +77,7 @@ class Map extends BaseTool
         s: s
 
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
-      return "/tiles/#{zoom}/#{url.src}.jpg"
+      return "/images/tiles/#{zoom}/#{url.src}.jpg"
 
     @layer.addTo @map
   
@@ -93,25 +95,25 @@ class Map extends BaseTool
     circle.addTo(@map)
 
     # Use subject viewer for popup
-    subject_viewer = new SubjectViewer
-    subject_viewer.receiveData [subject]
-    subject_viewer.render()
+    # subject_viewer = new SubjectViewer
+    # subject_viewer.receiveData [subject]
+    # subject_viewer.render()
 
-    circle.bindPopup subject_viewer.el.get(0).outerHTML, {maxWidth: 460}
+    # circle.bindPopup subject_viewer.el.get(0).outerHTML, {maxWidth: 460}
 
-    circle.on 'click', =>
-      @selectSubject circle
+    # circle.on 'click', =>
+    #   @selectSubject circle
       # @publish [{message: "selected", item_id: circle.zooniverse_id}]
 
     @circles.push circle
-    
+
   plotObjects: =>
+    data = @dimensions.id.top(30)
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
-    @filterData()
-    @plotObject subject for subject in @filteredData
+    @plotObject subject for subject in data
 
-    latlng = new L.LatLng(@data[0].dec, @data[0].ra)
+    latlng = new L.LatLng(data[0].dec, data[0].ra)
     @map.panTo latlng
  
   selected: (itemId) =>
