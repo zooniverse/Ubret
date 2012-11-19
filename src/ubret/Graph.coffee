@@ -36,12 +36,18 @@ class Graph extends BaseTool
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
     
+    @clearFilters()
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
     @drawBrush()
   
-  start: => @setupGraph()
+  start: =>
+    @setupGraph()
+  
+  clearFilters: =>
+    for key, dimension of @dimensions
+      dimension.filterAll()
   
   drawAxes: =>
     

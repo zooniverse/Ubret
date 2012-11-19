@@ -17,7 +17,7 @@ class Histogram2 extends Graph
     super opts
     
     # Compute the number of bins for the unfiltered dataset
-    @bins   = if opts.bins then opts.bins else Math.log(@count) / Math.log(2) + 1
+    @bins   = if opts.bins then opts.bins else Math.floor(Math.log(@count) / Math.log(2) + 1)
     @axis2  = opts.yLabel or 'Count'
   
   setupData: =>
@@ -28,18 +28,17 @@ class Histogram2 extends Graph
     @binSize  = (@xDomain[1] - @xDomain[0]) / @bins
     
     # Bin the data using crossfilter
-    group = @dimensions[@axis1].group( (d) => Math.floor((d) / @binSize))
+    group = @dimensions[@axis1].group( (d) => Math.floor((d) / (@binSize)))
     @data    = group.top(Infinity)
     @yDomain = [0, @data[0].value]
   
   drawData: =>
-    offset = Math.abs(_.min(@data, (d) -> return d.key).key)
-    console.log "offset = ", offset
+    # offset = Math.abs(_.min(@data, (d) -> return d.key).key)
     @bars = @svg.selectAll('.bar')
         .data(@data)
       .enter().append('rect')
         .attr('class', 'bar')
-        .attr('x', (d) => return @x((d.key + offset) * @binSize))
+        .attr('x', (d) => return @x((d.key) * @binSize))
         .attr('width', @x(@binSize))
         .attr('y', (d) => return @y(d.value))
         .attr('height', (d) => return @graphHeight - @y(d.value))
@@ -58,9 +57,9 @@ class Histogram2 extends Graph
 
   brushend: =>
     
-    # Clear existing filters
-    for axis, dimension of @dimensions
-      dimension.filterAll()
+    # # Clear existing filters
+    # for axis, dimension of @dimensions
+    #   dimension.filterAll()
     
     # Apply the filter
     @dimensions[@axis1].filter(d3.event.target.extent())

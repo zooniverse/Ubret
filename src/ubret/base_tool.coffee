@@ -38,7 +38,7 @@ class BaseTool
     @start()
 
   createDimensions: =>
-    @dimensions = new Object
+    @dimensions = {}
     for key in @keys
       @dimensions.id = @data.dimension( (d) -> d.id )
       @dimensions[key] = @data.dimension( (d) -> d[key] )
