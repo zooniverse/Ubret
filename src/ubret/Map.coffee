@@ -28,7 +28,7 @@ class Map extends BaseTool
 
   start: =>
     if @map
-      @map.invalidateSize(true)
+      @map.invalidateSize()
     else @createSky()
     # @plotObjects() if @dimensions.id.top(Infinity)
     

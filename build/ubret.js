@@ -575,7 +575,7 @@
 
     Map.prototype.start = function() {
       if (this.map) {
-        return this.map.invalidateSize(true);
+        return this.map.invalidateSize();
       } else {
         return this.createSky();
       }
