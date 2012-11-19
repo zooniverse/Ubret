@@ -2,11 +2,6 @@ BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Map extends BaseTool
 
-  template:
-    """
-    <div id="<%- selector %>" class="map"></div>
-    """
-
   @mapOptions =
     attributionControl: false
     
@@ -31,18 +26,14 @@ class Map extends BaseTool
     super opts
     @circles = []
 
-  render: =>
-    @el.html _.template(@template, { selector: @selector })
-
   start: =>
-    @render()
-    @createSky() unless @map
-    @plotObjects() if @dimensions.id.top(Infinity)
+    if @map
+      @map.invalidateSize(true)
+    else @createSky()
+    # @plotObjects() if @dimensions.id.top(Infinity)
     
   createSky: =>
-    if @el.context._leaflet
-      console.log @el
-    @map = L.map(@selector, Map.mapOptions).setView([0, 180], 6)
+    @map = L.map(@el.attr('id'), Map.mapOptions).setView([0, 180], 6)
     @layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg',
       maxZoom: 7
     )

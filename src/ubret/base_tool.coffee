@@ -47,7 +47,7 @@ class BaseTool
 
   addFilters: (filters) =>
     @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters
-    @start() if @initialized
+    # @start() if @initialized # temp
 
   receiveSetting: (key, value) =>
     @[key] = value

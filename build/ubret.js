@@ -108,14 +108,13 @@
     };
 
     BaseTool.prototype.addFilters = function(filters) {
-      var filter, _i, _len;
+      var filter, _i, _len, _results;
+      _results = [];
       for (_i = 0, _len = filters.length; _i < _len; _i++) {
         filter = filters[_i];
-        this.dimensions[filter.key].filterRange([filter.min, filter.max]);
+        _results.push(this.dimensions[filter.key].filterRange([filter.min, filter.max]));
       }
-      if (this.initialized) {
-        return this.start();
-      }
+      return _results;
     };
 
     BaseTool.prototype.receiveSetting = function(key, value) {
@@ -538,8 +537,6 @@
 
     __extends(Map, _super);
 
-    Map.prototype.template = "<div id=\"<%- selector %>\" class=\"map\"></div>";
-
     Map.mapOptions = {
       attributionControl: false
     };
@@ -572,33 +569,20 @@
       this.createSky = __bind(this.createSky, this);
 
       this.start = __bind(this.start, this);
-
-      this.render = __bind(this.render, this);
       Map.__super__.constructor.call(this, opts);
       this.circles = [];
     }
 
-    Map.prototype.render = function() {
-      return this.el.html(_.template(this.template, {
-        selector: this.selector
-      }));
-    };
-
     Map.prototype.start = function() {
-      this.render();
-      if (!this.map) {
-        this.createSky();
-      }
-      if (this.dimensions.id.top(Infinity)) {
-        return this.plotObjects();
+      if (this.map) {
+        return this.map.invalidateSize(true);
+      } else {
+        return this.createSky();
       }
     };
 
     Map.prototype.createSky = function() {
-      if (this.el.context._leaflet) {
-        console.log(this.el);
-      }
-      this.map = L.map(this.selector, Map.mapOptions).setView([0, 180], 6);
+      this.map = L.map(this.el.attr('id'), Map.mapOptions).setView([0, 180], 6);
       this.layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg', {
         maxZoom: 7
       });
