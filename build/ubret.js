@@ -197,17 +197,11 @@
           return;
         }
       }
-<<<<<<< HEAD
       this.el.find('svg').empty();
-      this.graphHeight = this.height - (this.margin.top + this.margin.bottom);
-      this.graphWidth = this.width - (this.margin.left + this.margin.right);
-      this.svg = d3.select("" + this.selector + " svg").attr('width', this.width).attr('height', this.height).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
-      this.clearFilters();
-=======
       this.graphHeight = this.el.height() - (this.margin.top + this.margin.bottom);
       this.graphWidth = this.el.width() - (this.margin.left + this.margin.right);
       this.svg = d3.select("" + this.selector + " svg").attr('width', this.el.width()).attr('height', this.el.height()).append('g').attr('transform', "translate(" + this.margin.left + ", " + this.margin.top + ")");
->>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
+      this.clearFilters();
       this.setupData();
       this.drawAxes();
       this.drawData();
@@ -215,8 +209,6 @@
     };
 
     Graph.prototype.start = function() {
-      Graph.__super__.start.apply(this, arguments);
-      this.el.append('<svg></svg>');
       return this.setupGraph();
     };
 
@@ -499,19 +491,9 @@
     };
 
     Histogram2.prototype.drawData = function() {
-<<<<<<< HEAD
       var _this = this;
       return this.bars = this.svg.append('g').selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
         return _this.x(d.key * _this.binSize);
-=======
-      var offset,
-        _this = this;
-      offset = Math.abs(_.min(this.data, function(d) {
-        return d.key;
-      }).key);
-      return this.bars = this.svg.selectAll('.bar').data(this.data).enter().append('rect').attr('class', 'bar').attr('x', function(d) {
-        return _this.x((d.key + offset) * _this.binSize);
->>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
       }).attr('width', this.x(this.binSize)).attr('y', function(d) {
         return _this.y(d.value);
       }).attr('height', function(d) {

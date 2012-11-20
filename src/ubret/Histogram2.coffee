@@ -35,13 +35,7 @@ class Histogram2 extends Graph
     @yDomain  = [0, @data[0].value]
   
   drawData: =>
-<<<<<<< HEAD
-    # offset = Math.abs(_.min(@data, (d) -> return d.key).key)
     @bars = @svg.append('g').selectAll('.bar')
-=======
-    offset = Math.abs(_.min(@data, (d) -> return d.key).key)
-    @bars = @svg.selectAll('.bar')
->>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
         .data(@data)
       .enter().append('rect')
         .attr('class', 'bar')

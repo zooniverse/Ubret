@@ -18,6 +18,8 @@ class Graph extends BaseTool
       key = "axis#{axis}"
       return if @[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
     
+    @el.find('svg').empty()
+    
     @graphHeight = @el.height() - (@margin.top + @margin.bottom)
     @graphWidth  = @el.width() - (@margin.left + @margin.right)
 
@@ -26,29 +28,19 @@ class Graph extends BaseTool
       .attr('height', @el.height())
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
-<<<<<<< HEAD
-    
+      
     @clearFilters()
-=======
-
->>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
     @drawBrush()  # Implemented by subclasses
   
   start: =>
-<<<<<<< HEAD
     @setupGraph()
   
   clearFilters: =>
     for key, dimension of @dimensions
       dimension.filterAll()
-=======
-    super
-    @el.append('<svg></svg>')
-    @setupGraph()
->>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
   
   drawAxes: =>
     
