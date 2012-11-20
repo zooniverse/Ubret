@@ -1,9 +1,6 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Map extends BaseTool
-
-  @mapOptions =
-    attributionControl: false
     
   # Set the default image path for Leaflet
   L.Icon.Default.imagePath = '/images'
@@ -25,12 +22,14 @@ class Map extends BaseTool
   constructor: (opts) ->
     super opts
     @circles = []
+    @limit = @limit or 30
 
   start: =>
     if @map
       @map.invalidateSize()
-    else @createSky()
-    # @plotObjects() if @dimensions.id.top(Infinity)
+    else
+      @createSky()
+      @plotObjects() if @dimensions.id.top(Infinity)
     
   createSky: =>
     @map = L.map(@el.attr('id'), Map.mapOptions).setView([0, 180], 6)
@@ -84,22 +83,13 @@ class Map extends BaseTool
     circle.zooniverse_id = subject.zooniverse_id
     
     circle.addTo(@map)
-
-    # Use subject viewer for popup
-    # subject_viewer = new SubjectViewer
-    # subject_viewer.receiveData [subject]
-    # subject_viewer.render()
-
-    # circle.bindPopup subject_viewer.el.get(0).outerHTML, {maxWidth: 460}
-
-    # circle.on 'click', =>
-    #   @selectSubject circle
-      # @publish [{message: "selected", item_id: circle.zooniverse_id}]
+      .bindPopup('etc')
+      .openPopup()
 
     @circles.push circle
 
   plotObjects: =>
-    data = @dimensions.id.top(30)
+    data = @dimensions.id.top(@limit)
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in data

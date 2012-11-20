@@ -20,12 +20,8 @@ task 'watch', 'Watch src/ for changes', ->
     print data.toString()
 
 task 'concat', 'Concat lib/ into one js file', ->
-  destination_dir = __dirname + '/lib/ubret/'
-  singleFile = new String
 
-  singleFile = fs.readFileSync __dirname + '/lib/index.js'
-  singleFile = singleFile + fs.readFileSync __dirname + '/lib/ubret/base_tool.js'
-
+  # Helper
   views_func =
     gather_views: (source_dir, working_dir, views) =>
       entities = fs.readdirSync source_dir + working_dir
@@ -41,11 +37,30 @@ task 'concat', 'Concat lib/ into one js file', ->
       views
 
   views = []
+
+  # Vendor JS first
+  vendorFile = new String
+  vendorDir = __dirname + '/vendor/'
+  entities = fs.readdirSync vendorDir
+  entities.forEach (vendor_js) ->
+    file = fs.readFileSync vendorDir + vendor_js
+    vendorFile = vendorFile + file
+
+  # Ubret Library
+  destination_dir = __dirname + '/lib/ubret/'
+  singleFile = new String
+  singleFile = fs.readFileSync __dirname + '/lib/index.js'
+  singleFile = singleFile + fs.readFileSync __dirname + '/lib/ubret/base_tool.js'
   views = views_func.gather_views(destination_dir, '', views)
 
+  # Concat
   views.forEach (view) ->
     data = fs.readFileSync destination_dir + view
     singleFile = singleFile + data
 
+  # Add Vendor
+  singleFile = vendorFile + singleFile
+
+  # Write out
   fs.writeFileSync __dirname + '/build/ubret.js', singleFile
 

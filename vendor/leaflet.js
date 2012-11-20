@@ -6117,7 +6117,7 @@ L.Map.Keyboard = L.Handler.extend({
 
 	_onMouseDown: function () {
 		if (!this._focused) {
-			this._map._container.focus();
+			// this._map._container.focus();
 		}
 	},
 
