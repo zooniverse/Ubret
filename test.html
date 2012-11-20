@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="UTF-8">
+  <title> Ubret Test Page </title> 
+  <script src="vendor/sizzle.js" type="text/javascript"></script>
+  <script src="vendor/d3.v2.js" type="text/javascript"></script>
+  <script src="vendor/underscore.js" type="text/javascript"></script>
+  <script src="vendor/leaflet-src.js" type="text/javascript"></script>
+  <script src="vendor/crossfilter.js" type="text/javascript"></script>
+  <script src="build/ubret.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div class="table">
+    </div>
+
+  <script type="text/javascript">
+    data = [
+      { id: 1, something: 'Awesome', number: 1, score: 54.0 },
+      { id: 2, something: 'cool', number: 11, score: 54.9 },
+      { id: 5, something: 'sick', number: 11111, score: 54.4 },
+      { id: 4, something: 'tight', number: 1111, score: 54.5 },
+      { id: 6, something: 'dumb', number: 11, score: 54.3 },
+      { id: 3, something: 'wicked', number: 111, score: 54.6 },
+      { id: 7, something: 'touchy', number: 111, score: 54.2 },
+      { id: 8, something: 'explosive', number: 1, score: 54.1 }]
+
+    keys = ['something', 'number', 'score']
+
+    selector = '.table'
+
+    opts = { keys: keys, selector: selector, data: data, el: 'asdfasdf', selectedKey: 'number', filters: [] }
+    table = new Ubret.Table(opts)
+    stats = new Ubret.Statistics(opts)
+  </script>
+  </body>
+</html>

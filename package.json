@@ -1,0 +1,35 @@
+{
+  "name": "Ubret",
+  "version": "0.0.1",
+  "private": true,
+  "author" : "zooniverse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zooniverse/Ubret.git"
+  },
+  "scripts" : {
+    "pretest" : "hem server --port 9200 & echo $! > hem.pid",
+    "test" : "sleep 2; jasmine-phantom-node --port 9200 --url /public/test.html",
+    "posttest" : "kill `cat hem.pid`; rm hem.pid"
+  },
+  "main" : "./lib/index.js",
+  "bin" : {
+    "compile-eco": "./bin/compile-eco"
+  },
+  "dependencies": { 
+    "serveup": "~0.0.4",
+    "hem": "git://github.com/kapadia/hem.git",
+    "es5-shimify": "~0.0.1",
+    "json2ify": "~0.0.1",
+    "jqueryify": "~0.0.1",
+    "underscore": "*",
+    "spine": "~1.0.8",
+    "zooniverse": "git+ssh://git@github.com:zooniverse/Zooniverse.git",
+    "node-pubsub" : "*"
+  },
+  "devDependencies" : {
+    "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git",
+    "sinon"                :  "*",
+    "eco" : "*"
+  }
+}
