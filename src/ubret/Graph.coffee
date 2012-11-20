@@ -5,13 +5,7 @@ class Graph extends BaseTool
 
   constructor: (opts) ->
     super opts
-    
-    # Load the template
-    compiled = _.template @template, {selector: @selector}
-    @el.html compiled
-    
-    @width  = opts.width or @el.width()
-    @height = opts.height or @el.height()
+
     @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
     @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
     
@@ -19,35 +13,42 @@ class Graph extends BaseTool
     @selectionColor = opts.selectionColor or '#CD3E20'
 
   setupGraph: =>
-    
     # Check that all axes are defined
     for axis in [1..@axes]
       key = "axis#{axis}"
       return if @[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
     
-    @el.find('svg').empty()
-    
-    @graphHeight = @height - (@margin.top + @margin.bottom)
-    @graphWidth  = @width - (@margin.left + @margin.right)
-    
+    @graphHeight = @el.height() - (@margin.top + @margin.bottom)
+    @graphWidth  = @el.width() - (@margin.left + @margin.right)
+
     @svg = d3.select("#{@selector} svg")
-      .attr('width', @width)
-      .attr('height', @height)
+      .attr('width', @el.width())
+      .attr('height', @el.height())
       .append('g')
         .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
+<<<<<<< HEAD
     
     @clearFilters()
+=======
+
+>>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
     @drawBrush()  # Implemented by subclasses
   
   start: =>
+<<<<<<< HEAD
     @setupGraph()
   
   clearFilters: =>
     for key, dimension of @dimensions
       dimension.filterAll()
+=======
+    super
+    @el.append('<svg></svg>')
+    @setupGraph()
+>>>>>>> 97e2165c16a122b789109245867ab3a5623e2903
   
   drawAxes: =>
     

@@ -5,13 +5,14 @@ class Statistics extends BaseTool
   constructor: (opts) ->
     super opts
     @displayFormat = if opts.format then d3.format(opts.format) else d3.format(',.03f')
-    @createList()
-    @start()
 
   start: =>
+    super
     # Assign a selected key so the tool renders immediately.
-    if @selectedKey is 'id'
+    unless @selectedKey
       @selectedKey = @keys[0]
+
+    @createList()
     @createStats()
     @displayStats()
 
@@ -63,12 +64,10 @@ class Statistics extends BaseTool
     else
       median = @dimensions[@selectedKey].top(midPoint)
       median = _.last(median)[@selectedKey]
-    console.log @selectedKey, median
     median
 
   mode: =>
     mode = @dimensions[@selectedKey].group().reduceCount().top(1)
-    console.log mode
     mode[0].key
 
   min: =>

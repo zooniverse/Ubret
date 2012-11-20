@@ -13,20 +13,13 @@ class SubjectViewer extends BaseTool
     </ul>
     """
 
-  constructor: (opts) ->
-    super
-    @start()
-
   start: =>
     data = @dimensions.id.top(Infinity)
-    @render()
-
-  render: =>
-    if @selectedElements.length
-      subject = _.find @dimensions.id.top(Infinity), (record) =>
-        record.id == @selectedElements[0]
+    unless @selectedElements
+      subject = data[0]
     else
-      subject = @dimensions.id.top(Infinity)[0]
+      subject = _.find data, (record) =>
+        record.id == @selectedElements[0]
 
     compiled = _.template @template, { subject: subject, keys: @keys }
     @el.html compiled
