@@ -36,6 +36,7 @@ class Graph extends BaseTool
     @drawBrush()  # Implemented by subclasses
   
   start: =>
+    @el.html _.template @template, {selector: @selector}
     @setupGraph()
   
   clearFilters: =>
