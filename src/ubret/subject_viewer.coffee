@@ -1,7 +1,7 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class SubjectViewer extends BaseTool
-
+  name: 'Subject Viewer'
   template:
     """
     <ul>
@@ -14,6 +14,7 @@ class SubjectViewer extends BaseTool
     """
 
   start: =>
+    console.log @dimensions
     data = @dimensions.id.top(Infinity)
     unless @selectedElements
       subject = data[0]

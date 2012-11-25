@@ -2,6 +2,7 @@
 Graph = window.Ubret.Graph or require('./Graph')
 
 class Histogram2 extends Graph
+  name: 'Histogram'
   axes: 1
   
   template:

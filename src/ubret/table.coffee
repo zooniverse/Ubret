@@ -1,7 +1,8 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Table extends BaseTool
-
+  name: 'Table'
+  
   constructor: (opts) ->
     super opts
     @sortOrder = 'top'

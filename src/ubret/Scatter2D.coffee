@@ -2,6 +2,7 @@
 Graph = window.Ubret.Graph or require('./Graph')
 
 class Scatter2D extends Graph
+  name: 'Scatterplot'
   axes: 2
   
   template:

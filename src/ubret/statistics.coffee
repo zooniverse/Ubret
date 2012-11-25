@@ -1,7 +1,8 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Statistics extends BaseTool
-
+  name: 'Statistics'
+  
   constructor: (opts) ->
     super opts
     @displayFormat = if opts.format then d3.format(opts.format) else d3.format(',.03f')

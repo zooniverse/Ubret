@@ -1,7 +1,8 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Map extends BaseTool
-    
+  name: 'Map'
+
   # Set the default image path for Leaflet
   L.Icon.Default.imagePath = '/images'
 
@@ -25,6 +26,7 @@ class Map extends BaseTool
     @limit = @limit or 30
 
   start: =>
+    console.log @dimensions
     if @map
       @map.invalidateSize()
     else
