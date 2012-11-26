@@ -14,7 +14,6 @@ class SubjectViewer extends BaseTool
     """
 
   start: =>
-    console.log @dimensions
     data = @dimensions.id.top(Infinity)
     unless @selectedElements
       subject = data[0]
