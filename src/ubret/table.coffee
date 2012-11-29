@@ -82,8 +82,6 @@ class Table extends BaseTool
     super key
 
   selection: (d, i) =>
-    console.log 'd', d
-    console.log 'i', i
     ids = @selectedElements
     if d3.event.shiftKey
       index = _.indexOf @selectedElements, d.uid
@@ -93,7 +91,6 @@ class Table extends BaseTool
         ids = _.without ids, d.uid 
     else
       ids = [d.uid]
-    console.log 'ids', ids
     @selectElements ids
 
   arrow: =>

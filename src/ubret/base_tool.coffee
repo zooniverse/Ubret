@@ -36,9 +36,6 @@ class BaseTool
   selectElements: (ids) =>
     @selectedElements = ids
     @selectElementsCb ids
-
-    console.log 'se', @selectedElements
-
     @start()
 
   selectKey: (key) =>
