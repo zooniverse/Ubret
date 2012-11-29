@@ -13,7 +13,9 @@ class BaseTool
         when 'data'
           # @data = crossfilter(opts.data)
           @data = opts.data
-          @original_data = opts.data
+          @original_data = _.map opts.data, (datum) ->
+            # Add a unique ID to each record
+            _.extend {uid: _.uniqueId()}, datum
           @count = opts.data.length
         when 'filters'
           @addFilters opts.filters
@@ -34,6 +36,9 @@ class BaseTool
   selectElements: (ids) =>
     @selectedElements = ids
     @selectElementsCb ids
+
+    console.log 'se', @selectedElements
+
     @start()
 
   selectKey: (key) =>

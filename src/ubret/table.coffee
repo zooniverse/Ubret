@@ -48,9 +48,9 @@ class Table extends BaseTool
         return -datum[@selectedKey]
 
     tr = @tbody.selectAll('tr')
-      .data(@data)
+      .data(@original_data)
       .enter().append('tr')
-        .attr('data-id', (d) -> d.id)
+        .attr('data-id', (d) -> d.uid)
         .on('click', @selection)
 
     tr.selectAll('td')
@@ -82,15 +82,18 @@ class Table extends BaseTool
     super key
 
   selection: (d, i) =>
+    console.log 'd', d
+    console.log 'i', i
     ids = @selectedElements
     if d3.event.shiftKey
-      index = _.indexOf @selectedElements, d.id
+      index = _.indexOf @selectedElements, d.uid
       if index is -1
-        ids.push d.id
+        ids.push d.uid
       else
-        ids = _.without ids, d.id 
+        ids = _.without ids, d.uid 
     else
-      ids = [d.id]
+      ids = [d.uid]
+    console.log 'ids', ids
     @selectElements ids
 
   arrow: =>
