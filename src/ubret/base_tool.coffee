@@ -11,16 +11,18 @@ class BaseTool
     for opt of opts
       switch opt
         when 'data'
-          @data = crossfilter(opts.data)
+          # @data = crossfilter(opts.data)
+          @data = opts.data
+          @original_data = opts.data
           @count = opts.data.length
         when 'filters'
           @addFilters opts.filters
         else
           @[opt] = opts[opt]
 
-    if @data and @keys
-      @createDimensions()
-      @initialized = true
+    # if @data and @keys
+    #   @createDimensions()
+    #   @initialized = true
 
   getTemplate: =>
     @template
@@ -39,11 +41,19 @@ class BaseTool
     @selectKeyCb key
     @start()
 
-  createDimensions: =>
+  createDimensions: (keys) =>
+    cf_data = crossfilter(@original_data)
+
     @dimensions = {}
-    for key in @keys
-      @dimensions.id = @data.dimension( (d) -> d.id )
-      @dimensions[key] = @data.dimension( (d) -> d[key] )
+    dim_keys = []
+    unless _.isArray keys
+      dim_keys.push keys
+    else
+      dim_keys = keys
+
+    for key in dim_keys
+      @dimensions.id = cf_data.dimension((d) -> d.id)
+      @dimensions[key] = cf_data.dimension((d) -> d[key])
 
   addFilters: (filters) =>
     @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters

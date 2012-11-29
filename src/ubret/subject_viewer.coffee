@@ -14,9 +14,10 @@ class SubjectViewer extends BaseTool
     """
 
   start: =>
-    data = @dimensions.id.top(Infinity)
+    # data = @dimensions.id.top(Infinity)
     unless @selectedElements
-      subject = data[0]
+      subject = @data[0]
+      # subject = data[0]
     else
       subject = _.find data, (record) =>
         record.id == @selectedElements[0]

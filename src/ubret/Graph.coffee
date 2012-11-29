@@ -49,7 +49,7 @@ class Graph extends BaseTool
     @x = d3.scale.linear()
       .range([0, @graphWidth])
       .domain(@xDomain)
-    
+
     xAxis = d3.svg.axis()
       .scale(@x)
       .orient('bottom')

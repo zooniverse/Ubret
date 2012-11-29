@@ -23,10 +23,14 @@ class Histogram2 extends Graph
   
   setupData: =>
     # Get data from crossfilter object
+    data = crossfilter(@original_data)
+    @createDimensions([@axis1])
+
     top       = @dimensions[@axis1].top(Infinity)
     data      = _.map(top, (d) => d[@axis1])
     @bins     = if @bins then @bins else Math.log(@count) / Math.log(2) + 1
     @xDomain  = d3.extent(data)
+    # @binSize  = @graphWidth / @bins
     @binSize  = (Math.ceil(@xDomain[1]) - Math.floor(@xDomain[0])) / @bins
     
     # Bin the data using crossfilter
@@ -34,10 +38,10 @@ class Histogram2 extends Graph
     group     = @dimensions[@axis1].group( (d) => Math.floor((d - min) / (@binSize)))
     @data     = group.top(Infinity)
     @yDomain  = [0, @data[0].value]
-  
+
   drawData: =>
     @bars = @svg.append('g').selectAll('.bar')
-        .data(@data)
+      .data(@data)
       .enter().append('rect')
         .attr('class', 'bar')
         .attr('x', (d) => return @x((d.key) * @binSize))

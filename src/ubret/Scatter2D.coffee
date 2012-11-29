@@ -19,12 +19,11 @@ class Scatter2D extends Graph
   
   setupData: =>
     # Get data from crossfilter object
-    data = @dimensions[@axis1].top(Infinity)
-    @data = _.map(data, (d) => _.pick(d, @axis1, @axis2))
-    
-    @xDomain = @bufferAxes(d3.extent(@data, (d) => d[@axis1]))
-    @yDomain = @bufferAxes(d3.extent(@data, (d) => d[@axis2]))
-  
+    # data = @dimensions[@axis1].top(Infinity)
+    @data = _.map(@original_data, (d) => _.pick(d, @axis1, @axis2))
+    @xDomain = d3.extent(@data, (d) => d[@axis1])
+    @yDomain = d3.extent(@data, (d) => d[@axis2])
+
   drawData: =>
     @points = @svg.append('g').selectAll('circle')
         .data(@data)
@@ -48,7 +47,6 @@ class Scatter2D extends Graph
       .on('brushend', @brushend))
   
   brushend: =>
-    
     # Clear existing filters
     for axis, dimension of @dimensions
       dimension.filterAll()

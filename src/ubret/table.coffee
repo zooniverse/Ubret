@@ -35,16 +35,28 @@ class Table extends BaseTool
     unless @selectedKey
       @selectedKey = @keys[0]
 
+    # tr = @tbody.selectAll('tr')
+    #   .data(@dimensions[@selectedKey][@sortOrder](20))
+    #   .enter().append('tr')
+    #     .attr('data-id', (d) -> d.id)
+    #     .on('click', @selection)
+    
+    @data = _.sortBy @original_data, (datum) =>
+      if @sortOrder is 'top'
+        return datum[@selectedKey]
+      else
+        return -datum[@selectedKey]
+
     tr = @tbody.selectAll('tr')
-      .data(@dimensions[@selectedKey][@sortOrder](20))
+      .data(@data)
       .enter().append('tr')
         .attr('data-id', (d) -> d.id)
         .on('click', @selection)
-    
+
     tr.selectAll('td')
       .data((d) => @toArray(d))
       .enter().append('td')
-        .text( (d) -> return d)
+        .text((d) -> return d)
 
     if @selectedElements and @selectedElements.length isnt 0
       @highlightRows()
