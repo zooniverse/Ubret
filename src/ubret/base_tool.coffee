@@ -11,20 +11,21 @@ class BaseTool
     for opt of opts
       switch opt
         when 'data'
-          # @data = crossfilter(opts.data)
-          @data = opts.data
-          @original_data = _.map opts.data, (datum) ->
+          original_data = _.map opts.data, (datum) ->
             # Add a unique ID to each record
             _.extend {uid: _.uniqueId()}, datum
+          @data = crossfilter(original_data)
           @count = opts.data.length
         when 'filters'
           @addFilters opts.filters
         else
           @[opt] = opts[opt]
 
-    # if @data and @keys
-    #   @createDimensions()
-    #   @initialized = true
+    @dimensions = new Object
+    if @data and @keys
+      @createDimensions('uid')
+      @createDimensions(@selectedKey) if typeof @selectedKey isnt 'undefined'
+      @initialized = true
 
   getTemplate: =>
     @template
@@ -39,23 +40,20 @@ class BaseTool
     @start()
 
   selectKey: (key) =>
+    delete @dimensions[@selectedKey]
+    @createDimensions key
     @selectedKey = key
     @selectKeyCb key
     @start()
 
   createDimensions: (keys) =>
-    cf_data = crossfilter(@original_data)
-
-    @dimensions = {}
     dim_keys = []
     unless _.isArray keys
       dim_keys.push keys
     else
       dim_keys = keys
-
-    for key in dim_keys
-      @dimensions.id = cf_data.dimension((d) -> d.id)
-      @dimensions[key] = cf_data.dimension((d) -> d[key])
+    @dimensions[key] = @data.dimension((d) -> d[key]) for key in dim_keys
+    
 
   addFilters: (filters) =>
     # @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters
@@ -73,7 +71,6 @@ class BaseTool
   checkOpts: (required_opts = @required_data_opts) =>
     for opt in required_opts
       throw "missing option #{opt}" unless _.has @, opt
-      
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = BaseTool

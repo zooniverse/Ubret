@@ -33,26 +33,14 @@ class Table extends BaseTool
     @tbody.selectAll('tr').remove()
 
     unless @selectedKey
-      @selectedKey = @keys[0]
-
-    # tr = @tbody.selectAll('tr')
-    #   .data(@dimensions[@selectedKey][@sortOrder](20))
-    #   .enter().append('tr')
-    #     .attr('data-id', (d) -> d.id)
-    #     .on('click', @selection)
-    
-    @data = _.sortBy @original_data, (datum) =>
-      if @sortOrder is 'top'
-        return datum[@selectedKey]
-      else
-        return -datum[@selectedKey]
+      @selectedKey = 'uid'
 
     tr = @tbody.selectAll('tr')
-      .data(@original_data)
+      .data(@dimensions[@selectedKey][@sortOrder](20))
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
         .on('click', @selection)
-
+    
     tr.selectAll('td')
       .data((d) => @toArray(d))
       .enter().append('td')

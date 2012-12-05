@@ -11,7 +11,7 @@ class Statistics extends BaseTool
     super
     # Assign a selected key so the tool renders immediately.
     unless @selectedKey
-      @selectedKey = @keys[0]
+      @selectedKey = 'uid'
 
     @createList()
     @createStats()
@@ -27,6 +27,7 @@ class Statistics extends BaseTool
       .attr('class', 'statistics')
 
   createStats: =>
+    @createDimensions(@selectedKey)
     @statistics = new Array
     @statistics.push [stat, @[stat]()] for stat in ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
 
@@ -43,15 +44,15 @@ class Statistics extends BaseTool
 
   # Statistics
   mean: =>
-    count = @dimensions.id.groupAll().reduceCount().value()
-    sum = @dimensions.id.groupAll().reduce(((p, v) => p + v[@selectedKey]),
+    count = @dimensions.uid.groupAll().reduceCount().value()
+    sum = @dimensions.uid.groupAll().reduce(((p, v) => p + v[@selectedKey]),
                                           ((p, v) => p - v[@selectedKey]), 
                                           ((p, v) -> 0))
                                             .value()
     sum / count
 
   median: =>
-    count = @dimensions.id.groupAll().reduceCount().value()
+    count = @dimensions.uid.groupAll().reduceCount().value()
 
     # Check for odd length
     midPoint = count / 2
@@ -69,6 +70,7 @@ class Statistics extends BaseTool
 
   mode: =>
     mode = @dimensions[@selectedKey].group().reduceCount().top(1)
+    console.log mode
     mode[0].key
 
   min: =>
@@ -78,14 +80,14 @@ class Statistics extends BaseTool
     @dimensions[@selectedKey].top(1)[0][@selectedKey]
 
   variance: =>
-    count = @dimensions.id.groupAll().reduceCount().value()
+    count = @dimensions.uid.groupAll().reduceCount().value()
     mean = @mean()
 
     varianceFormulaAdd = (p, v) =>
       p + Math.pow(Math.abs(v[@selectedKey] - mean), 2)
     varianceFormulaRemove = (p, v) =>
       p - Math.pow(Math.abs(v[@selectedKey] - mean), 2)
-    variance = @dimensions.id.groupAll().reduce(varianceFormulaAdd, varianceFormulaRemove, (p, v) -> 0).value()
+    variance = @dimensions.uid.groupAll().reduce(varianceFormulaAdd, varianceFormulaRemove, (p, v) -> 0).value()
 
     variance / count
 
@@ -95,13 +97,13 @@ class Statistics extends BaseTool
   skew: =>
     mean = @mean()
     standardDeviation = @standardDeviation()
-    count = @dimensions.id.groupAll().reduceCount().value()
+    count = @dimensions.uid.groupAll().reduceCount().value()
 
     reduceAdd = (p, v) =>
       p + Math.pow(v[@selectedKey] - mean, 3)
     reduceRemove = (p, v) =>
       p - Math.pow(v[@selectedKey] - mean, 3)
-    sum = @dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
+    sum = @dimensions.uid.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
 
     denom = count * Math.pow(standardDeviation, 3)
     sum / denom
@@ -109,13 +111,13 @@ class Statistics extends BaseTool
   kurtosis: =>
     mean = @mean()
     standardDeviation = @standardDeviation()
-    count = @dimensions.id.groupAll().reduceCount().value()
+    count = @dimensions.uid.groupAll().reduceCount().value()
 
     reduceAdd = (p, v) =>
       p + Math.pow(v[@selectedKey] - mean, 4)
     reduceRemove = (p, v) =>
       p - Math.pow(v[@selectedKey] - mean, 4)
-    sum = @dimensions.id.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
+    sum = @dimensions.uid.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
 
     denom = count * Math.pow(standardDeviation, 4)
 
