@@ -1,4 +1,3 @@
-
 Graph = window.Ubret.Graph or require('./Graph')
 
 class Histogram2 extends Graph
@@ -15,16 +14,15 @@ class Histogram2 extends Graph
     """
   
   constructor: (opts) ->
-    super opts
-    
     # Compute the number of bins for the unfiltered dataset
     @bins   = if opts.bins then opts.bins else 2 * Math.floor(Math.log(@count) / Math.log(2) + 1)
     @axis2  = opts.yLabel or 'Count'
   
+    super opts
+
   setupData: =>
     # Get data from crossfilter object
-    data = crossfilter(@original_data)
-    @createDimensions([@axis1])
+    @createDimensions(@axis1)
 
     top       = @dimensions[@axis1].top(Infinity)
     data      = _.map(top, (d) => d[@axis1])
@@ -76,7 +74,6 @@ class Histogram2 extends Graph
     console.log "min = ", Math.min.apply(Math, data)
     console.log "max = ", Math.max.apply(Math, data)
     console.log "len = ", data.length
-
 
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram2

@@ -36,8 +36,10 @@ class Graph extends BaseTool
     @drawBrush()  # Implemented by subclasses
   
   start: =>
+    super
     @el.html _.template @template, {selector: @selector}
     @setupGraph()
+    console.log 'here'
   
   clearFilters: =>
     for key, dimension of @dimensions
