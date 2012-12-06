@@ -19,12 +19,9 @@ class Scatter2D extends Graph
   
   setupData: =>
     # Create Dimensions for Axes
-    console.log @dimensions
     @createDimensions [@axis1, @axis2]
     # Get data from crossfilter object
     data = @dimensions.uid.top(Infinity)
-    console.log 'here-setup'
-    console.log data
     @graphData = _.map(data, (d) => _.pick(d, @axis1, @axis2))
     @xDomain = d3.extent(@graphData, (d) => d[@axis1])
     @yDomain = d3.extent(@graphData, (d) => d[@axis2])

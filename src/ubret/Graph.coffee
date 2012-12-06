@@ -6,7 +6,7 @@ class Graph extends BaseTool
   constructor: (opts) ->
     super opts
 
-    @margin = opts.margin or { left: 60, top: 20, bottom: 60, right: 40 }
+    @margin = opts.margin or { left: 80, top: 20, bottom: 40, right: 20 }
     @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
     
     @color = opts.color or '#0172E6'
@@ -86,7 +86,7 @@ class Graph extends BaseTool
       .append('text')
       .attr('class', 'y label')
       .attr('text-anchor', 'middle')
-      .attr('y', -60)
+      .attr('y', -40)
       .attr('x', -(@graphHeight / 2))
       .attr('transform', "rotate(-90)")
       .text(@formatKey(@axis2))
