@@ -1,7 +1,8 @@
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class SubjectViewer extends BaseTool
-
+  name: 'Subject Viewer'
+  
   constructor: (opts) ->
     super
     @count = 0
