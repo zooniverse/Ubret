@@ -15,7 +15,7 @@ class Histogram2 extends Graph
   
   constructor: (opts) ->
     # Compute the number of bins for the unfiltered dataset
-    @bins   = if opts.bins then opts.bins else 2 * Math.floor(Math.log(@count) / Math.log(2) + 1)
+    @bins   = opts.bins
     @axis2  = opts.yLabel or 'Count'
   
     super opts
@@ -26,26 +26,31 @@ class Histogram2 extends Graph
 
     top       = @dimensions[@axis1].top(Infinity)
     data      = _.map(top, (d) => d[@axis1])
-    @bins     = if @bins then @bins else Math.log(@count) / Math.log(2) + 1
+    @bins     = @bins or Math.floor(Math.log(@count) / Math.log(2) + 1)
     @xDomain  = d3.extent(data)
-    # @binSize  = @graphWidth / @bins
     @binSize  = (Math.ceil(@xDomain[1]) - Math.floor(@xDomain[0])) / @bins
     
     # Bin the data using crossfilter
     min = @xDomain[0]
-    group = @dimensions[@axis1].group( (d) => Math.floor((d - min) / (@binSize)))
-    @graphData = group.top(Infinity)
-    @yDomain = [0, @graphData[0].value]
+    group = @dimensions[@axis1].group( (d) =>
+      binNo = @bins
+      while binNo > -1
+        xValue = min + (@binSize * binNo)
+        if d >= xValue
+          return xValue
+        binNo -= 1)
+    @graphData = _.sortBy group.top(Infinity), (d) => d.key
+    @yDomain = [0, d3.max(@graphData, (d) -> d.value)]
 
   drawData: =>
     @bars = @svg.append('g').selectAll('.bar')
       .data(@graphData)
       .enter().append('rect')
         .attr('class', 'bar')
-        .attr('x', (d) => return @x((d.key) * @binSize))
-        .attr('width', @x(@binSize))
-        .attr('y', (d) => return @y(d.value))
-        .attr('height', (d) => return @graphHeight - @y(d.value))
+        .attr('x', (d) => @x(d.key))
+        .attr('width', @x(@graphData[1].key) - @x(@graphData[0].key))
+        .attr('y', (d) => @y(d.value))
+        .attr('height', (d) => @graphHeight - @y(d.value))
         .attr('fill', '#0071E5')
         .attr('stroke', '#FAFAFA')
 
