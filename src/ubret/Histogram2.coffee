@@ -33,13 +33,13 @@ class Histogram2 extends Graph
     
     # Bin the data using crossfilter
     min = @xDomain[0]
-    group     = @dimensions[@axis1].group( (d) => Math.floor((d - min) / (@binSize)))
-    @data     = group.top(Infinity)
-    @yDomain  = [0, @data[0].value]
+    group = @dimensions[@axis1].group( (d) => Math.floor((d - min) / (@binSize)))
+    @graphData = group.top(Infinity)
+    @yDomain = [0, @graphData[0].value]
 
   drawData: =>
     @bars = @svg.append('g').selectAll('.bar')
-      .data(@data)
+      .data(@graphData)
       .enter().append('rect')
         .attr('class', 'bar')
         .attr('x', (d) => return @x((d.key) * @binSize))

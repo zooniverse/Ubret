@@ -4,28 +4,23 @@ class BaseTool
   required_render_opts: ['selector', 'el', 'data', 'keys']
 
   constructor: (opts) ->
-    @setOpts opts
-    @checkOpts @required_init_opts
-
-  setOpts: (opts) =>
-    for opt of opts
-      switch opt
+    for key, value of opts
+      switch key 
         when 'data'
-          original_data = _.map opts.data, (datum) ->
+          originalData = _.map value, (datum) ->
             # Add a unique ID to each record
             _.extend {uid: _.uniqueId()}, datum
-          @data = crossfilter(original_data)
-          @count = opts.data.length
+          @data = crossfilter(originalData)
+          @count = originalData.length
         when 'filters'
-          @addFilters opts.filters
+          @addFilters value
         else
-          @[opt] = opts[opt]
+          @[key] = value
 
     @dimensions = new Object
-    if @data and @keys
-      @createDimensions('uid')
-      @createDimensions(@selectedKey) if typeof @selectedKey isnt 'undefined'
-      @initialized = true
+    @createDimensions('uid')
+    @createDimensions(@selectedKey) if typeof @selectedKey isnt 'undefined'
+    @checkOpts @required_init_opts
 
   getTemplate: =>
     @template
@@ -47,20 +42,19 @@ class BaseTool
     @start()
 
   createDimensions: (keys) =>
-    dim_keys = []
+    dimKeys = []
     unless _.isArray keys
-      dim_keys.push keys
+      dimKeys.push keys
     else
-      dim_keys = keys
-    @dimensions[key] = @data.dimension((d) -> d[key]) for key in dim_keys
-    
+      dimKeys = keys
+
+    @dimensions[key] = @data.dimension((d) -> d[key]) for key in dimKeys
 
   addFilters: (filters) =>
     # @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters
     # @start() if @initialized # temp
 
   receiveSetting: (key, value) =>
-    console.log key, value
     @[key] = value
     @start()
 

@@ -18,15 +18,20 @@ class Scatter2D extends Graph
     super opts
   
   setupData: =>
+    # Create Dimensions for Axes
+    console.log @dimensions
+    @createDimensions [@axis1, @axis2]
     # Get data from crossfilter object
-    # data = @dimensions[@axis1].top(Infinity)
-    @data = _.map(@original_data, (d) => _.pick(d, @axis1, @axis2))
-    @xDomain = d3.extent(@data, (d) => d[@axis1])
-    @yDomain = d3.extent(@data, (d) => d[@axis2])
+    data = @dimensions.uid.top(Infinity)
+    console.log 'here-setup'
+    console.log data
+    @graphData = _.map(data, (d) => _.pick(d, @axis1, @axis2))
+    @xDomain = d3.extent(@graphData, (d) => d[@axis1])
+    @yDomain = d3.extent(@graphData, (d) => d[@axis2])
 
   drawData: =>
     @points = @svg.append('g').selectAll('circle')
-        .data(@data)
+        .data(@graphData)
       .enter().append('circle')
         .attr('class', 'dot')
         .attr('r', 1.5)

@@ -39,7 +39,6 @@ class Graph extends BaseTool
     super
     @el.html _.template @template, {selector: @selector}
     @setupGraph()
-    console.log 'here'
   
   clearFilters: =>
     for key, dimension of @dimensions
