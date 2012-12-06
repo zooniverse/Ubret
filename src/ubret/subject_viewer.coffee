@@ -11,12 +11,12 @@ class SubjectViewer extends BaseTool
 
   start: =>
     subjects = new Array
-    if @selectedElements.length isnt 0
+    if typeof @selectedElements isnt 'undefined' and @selectedElements.length isnt 0
       subjects = @dimensions.uid.top(Infinity).filter (item) =>
         item.uid in @selectedElements
     else
       subjects = [@dimensions.uid.top(1)[0]]
-      @selectElements subjects
+      @selectElements(_.pluck subjects, 'uid')
     @render(subjects)
 
   render: (subjects) =>
@@ -27,9 +27,8 @@ class SubjectViewer extends BaseTool
         .append('div')
         .attr('class', 'subject')
 
-    subject.selectAll('img')
-      .append('img')
-        .attr('src', (d) -> d.image)
+    subject.append('img')
+        .attr('src', (d) -> console.log 'here'; d.image)
 
     subject.selectAll('ul')
       .append('ul')
