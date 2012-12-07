@@ -22,20 +22,20 @@ class Map extends BaseTool
 
   constructor: (opts) ->
     super opts
+    console.log "spectrum: ", @spectrum
     @circles = []
     @limit = @limit or 30
 
   start: =>
-    console.log @dimensions
     if @map
       @map.invalidateSize()
     else
-      @createSky()
-      @plotObjects() if @dimensions.id.top(Infinity)
+      @createSky(@spectrum)
+      @plotObjects() if @dimensions.uid.top(Infinity)
     
-  createSky: =>
+  createSky: (spectrum) =>
     @map = L.map(@el.attr('id'), Map.mapOptions).setView([0, 180], 6)
-    @layer = L.tileLayer('/tiles/#{zoom}/#{tilename}.jpg',
+    @layer = L.tileLayer("/tiles/#{spectrum}/" + '#{zoom}/#{tilename}.jpg',
       maxZoom: 7
     )
     @layer.getTileUrl = (tilePoint) ->
@@ -69,7 +69,7 @@ class Map extends BaseTool
         s: s
 
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
-      return "/images/tiles/#{zoom}/#{url.src}.jpg"
+      return "/images/tiles/#{spectrum}/#{url.src}.jpg"
 
     @layer.addTo @map
   
@@ -82,7 +82,7 @@ class Map extends BaseTool
         }
     
     circle = new L.marker(coords, options)
-    circle.zooniverse_id = subject.zooniverse_id
+    circle.uid = subject.uid
     
     circle.addTo(@map)
       .bindPopup('etc')
@@ -91,7 +91,7 @@ class Map extends BaseTool
     @circles.push circle
 
   plotObjects: =>
-    data = @dimensions.id.top(@limit)
+    data = @dimensions.uid.top(@limit)
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in data
@@ -104,9 +104,7 @@ class Map extends BaseTool
       subject.zooniverse_id = itemId
     latlng = new L.LatLng(item.dec, item.ra)
     circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
-
     @selectSubject circle
-
 
   # Events
   selectSubject: (circle) =>
