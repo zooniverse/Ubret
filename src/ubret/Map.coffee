@@ -69,7 +69,7 @@ class Map extends BaseTool
         s: s
 
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
-      return "/images/tiles/#{spectrum}/#{url.src}.jpg"
+      return "/images/tiles/#{spectrum}/#{zoom}/#{url.src}.jpg"
 
     @layer.addTo @map
   
