@@ -7,11 +7,8 @@ class BaseTool
     for key, value of opts
       switch key 
         when 'data'
-          originalData = _.map value, (datum) ->
-            # Add a unique ID to each record
-            _.extend {uid: _.uniqueId()}, datum
-          @data = crossfilter(originalData)
-          @count = originalData.length
+          @data = crossfilter(value)
+          @count = value.length
         when 'filters'
           @addFilters value
         else
@@ -47,7 +44,6 @@ class BaseTool
       dimKeys.push keys
     else
       dimKeys = keys
-
     @dimensions[key] = @data.dimension((d) -> d[key]) for key in dimKeys
 
   addFilters: (filters) =>

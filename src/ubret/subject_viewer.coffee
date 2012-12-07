@@ -15,20 +15,22 @@ class SubjectViewer extends BaseTool
       subjects = @dimensions.uid.top(Infinity).filter (item) =>
         item.uid in @selectedElements
     else
-      subjects = [@dimensions.uid.top(1)[0]]
+      subjects = @dimensions.uid.top(1)
       @selectElements(_.pluck subjects, 'uid')
     @render(subjects)
 
   render: (subjects) =>
     @div.selectAll('div.subject').remove()
 
-    subject = @div.selectAll('div')
+    subject = @div.selectAll('div.subject')
       .data(subjects).enter()
         .append('div')
         .attr('class', 'subject')
 
     subject.append('img')
-        .attr('src', (d) -> console.log 'here'; d.image)
+        .attr('src', (d) -> d.image)
+        .attr('width', 300)
+        .attr('height', 300)
 
     subject.selectAll('ul')
       .append('ul')
