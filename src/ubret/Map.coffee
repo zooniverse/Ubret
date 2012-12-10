@@ -34,8 +34,11 @@ class Map extends BaseTool
       @plotObjects() if @dimensions.uid.top(Infinity)
     
   createSky: (spectrum) =>
-    @map = L.map(@el.attr('id'), Map.mapOptions).setView([0, 180], 6)
-    @layer = L.tileLayer("/tiles/#{spectrum}/" + '#{zoom}/#{tilename}.jpg',
+    id = "#{@el.attr('id')}-leaflet"
+    @el.append """<div id=#{id} style="width: 400px; height: 200px; text-align: left; position: relative;"></div>"""
+    @el.css { overflow: 'hidden' }
+    @map = L.map(id, Map.mapOptions).setView([0, 180], 3)
+    @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7
     )
     @layer.getTileUrl = (tilePoint) ->
@@ -69,7 +72,8 @@ class Map extends BaseTool
         s: s
 
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
-      return "/images/tiles/#{spectrum}/#{zoom}/#{url.src}.jpg"
+      console.log url
+      return "/images/tiles/#{spectrum}/#{url.src}.jpg"
 
     @layer.addTo @map
   
