@@ -51,6 +51,7 @@ class BaseTool
     # @start() if @initialized # temp
 
   receiveSetting: (key, value) =>
+    console.log key, value
     @[key] = value
     @start()
 

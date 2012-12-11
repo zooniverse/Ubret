@@ -26,11 +26,9 @@ class Map extends BaseTool
     @limit = @limit or 30
 
   start: =>
-    if @map
-      @map.invalidateSize()
-    else
-      @createSky(@spectrum)
-      @plotObjects() if @dimensions.uid.top(Infinity)
+    @el.empty()
+    @createSky(@spectrum)
+    @plotObjects() if @dimensions.uid.top(Infinity)
     
   createSky: (spectrum) =>
     id = "#{@el.attr('id')}-leaflet"
