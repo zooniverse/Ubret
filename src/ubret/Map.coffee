@@ -22,7 +22,6 @@ class Map extends BaseTool
 
   constructor: (opts) ->
     super opts
-    console.log "spectrum: ", @spectrum
     @circles = []
     @limit = @limit or 30
 
@@ -35,9 +34,9 @@ class Map extends BaseTool
     
   createSky: (spectrum) =>
     id = "#{@el.attr('id')}-leaflet"
-    @el.append """<div id=#{id} style="width: 400px; height: 200px; text-align: left; position: relative;"></div>"""
+    @el.append """<div id="#{id}" style="margin: 20px; width: 100%; height: 100%; text-align: left; position: relative;"></div>"""
     @el.css { overflow: 'hidden' }
-    @map = L.map(id, Map.mapOptions).setView([0, 180], 3)
+    @map = L.map(id, Map.mapOptions).setView([0, 180], 4)
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7
     )
@@ -72,7 +71,6 @@ class Map extends BaseTool
         s: s
 
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
-      console.log url
       return "/images/tiles/#{spectrum}/#{url.src}.jpg"
 
     @layer.addTo @map
@@ -119,7 +117,6 @@ class Map extends BaseTool
     @selected_subject = circle
     circle.openPopup()
     circle.setIcon @selected_icon
-
   
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Map
