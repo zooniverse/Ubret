@@ -6,7 +6,7 @@ class Graph extends BaseTool
   constructor: (opts) ->
     super opts
 
-    @margin = opts.margin or { left: 80, top: 20, bottom: 40, right: 20 }
+    @margin = opts.margin or { left: 80, top: 20, bottom: 90, right: 20 }
     @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
     
     @color = opts.color or '#0172E6'
