@@ -10,7 +10,6 @@ class SubjectViewer extends BaseTool
     @start()
 
   start: =>
-    subjects = new Array
     if typeof @selectedElements isnt 'undefined' and @selectedElements.length isnt 0
       subjects = @dimensions.uid.top(Infinity).filter (item) =>
         item.uid in @selectedElements
