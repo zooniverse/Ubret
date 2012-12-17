@@ -33,7 +33,9 @@ class Spectra extends BaseTool
     url = "http://api.sdss3.org/spectrumLines?id=#{subject.spectrumID}"
     request.open("GET", url, true)
     request.onload = (e) =>
-      lines = JSON.parse(request.response)[subject.spectrumID]
+      lines = new Object
+      rawLines = JSON.parse(request.response)[subject.spectrumID]
+      lines[line.name] = line.wavelength for line in rawLines
       @plot(subject.wavelengths, subject.flux, subject.best_fit, lines)
 
     request.send()
@@ -104,16 +106,18 @@ class Spectra extends BaseTool
         .datum(fluxes)
         .attr("class", "line fluxes")
         .attr("d", @fluxLine)
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
         
     @svg.append("path")
         .datum(bestFit)
         .attr("class", "line best-fit")
         .attr("d", @bestFitLine)
         .attr('stroke', "blue")
+        .attr('fill', 'none')
         
     # Drawing spectral lines
     for name, wavelength of spectralLines
-      console.log name, wavelength
       @svg.append("line")
         .attr("x1", x(wavelength))
         .attr("x2", x(wavelength))

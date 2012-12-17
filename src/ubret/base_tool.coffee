@@ -3,7 +3,9 @@ class BaseTool
   required_init_opts: ['selector', 'el']
   required_render_opts: ['selector', 'el', 'data', 'keys']
 
-  constructor: (opts) ->
+  constructor: ({@selector, @el}) ->
+    
+  setOpts: (opts) =>
     for key, value of opts
       switch key 
         when 'data'
