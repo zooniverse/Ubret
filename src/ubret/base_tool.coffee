@@ -30,8 +30,9 @@ class BaseTool
 
   selectElements: (ids) =>
     @selectedElements = ids
-    @selectElementsCb ids
-    @start()
+    unless typeof @selectElementsCb is 'undefined'
+      @selectElementsCb ids 
+      @start()
 
   selectKey: (key) =>
     delete @dimensions[@selectedKey]

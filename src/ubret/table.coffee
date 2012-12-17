@@ -31,15 +31,15 @@ class Table extends BaseTool
         .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow() else ''}")
 
   createRows: => 
-    numRows = Math.floor((@el.height() - 47 )/ 20)
-    console.log numRows
+    @paginate()
+
     @tbody.selectAll('tr').remove()
 
     unless @selectedKey
       @selectedKey = 'uid'
 
     tr = @tbody.selectAll('tr')
-      .data(@dimensions[@selectedKey][@sortOrder](numRows))
+      .data(@page(0))
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
         .on('click', @selection)
@@ -51,6 +51,13 @@ class Table extends BaseTool
 
     if @selectedElements and @selectedElements.length isnt 0
       @highlightRows()
+
+  paginate: =>
+    @numRows = Math.floor((@el.height() - 47 )/ 28)
+
+  page: (number) =>
+    if number is 0
+      return @dimensions.uid.top
 
   toArray: (data) =>
     ret = new Array
