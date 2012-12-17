@@ -30,7 +30,7 @@ class BaseTool
 
   selectElements: (ids) =>
     @selectedElements = ids
-    unless typeof @selectElementsCb is 'undefined'
+    unless typeof @selectElementsCb is 'undefined' # I'm Sorry
       @selectElementsCb ids 
       @start()
 

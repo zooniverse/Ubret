@@ -54,10 +54,17 @@ class Table extends BaseTool
 
   paginate: =>
     @numRows = Math.floor((@el.height() - 47 )/ 28)
+    @pages = Math.ceil(@dimensions.uid.group().size() / @numRows)
 
   page: (number) =>
     if number is 0
-      return @dimensions.uid.top
+      top = @dimensions.uid.top(1)[0]
+      bottom = @dimensions.uid.top(@numRows)[@numRows - 1]
+      return @dimensions.uid.filter(bottom.uid, top.uid).top(Infinity)
+    else if number < @pages
+      top = @dimensions.uid.top(number * @numRows)[(number * @numRows) - 1]
+      bottom = @dimensions.uid.top(number * @numRows)[((number + 1) * @numRows) -1]
+      return @imdensions.uid.filter(top.uid, bottom.uid).top(Infinity)
 
   toArray: (data) =>
     ret = new Array
