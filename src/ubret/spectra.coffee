@@ -1,4 +1,3 @@
-
 BaseTool = window.Ubret.BaseTool or require('./base_tool')
 
 class Spectra extends BaseTool
@@ -114,6 +113,7 @@ class Spectra extends BaseTool
         
     # Drawing spectral lines
     for name, wavelength of spectralLines
+      console.log name, wavelength
       @svg.append("line")
         .attr("x1", x(wavelength))
         .attr("x2", x(wavelength))
