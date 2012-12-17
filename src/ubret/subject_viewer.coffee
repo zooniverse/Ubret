@@ -6,8 +6,6 @@ class SubjectViewer extends BaseTool
   constructor: (opts) ->
     super
     @count = 0
-    @div = d3.select(@selector)
-    @start()
 
   start: =>
     if typeof @selectedElements isnt 'undefined' and @selectedElements.length isnt 0
@@ -19,6 +17,7 @@ class SubjectViewer extends BaseTool
     @render(subjects)
 
   render: (subjects) =>
+    @div = d3.select(@selector)
     @div.selectAll('div.subject').remove()
 
     subject = @div.selectAll('div.subject')
@@ -27,7 +26,7 @@ class SubjectViewer extends BaseTool
         .attr('class', 'subject')
 
     subject.append('img')
-        .attr('src', (d) -> d.image)
+        .attr('src', (d) -> console.log d; d.image)
         .attr('width', 300)
         .attr('height', 300)
 

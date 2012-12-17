@@ -6,6 +6,7 @@ class Table extends BaseTool
   constructor: (opts) ->
     super opts
     @sortOrder = 'top'
+    @el.on 'scroll', => console.log 'scrolled'
 
   start: =>
     super
@@ -30,13 +31,15 @@ class Table extends BaseTool
         .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow() else ''}")
 
   createRows: => 
+    numRows = Math.floor((@el.height() - 47 )/ 20)
+    console.log numRows
     @tbody.selectAll('tr').remove()
 
     unless @selectedKey
       @selectedKey = 'uid'
 
     tr = @tbody.selectAll('tr')
-      .data(@dimensions[@selectedKey][@sortOrder](20))
+      .data(@dimensions[@selectedKey][@sortOrder](numRows))
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
         .on('click', @selection)
