@@ -71,15 +71,10 @@ class Histogram2 extends Graph
     # Apply the filter
     @dimensions[@axis1].filter(d3.event.target.extent())
     
-    # Select all items within the range
-    # TODO: Pass these data down the chain
     top   = @dimensions[@axis1].top(Infinity)
-    data  = _.map(top, (d) => d[@axis1])
+    data  = _.pluck top, 'uid'
+    @selectElements data
     
-    console.log "min = ", Math.min.apply(Math, data)
-    console.log "max = ", Math.max.apply(Math, data)
-    console.log "len = ", data.length
-
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Histogram2
 else

@@ -22,11 +22,12 @@ class Scatter2D extends Graph
     @createDimensions [@axis1, @axis2]
     # Get data from crossfilter object
     data = @dimensions.uid.top(Infinity)
-    @graphData = _.map(data, (d) => _.pick(d, @axis1, @axis2))
+    @graphData = _.map(data, (d) => _.pick(d, @axis1, @axis2, 'uid'))
     @xDomain = d3.extent(@graphData, (d) => d[@axis1])
     @yDomain = d3.extent(@graphData, (d) => d[@axis2])
 
   drawData: =>
+    console.log @selectedElements
     @points = @svg.append('g').selectAll('circle')
         .data(@graphData)
       .enter().append('circle')
@@ -34,6 +35,12 @@ class Scatter2D extends Graph
         .attr('r', 1.5)
         .attr('cx', (d) => @x(d[@axis1]))
         .attr('cy', (d) => @y(d[@axis2]))
+        .attr('fill', (d) => 
+          if d.uid in @selectedElements
+            return 'orange'
+          else
+            return 'teal'
+        )
         .on('mouseover', @displayTooltip)
         .on('mouseout', @removeTooltip)
   
@@ -61,9 +68,9 @@ class Scatter2D extends Graph
     # TODO: Pass these data down the chain
     @dimensions[@axis1].filter(x)
     @dimensions[@axis2].filter(y)
-    top   = @dimensions[@axis1].top(Infinity)
-    data  = _.map(top, (d) => _.pick(d, @axis1, @axis2))
-    console.log data
+    top = @dimensions[@axis1].top(Infinity)
+    data = _.pluck top, 'uid'
+    @selectElements data
   
   
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
