@@ -26,19 +26,21 @@ class SubjectViewer extends BaseTool
         .attr('class', 'subject')
 
     subject.append('img')
-        .attr('src', (d) -> console.log d; d.image)
-        .attr('width', 300)
-        .attr('height', 300)
+        .attr('src', (d) -> d.image)
 
-    subject.selectAll('ul')
-      .append('ul')
+    subject.append('ul').selectAll('ul')
       .data((d) => @toArray(d)).enter()
         .append('li')
         .attr('data-key', (d) -> d[0])
-        .text((d) => "#{@formatKey(d[0])}: #{d[1]}")
+        .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{d[1]}</span>")
 
     subject.select("[data-key=\"#{@selectedKey}\"]")
       .attr('class', 'selected')
+
+    header = subject.selectAll('ul')
+      .insert('li', ':first-child')
+        .attr('class', 'heading')
+        .html('<label>Key</label> <span>Value</span>')
 
   toArray: (data) =>
     arrayedData = new Array
