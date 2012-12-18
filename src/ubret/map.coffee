@@ -26,15 +26,13 @@ class Map extends BaseTool
     @limit = @limit or 30
 
   start: =>
-    @el.empty()
     @createSky(@spectrum)
     @plotObjects() if @dimensions.uid.top(Infinity)
     
   createSky: (spectrum) =>
-    id = "#{@el.attr('id')}-leaflet"
-    @el.append """<div id="#{id}" style="width: 100%; height: 100%; text-align: left; position: relative;"></div>"""
-    @el.css { overflow: 'hidden' }
-    @map = L.map(id, Map.mapOptions).setView([0, 180], 4)
+    unless @map
+      @map = L.map(@selector.slice(1), Map.mapOptions).setView([0, 180], 5)
+
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7
     )
