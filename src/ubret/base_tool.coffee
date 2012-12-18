@@ -35,7 +35,7 @@ class BaseTool
       @start()
 
   selectKey: (key) =>
-    delete @dimensions[@selectedKey]
+    delete @dimensions[@selectedKey].filterAll() unless @selectedKey is 'uid'
     @createDimensions key
     @selectedKey = key
     @selectKeyCb key

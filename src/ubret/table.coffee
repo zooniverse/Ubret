@@ -6,7 +6,7 @@ class Table extends BaseTool
   constructor: (opts) ->
     super opts
     @sortOrder = 'top'
-    @el.on 'scroll', => console.log 'scrolled'
+    @currentPage = 0
 
   start: =>
     super
@@ -39,7 +39,7 @@ class Table extends BaseTool
       @selectedKey = 'uid'
 
     tr = @tbody.selectAll('tr')
-      .data(@page(0))
+      .data(@page(@currentPage))
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
         .on('click', @selection)
@@ -53,18 +53,21 @@ class Table extends BaseTool
       @highlightRows()
 
   paginate: =>
-    @numRows = Math.floor((@el.height() - 47 )/ 28)
+    @numRows = Math.floor((@el.height() - 47 )/ 28) # Assumes thead height of 47px and tbody height of 28px
     @pages = Math.ceil(@dimensions.uid.group().size() / @numRows)
 
   page: (number) =>
     if number is 0
-      top = @dimensions.uid.top(1)[0]
-      bottom = @dimensions.uid.top(@numRows)[@numRows - 1]
-      return @dimensions.uid.filter(bottom.uid, top.uid).top(Infinity)
+      top = @dimensions[@selectedKey].filterAll()[@sortOrder](1)[0]
+      bottom = @dimensions[@selectedKey][@sortOrder](@numRows)[@numRows - 1]
+      if @sortOrder is 'top'
+        return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
+      else
+        return @dimensions[@selectedKey].filter([top[@selectedKey], bottom[@selectedKey]])[@sortOrder](Infinity)
     else if number < @pages
-      top = @dimensions.uid.top(number * @numRows)[(number * @numRows) - 1]
-      bottom = @dimensions.uid.top(number * @numRows)[((number + 1) * @numRows) -1]
-      return @imdensions.uid.filter(top.uid, bottom.uid).top(Infinity)
+      top = @dimensions[@selectedKey][@sortOrder](number * @numRows)[(number * @numRows) - 1]
+      bottom = @dimensions[@selectedKey][@sortOrder](number * @numRows)[((number + 1) * @numRows) -1]
+      return @imdensions[@selectedKey].filterAll().filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
 
   toArray: (data) =>
     ret = new Array
@@ -80,8 +83,13 @@ class Table extends BaseTool
     @start()
 
   selectKey: (key) ->
-    if key is @selectedKey and @sortOrder is 'top'
-      @sortOrder = 'bottom'
+    if key is @selectedKey 
+      if @sortOrder is 'top'
+        @sortOrder = 'bottom'
+      else if @sortOrder is 'bottom'
+        @sortOrder = 'top'
+      @start()
+      return
     else
       @sortOrder = 'top'
     super key
