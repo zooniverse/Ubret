@@ -32,7 +32,7 @@ class Map extends BaseTool
     
   createSky: (spectrum) =>
     id = "#{@el.attr('id')}-leaflet"
-    @el.append """<div id="#{id}" style="margin: 20px; width: 100%; height: 100%; text-align: left; position: relative;"></div>"""
+    @el.append """<div id="#{id}" style="width: 100%; height: 100%; text-align: left; position: relative;"></div>"""
     @el.css { overflow: 'hidden' }
     @map = L.map(id, Map.mapOptions).setView([0, 180], 4)
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
