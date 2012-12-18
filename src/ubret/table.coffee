@@ -13,6 +13,7 @@ class Table extends BaseTool
     @createTable()
     @createHeader()
     @createRows()
+    @createPages()
 
   createTable: =>
     table = d3.select(@selector)
@@ -52,6 +53,16 @@ class Table extends BaseTool
     if @selectedElements and @selectedElements.length isnt 0
       @highlightRows()
 
+  createPages: =>
+    @p.remove() if @p
+
+    pageNumber = if @currentPage < @pages then @currentPage else @currentPage % @pages
+
+    @p = d3.select(@selector)
+      .append('p')
+      .attr('class', 'pages')
+      .text("Page: #{pageNumber + 1} of #{@pages}")
+
   paginate: =>
     @numRows = Math.floor((@el.height() - 47 )/ 28) # Assumes thead height of 47px and tbody height of 28px
     @pages = Math.ceil(@dimensions.uid.group().size() / @numRows)
@@ -65,9 +76,13 @@ class Table extends BaseTool
       else
         return @dimensions[@selectedKey].filter([top[@selectedKey], bottom[@selectedKey]])[@sortOrder](Infinity)
     else if number < @pages
-      top = @dimensions[@selectedKey][@sortOrder](number * @numRows)[(number * @numRows) - 1]
-      bottom = @dimensions[@selectedKey][@sortOrder](number * @numRows)[((number + 1) * @numRows) -1]
-      return @imdensions[@selectedKey].filterAll().filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
+      console.log @currentPage, number
+      top = @dimensions[@selectedKey].filterAll()[@sortOrder](number * @numRows)[(number * @numRows) - 1]
+      bottom = @dimensions[@selectedKey][@sortOrder]((number + 1) * @numRows)[((number + 1) * @numRows) - 1]
+      console.log top, bottom
+      return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
+    else if number >= @pages
+      @page number % @pages
 
   toArray: (data) =>
     ret = new Array
