@@ -18,12 +18,13 @@ class Statistics extends BaseTool
     @displayStats()
 
   createList: =>
-    @title = d3.select(@selector)
-      .append('h3')
+    @wrapper = d3.select(@selector).append('div')
+      .attr('class', 'stats')
+
+    @title = @wrapper.append('h3')
       .attr('class', 'stat-key')
 
-    @ul = d3.select(@selector)
-      .append('ul')
+    @ul = @wrapper.append('ul')
       .attr('class', 'statistics')
 
   createStats: =>
@@ -40,7 +41,7 @@ class Statistics extends BaseTool
       .data(@statistics)
       .enter().append('li')
       .attr('data-stat', (d) -> d[0])
-      .text( (d) => "#{@formatKey(d[0])}: #{@displayFormat(d[1])}" )
+      .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{@displayFormat(d[1])}</span>")
 
   # Statistics
   mean: =>
