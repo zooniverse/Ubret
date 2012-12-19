@@ -76,10 +76,8 @@ class Table extends BaseTool
       else
         return @dimensions[@selectedKey].filter([top[@selectedKey], bottom[@selectedKey]])[@sortOrder](Infinity)
     else if number < @pages
-      console.log @currentPage, number
       top = @dimensions[@selectedKey].filterAll()[@sortOrder](number * @numRows)[(number * @numRows) - 1]
       bottom = @dimensions[@selectedKey][@sortOrder]((number + 1) * @numRows)[((number + 1) * @numRows) - 1]
-      console.log top, bottom
       return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
     else if number >= @pages
       @page number % @pages
