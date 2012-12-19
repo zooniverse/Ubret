@@ -64,10 +64,11 @@ class Table extends BaseTool
       .text("Page: #{pageNumber + 1} of #{@pages}")
 
   paginate: =>
-    @numRows = Math.floor((@el.height() - 47 )/ 28) # Assumes thead height of 47px and tbody height of 28px
+    @numRows = Math.floor((@el.height() - 47 )/ 30) # Assumes thead height of 47px and tbody height of 28px
     @pages = Math.ceil(@dimensions.uid.group().size() / @numRows)
 
   page: (number) =>
+    console.log @currentPage
     if number is 0
       top = @dimensions[@selectedKey].filterAll()[@sortOrder](1)[0]
       bottom = @dimensions[@selectedKey][@sortOrder](@numRows)[@numRows - 1]
@@ -77,7 +78,8 @@ class Table extends BaseTool
         return @dimensions[@selectedKey].filter([top[@selectedKey], bottom[@selectedKey]])[@sortOrder](Infinity)
     else if number < @pages
       top = @dimensions[@selectedKey].filterAll()[@sortOrder](number * @numRows)[(number * @numRows) - 1]
-      bottom = @dimensions[@selectedKey][@sortOrder]((number + 1) * @numRows)[((number + 1) * @numRows) - 1]
+      bottom = @dimensions[@selectedKey][@sortOrder]((number + 1) * @numRows)
+      bottom = bottom[bottom.length - 1]
       return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
     else if number >= @pages
       @page number % @pages
