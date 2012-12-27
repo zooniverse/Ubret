@@ -7,5 +7,4 @@ if typeof require is 'function' and typeof exports is 'object' and typeof module
   
   module.exports = Ubret
 else
-  console.log 'here'
   window.Ubret = {}
