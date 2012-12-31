@@ -1,23 +1,24 @@
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
-
-class Table extends BaseTool
+class Table extends Ubret.BaseTool
   name: 'Table'
   
-  constructor: (opts) ->
-    super opts
-    @sortOrder = 'top'
-    @currentPage = 0
+  constructor: (selector) ->
+    super selector
+    @opts.sortOrder = 'top'
+    @opts.currentPage = 0
+    @pages = new Array
 
   start: =>
     super
+    @sortKey = @opts.selectedKeys?[0] or 'uid'
     @createTable()
+    @paginate()
     @createHeader()
     @createRows()
     @createPages()
 
+  # Drawing
   createTable: =>
-    table = d3.select(@selector)
-      .append('table')
+    table = @opts.selector.append('table')
     @thead = table.append('thead')
     @tbody = table.append('tbody')
 
@@ -25,24 +26,20 @@ class Table extends BaseTool
     @thead.selectAll('th').remove()
 
     @thead.selectAll("th")
-      .data(@keys)
+      .data(@opts.keys)
       .enter().append("th")
-        .on('click', (d, i) => @selectKey d)
+        .on('click', (d, i) => @selectKeys d)
         .attr('data-key', (d) -> d)
-        .text( (d) => "#{@formatKey d} #{if d is @selectedKey then @arrow() else ''}")
+        .text( (d) => "#{@formatKey d} #{if d is @opts.selectedKeys?[0] then @arrow() else ''}")
 
   createRows: => 
-    @paginate()
-
     @tbody.selectAll('tr').remove()
-
-    unless @selectedKey
-      @selectedKey = 'uid'
-
+    console.log @opts.selectedIds
     tr = @tbody.selectAll('tr')
-      .data(@page(@currentPage))
+      .data(@pages[@opts.currentPage])
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
+        .attr('class', (d) => if d.uid in @opts.selectedIds then 'selected' else '')
         .on('click', @selection)
     
     tr.selectAll('td')
@@ -50,84 +47,65 @@ class Table extends BaseTool
       .enter().append('td')
         .text((d) -> return d)
 
-    if @selectedElements and @selectedElements.length isnt 0
-      @highlightRows()
-
   createPages: =>
     @p.remove() if @p
-
-    pageNumber = if @currentPage < @pages then @currentPage else @currentPage % @pages
-
     @p = d3.select(@selector)
       .append('p')
       .attr('class', 'pages')
-      .text("Page: #{pageNumber + 1} of #{@pages}")
+      .text("Page: #{@opts.currentPage + 1} of #{@numPages}")
 
+  # Helpers
   paginate: =>
-    @numRows = Math.floor((@el.height() - 47 )/ 30) # Assumes thead height of 47px and tbody height of 28px
-    @pages = Math.ceil(@dimensions.uid.group().size() / @numRows)
+    @numRows = Math.floor((@opts.height - 47 )/ 30) # Assumes thead height of 47px and tbody height of 28px
+    @numPages = Math.ceil(@opts.data.length / @numRows)
 
-  page: (number) =>
-    console.log @currentPage
-    if number is 0
-      top = @dimensions[@selectedKey].filterAll()[@sortOrder](1)[0]
-      bottom = @dimensions[@selectedKey][@sortOrder](@numRows)[@numRows - 1]
-      if @sortOrder is 'top'
-        return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
-      else
-        return @dimensions[@selectedKey].filter([top[@selectedKey], bottom[@selectedKey]])[@sortOrder](Infinity)
-    else if number < @pages
-      top = @dimensions[@selectedKey].filterAll()[@sortOrder](number * @numRows)[(number * @numRows) - 1]
-      bottom = @dimensions[@selectedKey][@sortOrder]((number + 1) * @numRows)
-      bottom = bottom[bottom.length - 1]
-      return @dimensions[@selectedKey].filter([bottom[@selectedKey], top[@selectedKey]])[@sortOrder](Infinity)
-    else if number >= @pages
-      @page number % @pages
+    sortedData = _.sortBy @opts.data, (d) => d[@sortKey]
+    sortedData.reverse() if @opts.sortOrder is 'bottom'
+    @pages[number] = sortedData.slice(0, @numRows) for number in [0..(@numPages - 1)]
+
+  currentPage: (page) =>
+    if page < 0
+      @opts.currentPage = @numPages - 1
+    else if page >= @numPages
+      @opts.currentPage = 0
+    else
+      @opts.currentPage = page
 
   toArray: (data) =>
     ret = new Array
-    for key in @keys
+    for key in @opts.keys
       ret.push data[key]
     return ret
 
-  highlightRows: =>
-    @tbody.select("[data-id=\"#{id}\"]").attr('class', 'selected') for id in @selectedElements
-
-  changeData: (data) =>
-    @data = data
-    @start()
-
-  selectKey: (key) ->
-    if key is @selectedKey 
-      if @sortOrder is 'top'
-        @sortOrder = 'bottom'
-      else if @sortOrder is 'bottom'
-        @sortOrder = 'top'
+  selectKeys: (key) ->
+    if key is @sortKey
+      if @opts.sortOrder is 'top'
+        @opts.sortOrder = 'bottom'
+      else 
+        @opts.sortOrder = 'top'
       @start()
       return
     else
-      @sortOrder = 'top'
-    super key
+      @opts.sortOrder = 'top'
+    super [key]
+    @start()
 
   selection: (d, i) =>
-    ids = @selectedElements
+    ids = @opts.selectedIds
     if d3.event.shiftKey
-      index = _.indexOf @selectedElements, d.uid
-      if index is -1
+      if not d.uid in @opts.selectedIds
         ids.push d.uid
       else
         ids = _.without ids, d.uid 
     else
       ids = [d.uid]
-    @selectElements ids
+    @selectIds ids
+    @start()
 
   arrow: =>
-    if @sortOrder is 'top'
+    if @opts.sortOrder is 'top'
       return '▲'
     else
       return '▼'
 
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Table
-else
-  window.Ubret['Table'] = Table
+window.Ubret.Table = Table

@@ -1,72 +1,81 @@
-class BaseTool
+class BaseTool extends Ubret.Events
+  constructor: (selector) ->
+    super
+    @opts = new Object
+    @opts.selector = d3.select selector
+    @opts.height = @opts.selector[0][0].clientHeight
+    @opts.width = @opts.selector[0][0].clientWidth
+    @opts.selectedKeys = new Array
+    @opts.selectedIds = new Array
 
-  required_init_opts: ['selector', 'el']
-  required_render_opts: ['selector', 'el', 'data', 'keys']
-
-  constructor: ({@selector, @el}) ->
-    
-  setOpts: (opts) =>
-    for key, value of opts
-      switch key 
-        when 'data'
-          @data = crossfilter(value)
-          @count = value.length
-        when 'filters'
-          @addFilters value
-        else
-          @[key] = value
-
-    @dimensions = new Object
-    @createDimensions('uid')
-    @createDimensions(@selectedKey) if typeof @selectedKey isnt 'undefined'
-    @checkOpts @required_init_opts
-
-  getTemplate: =>
-    @template
+  toJSON: =>
+    @opts
 
   start: =>
-    @el.html ''
-    @checkOpts @required_render_opts
+    @opts.selector.html ''
 
-  selectElements: (ids) =>
-    @selectedElements = ids
-    unless typeof @selectElementsCb is 'undefined' # I'm Sorry
-      @selectElementsCb ids 
-      @start()
+  data: (data=[]) =>
+    @opts.data = _(data).map (d) -> 
+      d.uid = _.uniqueId()
+      d
+    @trigger 'data-received', @childData()
+    @
 
-  selectKey: (key) =>
-    delete @dimensions[@selectedKey].filterAll() unless @selectedKey is 'uid'
-    @createDimensions key
-    @selectedKey = key
-    @selectKeyCb key
-    @start()
-
-  createDimensions: (keys) =>
-    dimKeys = []
-    unless _.isArray keys
-      dimKeys.push keys
+  keys: (keys=[]) =>
+    @opts.keys = keys
+    @trigger 'keys-received', @opts.keys
+    @
+    
+  selectIds: (ids=[]) =>
+    if _.isArray ids
+      @opts.selectedIds = ids
     else
-      dimKeys = keys
-    @dimensions[key] = @data.dimension((d) -> d[key]) for key in dimKeys
+      @opts.selectedIds.push ids
+    @trigger 'selection', ids
+    @
 
-  addFilters: (filters) =>
-    # @dimensions[filter.key].filterRange([filter.min, filter.max]) for filter in filters
-    # @start() if @initialized # temp
+  selectKeys: (keys=[]) =>
+    if _.isArray keys
+      @opts.selectedKeys = keys
+    else
+      @opts.selectedKeys.push keys
+    @trigger 'keys-selection', keys
+    @
 
-  receiveSetting: (key, value) =>
-    @[key] = value
+  filters: (filters=[]) =>
+    if _.isArray filters
+      @opts.filters = filters
+    else
+      @opts.filters.push filters
+    @trigger 'add-filters', filters
+    @
+
+  parentTool: (tool=null) =>
+    if tool
+      @opts.parentTool = tool
+    if typeof @opts.parentTool isnt 'undefined'
+      @opts.parentTool.on 'data-received', @data 
+      @opts.parentTool.on 'selection', @selectElements
+      @opts.parentTool.on 'set-keys', @selectKeys
+      @opts.parentTool.on 'add-filter', @filters
+      @trigger 'bound-to', tool
+    @
+
+  childData: =>
+    @opts.data
+
+  toolSetting: (settings) =>
+    for setting, value of settings
+      if typeof @[setting] is 'function'
+        @[setting](value)
+      else
+        @opts[setting] = value
     @start()
+    @
 
   # Helpers
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
 
-  checkOpts: (required_opts = @required_data_opts) =>
-    for opt in required_opts
-      throw "missing option #{opt}" unless _.has @, opt
-
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = BaseTool
-else
-  window.Ubret['BaseTool'] = BaseTool
+window.Ubret.BaseTool = BaseTool
