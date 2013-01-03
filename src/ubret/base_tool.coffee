@@ -4,22 +4,25 @@ class BaseTool extends Ubret.Events
     @opts = new Object
     @opts.selectedKeys = new Array
     @opts.selectedIds = new Array
+    @on 'update-settings', @start
 
-  toJSON: =>
-    @opts
+  toJSON: ->
+    json = new Object
+    json[key] = value for key, value of @opts when key isnt 'selector'
+    json
 
   start: =>
-    console.log 'starting', @opts
     @opts.selector = d3.select @selector
     @opts.height = @opts.selector[0][0].clientHeight
     @opts.width = @opts.selector[0][0].clientWidth
     @opts.selector.html ''
 
   data: (data=[]) =>
-    @opts.data = _(data).map (d) -> 
+    @opts.data = _(data).map((d) -> 
       d.uid = _.uniqueId()
-      d
+      d) if data.length isnt 0
     @trigger 'data-received', @childData()
+    console.log @opts.data
     @
 
   keys: (keys=[]) =>
@@ -29,11 +32,9 @@ class BaseTool extends Ubret.Events
     
   selectIds: (ids=[]) =>
     if _.isArray ids
-      console.log 'here'
       @opts.selectedIds = ids
-      console.log @opts.selectedIds, ids
     else
-      @opts.selectedIds.push ids
+      @opts.selectedIds.push ids unless _.isUndefined ids
     @trigger 'selection', ids
     @
 
@@ -41,7 +42,7 @@ class BaseTool extends Ubret.Events
     if _.isArray keys
       @opts.selectedKeys = keys
     else
-      @opts.selectedKeys.push keys
+      @opts.selectedKeys.push keys unless _.isUndefined keys
     @trigger 'keys-selection', keys
     @
 
@@ -57,6 +58,10 @@ class BaseTool extends Ubret.Events
     if tool
       @opts.parentTool = tool
     if not _.isUndefined @opts.parentTool
+      @data(tool.childData())
+        .keys(tool.opts.keys)
+        .selectIds(tool.opts.selectedIds)
+        .selectKeys(tool.opts.selectedKeys)
       @opts.parentTool.on 'data-received', @data 
       @opts.parentTool.on 'selection', @selectElements
       @opts.parentTool.on 'set-keys', @selectKeys
@@ -64,17 +69,18 @@ class BaseTool extends Ubret.Events
       @trigger 'bound-to', tool
     @
 
-  childData: =>
-    @opts.data
-
   settings: (settings) =>
-    for setting, value of settings
-      if typeof @[setting] is 'function'
-        @[setting](value)
-      else
-        @opts[setting] = value
-      @trigger 'update-setting', @opts[setting]
+    unless _.isUndefined settings
+      for setting, value of settings
+        if typeof @[setting] is 'function'
+          @[setting](value)
+        else
+          @opts[setting] = value
+        @trigger 'update-setting', @opts[setting]
     @
+
+  childData: ->
+    @opts.data
 
   # Helpers
   formatKey: (key) ->

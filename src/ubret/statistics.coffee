@@ -1,9 +1,9 @@
-class Statistics extends Window.BaseTool
+class Statistics extends Ubret.BaseTool
   name: 'Statistics'
   
   constructor: (selector) ->
     super selector
-    @opts.displayFormat = d3.format(',.03f')
+    @opts.displayFormat = ',.03f'
 
   start: =>
     super
@@ -35,13 +35,13 @@ class Statistics extends Window.BaseTool
   displayStats: => 
     @ul.selectAll('li').remove()
 
-    @title.text(@formatKey(@selectedKey))
+    @title.text(@formatKey(@statKey))
 
     li = @ul.selectAll('li')
       .data(@statistics)
       .enter().append('li')
       .attr('data-stat', (d) -> d[0])
-      .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{@displayFormat(d[1])}</span>")
+      .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{d3.format(@opts.displayFormat)(d[1])}</span>")
 
   # Statistics
   mean: =>
@@ -57,10 +57,10 @@ class Statistics extends Window.BaseTool
       return (@statData[top] + @statData[bottom]) / 2
 
   mode: =>
-    _(@statData).countBy((num) -> num).foldl(((memo, value, key) -> 
-      memo.value < value
-      {key: key, value: value}), {key: 'uid', value: 0})
-        .value().key
+    
+    console.log _.chain(@statData).countBy((num) -> num)
+      .sortBy((value, key) -> value)
+      .first().value()
 
   min: =>
     _.min @statData
@@ -69,18 +69,18 @@ class Statistics extends Window.BaseTool
     _.max @statData
 
   variance: =>
-    mean = @statistics.mean
+    mean = @mean()
     varianceFormula = (memo, value) =>
       memo + Math.pow(Math.abs(value - mean), 2)
     variance = _.foldl @statData, varianceFormula, 0
-    variance / count
+    variance / @count
 
   standardDeviation: =>
-    Math.sqrt @statistics.variance
+    Math.sqrt @variance()
 
   skew: =>
-    mean = @statistics.mean
-    standardDeviation = @statistics.standardDeviation
+    mean = @mean()
+    standardDeviation = @standardDeviation()
 
     skewFormula = (memo, value) =>
       memo + Math.pow(value - mean, 3)
@@ -90,12 +90,12 @@ class Statistics extends Window.BaseTool
     sum / denom
 
   kurtosis: =>
-    mean = @statistics.mean
-    standardDeviation = @statistics.standardDeviation
+    mean = @mean()
+    standardDeviation = @standardDeviation()
 
-    reduceAdd = (p, v) =>
-      p + Math.pow(v[@selectedKey] - mean, 4)
-    sum = @dimensions.uid.groupAll().reduce(reduceAdd, reduceRemove, (p, v) -> 0).value()
+    reduceAdd = (memo, value) =>
+      memo + Math.pow(value - mean, 4)
+    sum = _.foldl @statData, reduceAdd, 0
 
     denom = @count * Math.pow(standardDeviation, 4)
     sum / denom

@@ -12,6 +12,7 @@ class Table extends Ubret.BaseTool
     @sortKey = @opts.selectedKeys?[0] or 'uid'
     @createTable()
     @paginate()
+    @settings({currentPage: @opts.currentPage})
     @createHeader()
     @createRows()
     @createPages()
@@ -28,13 +29,12 @@ class Table extends Ubret.BaseTool
     @thead.selectAll("th")
       .data(@opts.keys)
       .enter().append("th")
-        .on('click', (d, i) => @selectKeys d)
+        .on('click', (d, i) => @sortRow d)
         .attr('data-key', (d) -> d)
         .text( (d) => "#{@formatKey d} #{if d is @opts.selectedKeys?[0] then @arrow() else ''}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()
-    console.log @opts.selectedIds
     tr = @tbody.selectAll('tr')
       .data(@pages[@opts.currentPage])
       .enter().append('tr')
@@ -77,7 +77,7 @@ class Table extends Ubret.BaseTool
       ret.push data[key]
     return ret
 
-  selectKeys: (key) ->
+  sortRow: (key) ->
     if key is @sortKey
       if @opts.sortOrder is 'top'
         @opts.sortOrder = 'bottom'
@@ -87,7 +87,7 @@ class Table extends Ubret.BaseTool
       return
     else
       @opts.sortOrder = 'top'
-    super [key]
+    @selectKeys key
     @start()
 
   selection: (d, i) =>
