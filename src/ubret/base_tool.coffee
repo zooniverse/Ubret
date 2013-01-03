@@ -1,10 +1,7 @@
 class BaseTool extends Ubret.Events
-  constructor: (selector) ->
+  constructor: (@selector) ->
     super
     @opts = new Object
-    @opts.selector = d3.select selector
-    @opts.height = @opts.selector[0][0].clientHeight
-    @opts.width = @opts.selector[0][0].clientWidth
     @opts.selectedKeys = new Array
     @opts.selectedIds = new Array
 
@@ -12,6 +9,10 @@ class BaseTool extends Ubret.Events
     @opts
 
   start: =>
+    console.log 'starting', @opts
+    @opts.selector = d3.select @selector
+    @opts.height = @opts.selector[0][0].clientHeight
+    @opts.width = @opts.selector[0][0].clientWidth
     @opts.selector.html ''
 
   data: (data=[]) =>
@@ -28,7 +29,9 @@ class BaseTool extends Ubret.Events
     
   selectIds: (ids=[]) =>
     if _.isArray ids
+      console.log 'here'
       @opts.selectedIds = ids
+      console.log @opts.selectedIds, ids
     else
       @opts.selectedIds.push ids
     @trigger 'selection', ids
@@ -64,13 +67,13 @@ class BaseTool extends Ubret.Events
   childData: =>
     @opts.data
 
-  toolSetting: (settings) =>
+  settings: (settings) =>
     for setting, value of settings
       if typeof @[setting] is 'function'
         @[setting](value)
       else
         @opts[setting] = value
-    @start()
+      @trigger 'update-setting', @opts[setting]
     @
 
   # Helpers
