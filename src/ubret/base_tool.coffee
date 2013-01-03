@@ -56,7 +56,7 @@ class BaseTool extends Ubret.Events
   parentTool: (tool=null) =>
     if tool
       @opts.parentTool = tool
-    if typeof @opts.parentTool isnt 'undefined'
+    if not _.isUndefined @opts.parentTool
       @opts.parentTool.on 'data-received', @data 
       @opts.parentTool.on 'selection', @selectElements
       @opts.parentTool.on 'set-keys', @selectKeys
