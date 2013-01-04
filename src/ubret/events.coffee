@@ -1,6 +1,6 @@
 class Events
-  constructor: (@events) ->
-    @events = @events = new Object
+  constructor: () ->
+    @events = new Object
 
   on: (event, callback) ->
     unless _.isArray @events[event]

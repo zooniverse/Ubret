@@ -42,6 +42,7 @@ class BaseTool extends Ubret.Events
       @opts.selectedKeys = keys
     else
       @opts.selectedKeys.push keys unless _.isUndefined keys
+    console.log keys, @opts.selectedKeys
     @trigger 'keys-selection', keys
     @
 
@@ -62,7 +63,7 @@ class BaseTool extends Ubret.Events
         .selectIds(tool.opts.selectedIds)
         .selectKeys(tool.opts.selectedKeys)
       @opts.parentTool.on 'data-received', @data 
-      @opts.parentTool.on 'selection', @selectElements
+      @opts.parentTool.on 'selection', @selectIds
       @opts.parentTool.on 'set-keys', @selectKeys
       @opts.parentTool.on 'add-filter', @filters
       @trigger 'bound-to', tool

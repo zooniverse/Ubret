@@ -9,7 +9,8 @@ class Table extends Ubret.BaseTool
 
   start: =>
     super
-    @sortKey = @opts.selectedKeys?[0] or 'uid'
+    console.log @opts.selectedKeys[0]
+    @sortKey = @opts.selectedKeys[0] or 'uid'
     @createTable()
     @paginate()
     @settings({currentPage: @opts.currentPage})
@@ -31,7 +32,7 @@ class Table extends Ubret.BaseTool
       .enter().append("th")
         .on('click', (d, i) => @sortRow d)
         .attr('data-key', (d) -> d)
-        .text( (d) => "#{@formatKey d} #{if d is @opts.selectedKeys?[0] then @arrow() else ''}")
+        .text( (d) => "#{@formatKey d} #{if d is @sortKey then @arrow() else ''}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()
@@ -56,18 +57,18 @@ class Table extends Ubret.BaseTool
 
   # Helpers
   paginate: =>
-    @numRows = Math.floor((@opts.height - 47 )/ 30) # Assumes thead height of 47px and tbody height of 28px
+    @numRows = Math.floor((@opts.height - 47 )/ 28) # Assumes thead height of 47px and tbody height of 28px
     @numPages = Math.ceil(@opts.data.length / @numRows)
 
     sortedData = _.sortBy @opts.data, (d) => d[@sortKey]
     sortedData.reverse() if @opts.sortOrder is 'bottom'
-    @pages[number] = sortedData.slice(0, @numRows) for number in [0..(@numPages - 1)]
+    @pages[number] = sortedData.slice((number * @numRows), ((number + 1) * @numRows)) for number in [0..(@numPages - 1)]
 
   currentPage: (page) =>
     if page < 0
       @opts.currentPage = @numPages - 1
     else if page >= @numPages
-      @opts.currentPage = 0
+      @opts.currentPage = page % @numPages
     else
       @opts.currentPage = page
 
@@ -78,6 +79,7 @@ class Table extends Ubret.BaseTool
     return ret
 
   sortRow: (key) ->
+    console.log key, @sortKey
     if key is @sortKey
       if @opts.sortOrder is 'top'
         @opts.sortOrder = 'bottom'
@@ -87,7 +89,7 @@ class Table extends Ubret.BaseTool
       return
     else
       @opts.sortOrder = 'top'
-    @selectKeys key
+    @selectKeys [key]
     @start()
 
   selection: (d, i) =>
