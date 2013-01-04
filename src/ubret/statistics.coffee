@@ -57,10 +57,12 @@ class Statistics extends Ubret.BaseTool
       return (@statData[top] + @statData[bottom]) / 2
 
   mode: =>
-    
-    console.log _.chain(@statData).countBy((num) -> num)
-      .sortBy((value, key) -> value)
-      .first().value()
+    _.chain(@statData).countBy((num) -> num)
+      .foldl(((memo, value, key) -> 
+        if value > memo.value
+          { key: key, value: value }
+        else
+          memo), {key: '', value: 0}).value().key
 
   min: =>
     _.min @statData

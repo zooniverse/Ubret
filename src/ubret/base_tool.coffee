@@ -22,7 +22,6 @@ class BaseTool extends Ubret.Events
       d.uid = _.uniqueId()
       d) if data.length isnt 0
     @trigger 'data-received', @childData()
-    console.log @opts.data
     @
 
   keys: (keys=[]) =>
