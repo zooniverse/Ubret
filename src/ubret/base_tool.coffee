@@ -4,7 +4,6 @@ class BaseTool extends Ubret.Events
     @opts = new Object
     @opts.selectedKeys = new Array
     @opts.selectedIds = new Array
-    @on 'update-settings', @start
 
   toJSON: ->
     json = new Object
@@ -18,9 +17,7 @@ class BaseTool extends Ubret.Events
     @opts.selector.html ''
 
   data: (data=[]) =>
-    @opts.data = _(data).map((d) -> 
-      d.uid = _.uniqueId()
-      d) if data.length isnt 0
+    @opts.data = data
     @trigger 'data-received', @childData()
     @
 
@@ -34,7 +31,7 @@ class BaseTool extends Ubret.Events
       @opts.selectedIds = ids
     else
       @opts.selectedIds.push ids unless _.isUndefined ids
-    @trigger 'selection', ids
+    @trigger 'selection', ids unless ids.length is 0
     @
 
   selectKeys: (keys=[]) =>
@@ -42,7 +39,6 @@ class BaseTool extends Ubret.Events
       @opts.selectedKeys = keys
     else
       @opts.selectedKeys.push keys unless _.isUndefined keys
-    console.log keys, @opts.selectedKeys
     @trigger 'keys-selection', keys
     @
 

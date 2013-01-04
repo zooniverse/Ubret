@@ -9,7 +9,6 @@ class Table extends Ubret.BaseTool
 
   start: =>
     super
-    console.log @opts.selectedKeys[0]
     @sortKey = @opts.selectedKeys[0] or 'uid'
     @createTable()
     @paginate()
@@ -79,7 +78,6 @@ class Table extends Ubret.BaseTool
     return ret
 
   sortRow: (key) ->
-    console.log key, @sortKey
     if key is @sortKey
       if @opts.sortOrder is 'top'
         @opts.sortOrder = 'bottom'
@@ -94,9 +92,13 @@ class Table extends Ubret.BaseTool
 
   selection: (d, i) =>
     ids = @opts.selectedIds
+    console.log d3.event.shiftKey
     if d3.event.shiftKey
-      if not d.uid in @opts.selectedIds
+      console.log 'here'
+      console.log d.uid in ids
+      if not (d.uid in ids)
         ids.push d.uid
+        console.log ids
       else
         ids = _.without ids, d.uid 
     else
