@@ -1,6 +1,4 @@
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
-
-class Map extends BaseTool
+class Map extends Ubret.BaseTool
   name: 'Map'
 
   # Set the default image path for Leaflet
@@ -20,8 +18,8 @@ class Map extends BaseTool
       iconAnchor: [13, 41]
     }
 
-  constructor: (opts) ->
-    super opts
+  constructor: (selector) ->
+    super 
     @circles = []
     @limit = @limit or 30
 
@@ -90,32 +88,11 @@ class Map extends BaseTool
     @circles.push circle
 
   plotObjects: =>
-    data = @dimensions.uid.top(@limit)
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
-    @plotObject subject for subject in data
+    @plotObject subject for subject in @opts.data
 
     latlng = new L.LatLng(data[0].dec, data[0].ra)
     @map.panTo latlng
- 
-  selected: (itemId) =>
-    item = _.find @data, (subject) ->
-      subject.zooniverse_id = itemId
-    latlng = new L.LatLng(item.dec, item.ra)
-    circle = (c for c in @circles when c.zooniverse_id is itemId)[0]
-    @selectSubject circle
-
-  # Events
-  selectSubject: (circle) =>
-    # Set previous selected subject back to default icon
-    if @selected_subject?
-      @selected_subject.setIcon @default_icon
-
-    @selected_subject = circle
-    circle.openPopup()
-    circle.setIcon @selected_icon
   
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Map
-else
-  window.Ubret['Map'] = Map
+window.Ubret.Map = Map
