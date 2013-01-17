@@ -1,35 +1,32 @@
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
-
 # Abstract class for plots.  All plots should inherit from this object
-class Graph extends BaseTool
+class Graph extends Ubret.BaseTool
 
-  constructor: (opts) ->
-    super opts
+  constructor: (selector) ->
+    super selector 
 
-    @margin = opts.margin or { left: 80, top: 20, bottom: 90, right: 20 }
-    @format = if opts.format then d3.format(opts.format) else d3.format(',.02f')
+    @opts.margin = @opts.margin or { left: 80, top: 20, bottom: 90, right: 20 }
+    @opts.format = if @opts.format then d3.format(opts.format) else d3.format(',.02f')
     
-    @color = opts.color or '#0172E6'
-    @selectionColor = opts.selectionColor or '#CD3E20'
+    @opts.color = @opts.color or '#0172E6'
+    @opts.selectionColor = @opts.selectionColor or '#CD3E20'
 
   setupGraph: =>
     # Check that all axes are defined
     for axis in [1..@axes]
       key = "axis#{axis}"
-      return if @[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
+      return if @opts[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
     
-    @el.find('svg').empty()
+    @opts.selector.selectAll('svg').remove()
     
-    @graphHeight = @el.height() - (@margin.top + @margin.bottom)
-    @graphWidth  = @el.width() - (@margin.left + @margin.right)
+    @graphHeight = @opts.height - (@opts.margin.top + @opts.margin.bottom)
+    @graphWidth  = @opts.width - (@opts.margin.left + @opts.margin.right)
 
-    @svg = d3.select("#{@selector} svg")
-      .attr('width', @el.width())
-      .attr('height', @el.height())
+    @svg = @opts.selector.append('svg')
+      .attr('width', @opts.width)
+      .attr('height', @opts.height)
       .append('g')
-        .attr('transform', "translate(#{@margin.left}, #{@margin.top})")
+        .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
       
-    @clearFilters()
     @setupData()  # Implemented by subclasses
     @drawAxes()
     @drawData()   # Implemented by subclasses
@@ -37,15 +34,9 @@ class Graph extends BaseTool
   
   start: =>
     super
-    @el.html _.template @template, {selector: @selector}
     @setupGraph()
   
-  clearFilters: =>
-    for key, dimension of @dimensions
-      dimension.filterAll()
-  
   drawAxes: =>
-    
     # Set up x axis
     @x = d3.scale.linear()
       .range([0, @graphWidth])
@@ -66,7 +57,7 @@ class Graph extends BaseTool
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 40)
-      .text(@formatKey(@axis1))
+      .text(@formatKey(@opts.axis1))
     
     # Set up y axis
     @y = d3.scale.linear()
@@ -89,7 +80,7 @@ class Graph extends BaseTool
       .attr('y', -40)
       .attr('x', -(@graphHeight / 2))
       .attr('transform', "rotate(-90)")
-      .text(@formatKey(@axis2))
+      .text(@formatKey(@opts.axis2))
   
   bufferAxes: (domain) ->
     for border, i in domain
@@ -98,7 +89,4 @@ class Graph extends BaseTool
       else
         border = border + (border * 0.15)
 
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Graph
-else
-  window.Ubret['Graph'] = Graph
+window.Ubret.Graph = Graph

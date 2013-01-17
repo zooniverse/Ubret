@@ -17,7 +17,7 @@ class BaseTool extends Ubret.Events
     @opts.selector.html ''
 
   data: (data=[]) =>
-    @opts.data = data
+    @opts.data = _(data).sortBy (d) -> d.uid
     @trigger 'data-received', @childData()
     @
 

@@ -1,4 +1,4 @@
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
+BaseTool = window.Ubret.BaseTool
 
 class SubjectViewer extends BaseTool
   name: 'Subject Viewer'
@@ -8,12 +8,10 @@ class SubjectViewer extends BaseTool
     @count = 0
 
   start: =>
-    if typeof @selectedElements isnt 'undefined' and @selectedElements.length isnt 0
-      subjects = @dimensions.uid.top(Infinity).filter (item) =>
-        item.uid in @selectedElements
-    else
-      subjects = @dimensions.uid.top(1)
-      @selectElements(_.pluck subjects, 'uid')
+    if @opts.selectedIds.length is 0
+      @selectIds [@opts.data.first.uid]
+    subjects = _(@opts.data).filter (d) => 
+      d.uid in @opts.selectedIds
     @render(subjects)
 
   render: (subjects) =>
@@ -47,7 +45,4 @@ class SubjectViewer extends BaseTool
     arrayedData.push [key, data[key]] for key in @keys
     arrayedData
 
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = SubjectViewer
-else
-  window.Ubret['SubjectViewer'] = SubjectViewer
+window.Ubret.SubjectViewer = SubjectViewer
