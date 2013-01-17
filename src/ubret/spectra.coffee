@@ -4,28 +4,14 @@ class Spectra extends BaseTool
 
   name: "Spectra"
   
-  template:
-    """
-    <div id="<%- selector %>-tool">
-      <svg></svg>
-    </div>
-    """
-
-  constructor: ->
-    super
+  constructor: (selector) ->
+    super selector
   
-  render: =>
-    compiled = _.template @template, { selector: @selector.slice(1) }
-    @el.html compiled
-
   start: =>
-    if typeof @selectedElements isnt 'undefined' and @selectedElements.length isnt 0
-      subjects = @dimensions.uid.top(Infinity).filter (item) =>
-        item.uid in @selectedElements
-    else
-      subjects = @dimensions.uid.top(1)
-      @selectElements(_.pluck subjects, 'uid')
-    @render()
+    if @opts.selectedIds.length is 0
+      @selectIds [@opts.data.first.uid]
+    subjects = _(@opts.data).filter (d) => 
+      d.uid in @opts.selectedIds
     @loadSpectralLines(subjects[0])
 
   loadSpectralLines: (subject) =>
@@ -37,15 +23,8 @@ class Spectra extends BaseTool
       rawLines = JSON.parse(request.response)[subject.spectrumID]
       lines[line.name] = line.wavelength for line in rawLines
       @plot(subject.wavelengths, subject.flux, subject.best_fit, lines)
-
     request.send()
 
-  zoom: =>
-    @svg.select(".x.axis").call(@xAxis)
-    @svg.select(".y.axis").call(@yAxis)
-    @svg.select("path.fluxes").attr("d", @fluxLine)
-    @svg.select("path.best-fit").attr("d", @bestFitLine)
-    
   plot: (wavelengths, fluxes, bestFit, spectralLines) =>
     margin =
       top: 14
@@ -80,7 +59,7 @@ class Spectra extends BaseTool
         return x(wavelengths[i])
       .y (d, i) => return y(d)
 
-    @svg = d3.select("#{@selector}-tool svg")
+    @svg = @opts.selector.append('svg')
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
       .append('g')
@@ -130,4 +109,4 @@ class Spectra extends BaseTool
 if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
   module.exports = Spectra
 else
-  window.Ubret['Spectra'] = Spectra
+  window.Ubret['Spectra'] = Spectra@opts.selector.append('svg')
