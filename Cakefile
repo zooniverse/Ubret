@@ -52,7 +52,7 @@ task 'concat', 'Concat lib/ into one js file', ->
   singleFile = fs.readFileSync __dirname + '/lib/index.js'
   singleFile = singleFile + fs.readFileSync __dirname + '/lib/ubret/events.js'
   singleFile = singleFile + fs.readFileSync __dirname + '/lib/ubret/base_tool.js'
-  views = views_func.gather_views(destination_dir, '', views)
+  # views = views_func.gather_views(destination_dir, '', views)
 
   # Concat
   views.forEach (view) ->
@@ -60,7 +60,7 @@ task 'concat', 'Concat lib/ into one js file', ->
     singleFile = singleFile + data
 
   # Add Vendor
-  singleFile = vendorFile + singleFile
+  # singleFile = vendorFile + singleFile
 
   # Write out
   fs.writeFileSync __dirname + '/build/ubret.js', singleFile
