@@ -27,7 +27,8 @@ class Map extends BaseTool
 
   start: =>
     @createSky(@spectrum)
-    @plotObjects() if @opts.data.leng
+    unless (_.isUndefined @opts.data) or (@opts.data.length isnt 0)
+      @plotObjects() 
     
   createSky: (spectrum) =>
     unless @map
