@@ -42,7 +42,7 @@ class SubjectViewer extends BaseTool
 
   toArray: (data) =>
     arrayedData = new Array
-    arrayedData.push [key, data[key]] for key in @keys
+    arrayedData.push [key, data[key]] for key in @opts.keys
     arrayedData
 
 window.Ubret.SubjectViewer = SubjectViewer
