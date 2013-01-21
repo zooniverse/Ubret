@@ -1,6 +1,4 @@
-BaseTool = window.Ubret.BaseTool or require('./base_tool')
-
-class Spectra extends BaseTool
+class Spectra extends Ubret.BaseTool
 
   name: "Spectra"
   
@@ -12,7 +10,13 @@ class Spectra extends BaseTool
       @selectIds [@opts.data.first.uid]
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
-    @loadSpectralLines(subjects[0])
+
+  loadSpectra: (plate, mjd, fiber) =>
+    request = new XMLHttpRequest()
+    url = "http://api.sdds3.org/spectrum?plate=#{plate}&mjd=#{mjd}&fiber=#{fiber}&fields=best_fit,wavelengths,flux&format=json"
+    request.open("GET", url, true)
+    request.onload = (e) =>
+      spectra
 
   loadSpectralLines: (subject) =>
     request = new XMLHttpRequest()
@@ -106,7 +110,4 @@ class Spectra extends BaseTool
         .style("stroke-width", 0.5)
 
 
-if typeof require is 'function' and typeof module is 'object' and typeof exports is 'object'
-  module.exports = Spectra
-else
-  window.Ubret['Spectra'] = Spectra@opts.selector.append('svg')
+window.Ubret.Spectra = Spectra
