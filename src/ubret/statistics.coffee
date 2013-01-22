@@ -8,7 +8,7 @@ class Statistics extends Ubret.BaseTool
   start: =>
     super
     # Assign a selected key so the tool renders immediately.
-    @statKey = @opts.selectedKeys[0] or 'uid'
+    @statKey = _.last(@opts.selectedKeys) or 'uid'
     @statData = _.pluck @opts.data, @statKey
 
     @count = @statData.length
