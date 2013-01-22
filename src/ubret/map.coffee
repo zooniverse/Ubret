@@ -24,7 +24,7 @@ class Map extends Ubret.BaseTool
     @limit = @limit or 30
 
   start: =>
-    @createSky(@spectrum)
+    @createSky(@opts.spectrum)
     unless (_.isUndefined @opts.data) or (@opts.data.length isnt 0)
       @plotObjects() 
     
