@@ -1,4 +1,4 @@
-class Map extends Ubret.BaseTool
+class Mapper extends Ubret.BaseTool
   name: 'Map'
 
   # Set the default image path for Leaflet
@@ -95,4 +95,4 @@ class Map extends Ubret.BaseTool
     latlng = new L.LatLng(data[0].dec, data[0].ra)
     @map.panTo latlng
   
-window.Ubret.Map = Map
+window.Ubret.Mapper = Mapper
