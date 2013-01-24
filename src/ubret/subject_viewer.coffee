@@ -9,7 +9,7 @@ class SubjectViewer extends BaseTool
 
   start: =>
     if @opts.selectedIds.length is 0
-      @selectIds [@opts.data.first.uid]
+      @selectIds [@opts.data[0].uid]
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
     @render(subjects)
