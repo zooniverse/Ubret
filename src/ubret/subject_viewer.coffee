@@ -3,19 +3,22 @@ BaseTool = window.Ubret.BaseTool
 class SubjectViewer extends BaseTool
   name: 'Subject Viewer'
   
-  constructor: (opts) ->
-    super
-    @count = 0
+  constructor: (selector) ->
+    super selector
 
   start: =>
-    if @opts.selectedIds.length is 0
-      @selectIds [@opts.data[0].uid]
+    super
+
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
-    @render(subjects)
+
+    if _.isEmpty subjects
+      @selectIds [@opts.data[0].uid]
+    else
+      @render(subjects)
 
   render: (subjects) =>
-    @div = d3.select(@selector)
+    @div = @opts.selector
     @div.selectAll('div.subject').remove()
 
     subject = @div.selectAll('div.subject')
@@ -24,7 +27,9 @@ class SubjectViewer extends BaseTool
         .attr('class', 'subject')
 
     subject.append('img')
-        .attr('src', (d) -> d.image)
+        .attr('src', (d) -> 
+          console.log d.image
+          d.image)
 
     subject.append('ul').selectAll('ul')
       .data((d) => @toArray(d)).enter()
