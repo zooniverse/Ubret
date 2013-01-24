@@ -21,25 +21,31 @@ class BaseTool extends Ubret.Events
     @trigger 'data-received', @childData()
     @
 
-  keys: (keys=[]) =>
+  keys: (keys=[], triggerEvent = true) =>
     @opts.keys = keys
-    @trigger 'keys-received', @opts.keys
+
+    if triggerEvent
+      @trigger 'keys-received', @opts.keys
     @
     
-  selectIds: (ids=[]) =>
+  selectIds: (ids=[], triggerEvent = true) =>
     if _.isArray ids
       @opts.selectedIds = ids
     else
       @opts.selectedIds.push ids unless _.isUndefined ids
-    @trigger 'selection', ids unless ids.length is 0
+
+    if triggerEvent
+      @trigger 'selection', ids unless ids.length is 0
     @
 
-  selectKeys: (keys=[]) =>
+  selectKeys: (keys=[], triggerEvent = true) =>
     if _.isArray keys
       @opts.selectedKeys = keys
     else
       @opts.selectedKeys.push keys unless _.isUndefined keys
-    @trigger 'keys-selection', keys
+
+    if triggerEvent
+      @trigger 'keys-selection', keys
     @
 
   filters: (filters=[]) =>
@@ -50,19 +56,32 @@ class BaseTool extends Ubret.Events
     @trigger 'add-filters', filters
     @
 
-  parentTool: (tool=null) =>
-    if tool
-      @opts.parentTool = tool
-    if not _.isUndefined @opts.parentTool
-      @data(tool.childData())
-        .keys(tool.opts.keys)
-        .selectIds(tool.opts.selectedIds)
-        .selectKeys(tool.opts.selectedKeys)
-      @opts.parentTool.on 'data-received', @data 
-      @opts.parentTool.on 'selection', @selectIds
-      @opts.parentTool.on 'set-keys', @selectKeys
-      @opts.parentTool.on 'add-filter', @filters
-      @trigger 'bound-to', tool
+  parentTool: (tool = null) =>
+    unless tool then return @opts.parentTool
+
+    # Only bother checking sameness if parentTool is set.
+    if @opts.parentTool?
+      # Don't re-assign events if parentTool is the same
+      if tool.selector is @opts.parentTool.selector
+        return @
+      else
+        # Unbind events first if parentTool is different.
+        @opts.parentTool.unbind()
+
+    @opts.parentTool = tool
+
+    @opts.parentTool.on 'keys-received', @keys
+    @opts.parentTool.on 'data-received', @data 
+    @opts.parentTool.on 'selection', @selectIds
+    @opts.parentTool.on 'keys-selection', @selectKeys
+    @opts.parentTool.on 'add-filter', @filters
+
+    @data(tool.childData())
+      .keys(tool.opts.keys, false)
+      .selectIds(tool.opts.selectedIds, false)
+      .selectKeys(tool.opts.selectedKeys, false)
+
+    @trigger 'bound-to', tool
     @
 
   settings: (settings) =>

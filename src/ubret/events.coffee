@@ -1,5 +1,5 @@
 class Events
-  constructor: () ->
+  constructor: ->
     @events = new Object
 
   on: (event, callback) ->
@@ -10,5 +10,10 @@ class Events
   trigger: (event, args...) ->
     if _.isArray @events[event]
       eventCallback(args...) for eventCallback in @events[event]
+
+  unbind: (event = null) ->
+    # if event is null, unbind all events.
+    unless event? then @events = {}; return
+    @events = _.omit @events, event
 
 window.Ubret.Events = Events
