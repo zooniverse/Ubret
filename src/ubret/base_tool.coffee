@@ -21,9 +21,11 @@ class BaseTool extends Ubret.Events
     @trigger 'data-received', @childData()
     @
 
-  keys: (keys=[]) =>
+  keys: (keys=[], triggerEvent = true) =>
     @opts.keys = keys
-    @trigger 'keys-received', @opts.keys
+
+    if triggerEvent
+      @trigger 'keys-received', @opts.keys
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
@@ -37,7 +39,6 @@ class BaseTool extends Ubret.Events
     @
 
   selectKeys: (keys=[], triggerEvent = true) =>
-    console.log 'selecting keys'
     if _.isArray keys
       @opts.selectedKeys = keys
     else
@@ -69,16 +70,17 @@ class BaseTool extends Ubret.Events
 
     @opts.parentTool = tool
 
-    @data(tool.childData())
-      .keys(tool.opts.keys)
-      .selectIds(tool.opts.selectedIds, false)
-      .selectKeys(tool.opts.selectedKeys, false)
-
     @opts.parentTool.on 'keys-received', @keys
     @opts.parentTool.on 'data-received', @data 
     @opts.parentTool.on 'selection', @selectIds
     @opts.parentTool.on 'keys-selection', @selectKeys
     @opts.parentTool.on 'add-filter', @filters
+
+    @data(tool.childData())
+      .keys(tool.opts.keys, false)
+      .selectIds(tool.opts.selectedIds, false)
+      .selectKeys(tool.opts.selectedKeys, false)
+
     @trigger 'bound-to', tool
     @
 
