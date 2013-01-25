@@ -28,7 +28,6 @@ class SubjectViewer extends BaseTool
 
     subject.append('img')
         .attr('src', (d) -> 
-          console.log d.image
           d.image)
 
     subject.append('ul').selectAll('ul')

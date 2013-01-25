@@ -6,17 +6,24 @@ class Spectra extends Ubret.BaseTool
     super selector
   
   start: =>
-    if @opts.selectedIds.length is 0
-      @selectIds [@opts.data.first.uid]
+    super
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
 
-  loadSpectra: (plate, mjd, fiber) =>
+    if _.isEmpty subjects
+      @selectIds [@opts.data[0].uid]
+    else
+      @loadSpectra(subjects[0])
+
+  loadSpectra: (subject) =>
     request = new XMLHttpRequest()
-    url = "http://api.sdds3.org/spectrum?plate=#{plate}&mjd=#{mjd}&fiber=#{fiber}&fields=best_fit,wavelengths,flux&format=json"
+    url = "http://api.sdss3.org/spectrum?plate=#{subject.plate}&mjd=#{subject.mjd}&fiber=#{subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
     request.open("GET", url, true)
     request.onload = (e) =>
-      spectra
+      subject = JSON.parse request.response
+      @loadSpectralLines subject
+    request.send()
+
 
   loadSpectralLines: (subject) =>
     request = new XMLHttpRequest()
@@ -35,8 +42,8 @@ class Spectra extends Ubret.BaseTool
       right: 30
       bottom: 100 
       left: 80
-    width = @el.width() - margin.left - margin.right
-    height = @el.height() - margin.top - margin.bottom
+    width = @opts.width - margin.left - margin.right
+    height = @opts.height - margin.top - margin.bottom
     
     x = d3.scale.linear()
       .range([0, width])
@@ -74,6 +81,13 @@ class Spectra extends Ubret.BaseTool
         .attr("class", "x axis")
         .attr("transform", "translate(0, #{height})")
         .call(@xAxis)
+      .append('text')
+        .attr('y', 30)
+        .attr('x', (width / 2))
+        .attr("dy", ".71em")
+        .style("text-anchor", "middle")
+        .text("Angstroms")
+
     @svg.append("g")
         .attr("class", "y axis")
         .call(@yAxis)
