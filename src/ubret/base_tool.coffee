@@ -84,6 +84,12 @@ class BaseTool extends Ubret.Events
     @trigger 'bound-to', tool
     @
 
+  removeParentTool: =>
+    if @opts.parentTool?
+      @opts.parentTool.unbind()
+      delete @opts.parentTool
+    @
+
   settings: (settings) =>
     obj = {}
     unless _.isUndefined settings

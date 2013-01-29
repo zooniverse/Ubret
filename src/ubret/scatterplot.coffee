@@ -13,7 +13,6 @@ class Scatterplot extends Ubret.Graph
     @yDomain = d3.extent(@graphData, (d) => d[@opts.axis2])
 
   drawData: =>
-    console.log @selectedElements
     @points = @svg.append('g').selectAll('circle')
         .data(@graphData)
       .enter().append('circle')
