@@ -1,5 +1,4 @@
 class Spectra extends Ubret.BaseTool
-
   name: "Spectra"
   
   constructor: (selector) ->

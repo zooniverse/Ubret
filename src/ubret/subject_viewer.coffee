@@ -1,6 +1,4 @@
-BaseTool = window.Ubret.BaseTool
-
-class SubjectViewer extends BaseTool
+class SubjectViewer extends Ubret.BaseTool
   name: 'Subject Viewer'
   
   constructor: (selector) ->
@@ -8,7 +6,6 @@ class SubjectViewer extends BaseTool
 
   start: =>
     super
-
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
 
