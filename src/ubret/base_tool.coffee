@@ -77,9 +77,9 @@ class BaseTool extends Ubret.Events
     @opts.parentTool.on 'add-filter', @filters
 
     @data(tool.childData())
-      .keys(tool.opts.keys, false)
-      .selectIds(tool.opts.selectedIds, false)
-      .selectKeys(tool.opts.selectedKeys, false)
+      .keys(tool.opts.keys)
+      .selectIds(tool.opts.selectedIds)
+      .selectKeys(tool.opts.selectedKeys)
 
     @trigger 'bound-to', tool
     @

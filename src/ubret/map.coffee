@@ -25,12 +25,11 @@ class Mapper extends Ubret.BaseTool
 
   start: =>
     @createSky(@opts.spectrum)
-    unless (_.isUndefined @opts.data) or (@opts.data.length isnt 0)
-      @plotObjects() 
+    @plotObjects() 
     
   createSky: (spectrum) =>
     unless @map
-      @map = L.map(@selector.slice(1), Map.mapOptions).setView([0, 180], 5)
+      @map = L.map(@selector.slice(1), Mapper.mapOptions).setView([0, 180], 5)
 
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7
@@ -82,17 +81,18 @@ class Mapper extends Ubret.BaseTool
     circle.uid = subject.uid
     
     circle.addTo(@map)
-      .bindPopup('etc')
-      .openPopup()
+      # .bindPopup('etc')
+      # .openPopup()
 
     @circles.push circle
 
   plotObjects: =>
+    console.log 'plotting objects'
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in @opts.data
 
-    latlng = new L.LatLng(data[0].dec, data[0].ra)
+    latlng = new L.LatLng(@opts.data[0].dec, @opts.data[0].ra)
     @map.panTo latlng
   
 window.Ubret.Mapper = Mapper
