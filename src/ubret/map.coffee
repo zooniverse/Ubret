@@ -29,7 +29,13 @@ class Mapper extends Ubret.BaseTool
     
   createSky: (spectrum) =>
     unless @map
-      @map = L.map(@selector.slice(1), Mapper.mapOptions).setView([0, 180], 5)
+      zoom = @opts.zoom or 5
+      @map = L.map(@selector.slice(1), Mapper.mapOptions).setView([0, 180], zoom)
+
+      @map.on 'zoomend', (e) =>
+        @settings
+          zoom: @map.getZoom()
+
 
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7

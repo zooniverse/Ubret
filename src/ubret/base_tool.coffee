@@ -85,13 +85,17 @@ class BaseTool extends Ubret.Events
     @
 
   settings: (settings) =>
+    obj = {}
     unless _.isUndefined settings
       for setting, value of settings
         if typeof @[setting] is 'function'
           @[setting](value)
         else
           @opts[setting] = value
-        @trigger 'update-setting', @opts[setting]
+
+        # This might not be 100% solid.
+        obj[setting] = value
+        @trigger 'update-setting', obj
     @
 
   childData: ->
