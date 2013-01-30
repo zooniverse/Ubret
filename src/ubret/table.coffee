@@ -94,13 +94,9 @@ class Table extends Ubret.BaseTool
 
   selection: (d, i) =>
     ids = @opts.selectedIds
-    console.log d3.event.shiftKey
     if d3.event.shiftKey
-      console.log 'here'
-      console.log d.uid in ids
       if not (d.uid in ids)
         ids.push d.uid
-        console.log ids
       else
         ids = _.without ids, d.uid 
     else

@@ -119,7 +119,6 @@ class BaseTool extends Ubret.Events
     if index >= @opts.data.length
       index = 0
     @selectIds [@opts.data[index].uid]
-    console.log @opts.selectedIds
     @start()
 
   prev: =>

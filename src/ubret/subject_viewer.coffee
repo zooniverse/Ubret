@@ -11,8 +11,6 @@ class SubjectViewer extends Ubret.BaseTool
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
 
-    console.log subjects
-
     if _.isEmpty subjects
       @selectIds [@opts.data[0].uid]
       @start()

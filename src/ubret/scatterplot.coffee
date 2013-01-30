@@ -44,7 +44,6 @@ class Scatterplot extends Ubret.Graph
     d = d3.event.target.extent()
     x = d.map( (x) -> return x[0])
     y = d.map( (x) -> return x[1])
-    console.log x, y
     
     # Select all items within the range
     # TODO: Pass these data down the chain
@@ -55,7 +54,6 @@ class Scatterplot extends Ubret.Graph
         (d[@opts.axis2] > y[0]) and (d[@opts.axis2] < y[1]))
       .pluck('uid')
       .value()
-    console.log top
     @selectIds top
   
 window.Ubret.Scatterplot = Scatterplot
