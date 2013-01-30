@@ -8,6 +8,7 @@ class Table extends Ubret.BaseTool
     @pages = new Array
     @on 'next-page', @nextPage
     @on 'prev-page', @prevPage
+    console.log @events
 
   start: =>
     super
@@ -58,7 +59,7 @@ class Table extends Ubret.BaseTool
 
   # Helpers
   paginate: =>
-    @numRows = Math.floor((@opts.height - 47 )/ 28) # Assumes thead height of 47px and tbody height of 28px
+    @numRows = Math.floor((@opts.height - 50 )/ 30) # Assumes thead height of 50px and tbody height of 30px
     @numPages = Math.ceil(@opts.data.length / @numRows)
 
     sortedData = _.sortBy @opts.data, (d) => d[@sortKey]
@@ -115,9 +116,11 @@ class Table extends Ubret.BaseTool
       return '▼'
 
   nextPage: =>
-    @currentPage @opts.currentPage + 1
+    @currentPage parseInt(@opts.currentPage) + 1
+    @start()
 
   prevPage: =>
-    @currentPage @opts.currentPage - 1
+    @currentPage parseInt(@opts.currentPage) - 1
+    @start()
 
 window.Ubret.Table = Table
