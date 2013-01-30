@@ -6,6 +6,8 @@ class Table extends Ubret.BaseTool
     @opts.sortOrder = 'top'
     @opts.currentPage = 0
     @pages = new Array
+    @on 'next-page', @nextPage
+    @on 'prev-page', @prevPage
 
   start: =>
     super
@@ -52,7 +54,7 @@ class Table extends Ubret.BaseTool
     @p = d3.select(@selector)
       .append('p')
       .attr('class', 'pages')
-      .text("Page: #{@opts.currentPage + 1} of #{@numPages}")
+      .text("Page: #{parseInt(@opts.currentPage) + 1} of #{@numPages}")
 
   # Helpers
   paginate: =>
@@ -111,5 +113,11 @@ class Table extends Ubret.BaseTool
       return '▲'
     else
       return '▼'
+
+  nextPage: =>
+    @currentPage @opts.currentPage + 1
+
+  prevPage: =>
+    @currentPage @opts.currentPage - 1
 
 window.Ubret.Table = Table
