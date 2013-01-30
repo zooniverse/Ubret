@@ -6,10 +6,6 @@ class Spectra extends Ubret.BaseTool
     @on 'next', @next
     @on 'prev', @prev
 
-  next: =>
-
-  prev: =>
-  
   start: =>
     super
     subjects = _(@opts.data).filter (d) => 

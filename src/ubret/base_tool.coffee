@@ -112,4 +112,23 @@ class BaseTool extends Ubret.Events
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
 
+  next: =>
+    lastUid = _(@opts.selectedIds).last()
+    lastSubject = _(@opts.data).find((d) => d.uid is lastUid)
+    index = _(@opts.data).indexOf(lastSubject) + 1
+    if index >= @opts.data.length
+      index = 0
+    @selectIds [@opts.data[index].uid]
+    console.log @opts.selectedIds
+    @start()
+
+  prev: =>
+    lastUid = _(@opts.selectedIds).first()
+    lastSubject = _(@opts.data).find((d) => d.uid is lastUid)
+    index = _(@opts.data).indexOf(lastSubject) - 1
+    if index is 0
+      index = @opts.data.length - 1 
+    @selectIds [@opts.data[index].uid]
+    @start()
+
 window.Ubret.BaseTool = BaseTool

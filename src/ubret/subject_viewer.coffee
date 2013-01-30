@@ -6,15 +6,12 @@ class SubjectViewer extends Ubret.BaseTool
     @on 'next', @next
     @on 'prev', @prev
 
-  next: =>
-    if 
-
-  prev: =>
-
   start: =>
     super
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
+
+    console.log subjects
 
     if _.isEmpty subjects
       @selectIds [@opts.data[0].uid]
