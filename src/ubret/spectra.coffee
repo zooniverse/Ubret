@@ -3,6 +3,12 @@ class Spectra extends Ubret.BaseTool
   
   constructor: (selector) ->
     super selector
+    @on 'next', @next
+    @on 'prev', @prev
+
+  next: =>
+
+  prev: =>
   
   start: =>
     super
@@ -11,6 +17,7 @@ class Spectra extends Ubret.BaseTool
 
     if _.isEmpty subjects
       @selectIds [@opts.data[0].uid]
+      @start()
     else
       @loadSpectra(subjects[0])
 
@@ -22,7 +29,6 @@ class Spectra extends Ubret.BaseTool
       subject = JSON.parse request.response
       @loadSpectralLines subject
     request.send()
-
 
   loadSpectralLines: (subject) =>
     request = new XMLHttpRequest()

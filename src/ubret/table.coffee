@@ -8,7 +8,6 @@ class Table extends Ubret.BaseTool
     @pages = new Array
     @on 'next-page', @nextPage
     @on 'prev-page', @prevPage
-    console.log @events
 
   start: =>
     super

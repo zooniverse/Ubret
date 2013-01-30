@@ -3,6 +3,13 @@ class SubjectViewer extends Ubret.BaseTool
   
   constructor: (selector) ->
     super selector
+    @on 'next', @next
+    @on 'prev', @prev
+
+  next: =>
+    if 
+
+  prev: =>
 
   start: =>
     super
@@ -11,6 +18,7 @@ class SubjectViewer extends Ubret.BaseTool
 
     if _.isEmpty subjects
       @selectIds [@opts.data[0].uid]
+      @start()
     else
       @render(subjects)
 
