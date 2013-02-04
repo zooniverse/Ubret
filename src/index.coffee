@@ -1,15 +1,24 @@
 window.Ubret = new Object unless typeof window.Ubret isnt 'undefined'
 
-Dependencies = 
+Ubret.BaseUrl = if location.port < 1024 and not location.protocol is 'file:'
+  "http://ubret.s3.amazonaws.com/ubret_library/" 
+else 
+  "http://localhost:3001/"
+
+Ubret.Dependencies = 
+  "underscore":
+    symbol: "_"
+    source: "vendor/underscore.js"
   "d3": 
     source: "vendor/d3.js"
   "Leaflet": 
+    symbol: "L"
     source: "vendor/leaflet.js"
   "Events" : 
     source: "ubret/events.js"
   "BaseTool": 
     source: "ubret/base_tool.js"
-    deps: ["d3"]
+    deps: ["Events", "d3", "underscore"]
   "Graph" :
     source: "ubret/graph.js"
     deps: ["BaseTool"]
@@ -35,16 +44,42 @@ Dependencies =
     source: "ubret/spectra.js"
     deps: ["BaseTool"]
 
-Ubret.Loader = (tools, cb) ->
+Ubret.Loader = (tools, cb=null) ->
   isScriptLoaded = (script) ->
     not (typeof window[script] is 'undefined' or typeof Ubret[script] is 'undefined')
+  
+  loadScript = (source, cb=null) ->
+    script = document.createElement 'script'
+    script.onload = cb
+    script.src = "#{Ubret.BaseUrl}#{source}"
+    document.getElementsByTagName('head')[0].appendChild script
 
   unique = (array) ->
+    flattened = []
+    flattened = flattened.concat.apply(flattened, array)
     uniqueArray = new Array
-    for item in array
-      unless (item in array) or (typeof item is 'undefined')
+    for item in flattened
+      unless (item in uniqueArray) or (typeof item is 'undefined')
         uniqueArray.push item 
     uniqueArray
 
-  dependencies.push Dependencies[tool].deps for tool in tools
-  dependencies = unique dependencies
+  findDeps = (deps, accum) ->
+    dependencies = []
+    dependencies.push Ubret.Dependencies[dep].deps for dep in deps
+    dependencies = unique dependencies
+    if dependencies.length is 0
+      return accum
+    else
+      return findDeps(dependencies, accum.concat(dependencies))
+
+  loadScripts = ->
+    if tools is 0 
+      return
+    callback = if tools.length is 1 and cb isnt null then cb else loadScripts
+    tool = tools.pop()
+    unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol)
+      source = Ubret.Dependencies[tool].source
+      loadScript source, callback
+
+  tools = tools.concat findDeps(tools, [])
+  loadScripts()

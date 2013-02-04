@@ -3,13 +3,14 @@
   <head>
   <meta charset="UTF-8">
   <title> Ubret Test Page </title> 
-  <script src="build/ubret.js" type="text/javascript"></script>
+  <script src="http://localhost:3001/index.js"></script>
   </head>
   <body>
     <div class="table" style="height: 640px;">
     </div>
 
   <script type="text/javascript">
+    function newTable() {
     var data = [
       { id: 1, something: 'Awesome', number: 1, score: 54.0 },
       { id: 2, something: 'cool', number: 11, score: 54.9 },
@@ -20,12 +21,15 @@
       { id: 7, something: 'touchy', number: 111, score: 54.2 },
       { id: 8, something: 'explosive', number: 1, score: 54.1 }]
 
-    var keys = ['something', 'number', 'score']
+    var keys = ['something', 'number', 'score'];
 
-    var selector = '.table'
+    var selector = '.table';
 
     var table = new Ubret.Table(selector)
-      .data(data).keys(keys).start()
+      .data(data).keys(keys).start();
+    }
+
+    Ubret.Loader(['Table'], newTable);
   </script>
   </body>
 </html>
