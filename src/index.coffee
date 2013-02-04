@@ -33,7 +33,7 @@ Ubret.Dependencies =
     deps: ["BaseTool"]
   "Mapper" :
     source: "ubret/map.js"
-    deps: ["BaseTool", "L"]
+    deps: ["BaseTool", "Leaflet"]
   "Statistics" :
     source: "ubret/statistics.js"
     deps: ["BaseTool"]
@@ -44,7 +44,7 @@ Ubret.Dependencies =
     source: "ubret/spectra.js"
     deps: ["BaseTool"]
 
-Ubret.Loader = (tools, cb=null) ->
+Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->
     not (typeof window[script] is 'undefined' or typeof Ubret[script] is 'undefined')
   
@@ -65,17 +65,17 @@ Ubret.Loader = (tools, cb=null) ->
 
   findDeps = (deps, accum) ->
     dependencies = []
-    dependencies.push Ubret.Dependencies[dep].deps for dep in deps
+    dependencies.push Ubret.Dependencies[dep].deps for dep in deps when Ubret.Dependencies
     dependencies = unique dependencies
     if dependencies.length is 0
-      return accum
+      return unique accum
     else
       return findDeps(dependencies, accum.concat(dependencies))
 
   loadScripts = ->
-    if tools is 0 
+    if tools.length is 0 
       return
-    callback = if tools.length is 1 and cb isnt null then cb else loadScripts
+    callback = if tools.length is 1 then cb else loadScripts
     tool = tools.pop()
     unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol)
       source = Ubret.Dependencies[tool].source
