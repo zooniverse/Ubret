@@ -9,7 +9,7 @@ option '-m', '--minifiy', 'minifies the compiled output'
 task 'build', 'Build lib/ from src', (options) ->
   if options.server
     invoke 'server'
-  coffee = spawn 'coffee', ['-c', '-o', 'lib', 'src']
+  coffee = spawn './node_modules/.bin/coffee', ['-c', '-o', 'lib', 'src']
   coffee.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   coffee.stdout.on 'data', (data) ->
@@ -21,7 +21,7 @@ task 'build', 'Build lib/ from src', (options) ->
 task 'watch', 'Watch src/ for changes', (options) ->
   if options.server
     invoke 'server'
-  coffee_src = spawn 'coffee', ['-w', '-c', '-o', 'lib', 'src']
+  coffee_src = spawn './node_modules/.bin/coffee', ['-w', '-c', '-o', 'lib', 'src']
   coffee_src.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   coffee_src.stdout.on 'data', (data) ->
@@ -30,7 +30,7 @@ task 'watch', 'Watch src/ for changes', (options) ->
 
 task 'server', "Serve contents of build", (options) ->
   port = options.port || 3001
-  node_static = spawn 'static', ['build', '--port', port]
+  node_static = spawn './node_modules/.bin/static', ['build', '--port', port]
   node_static.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   node_static.stdout.on 'data', (data) ->
