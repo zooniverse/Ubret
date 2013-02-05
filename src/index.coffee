@@ -1,7 +1,7 @@
 window.Ubret = new Object unless typeof window.Ubret isnt 'undefined'
 
 Ubret.BaseUrl = if location.port < 1024 and not location.protocol is 'file:'
-  "http://ubret.s3.amazonaws.com/ubret_library/" 
+  "http://ubret.s3.amazonaws.com/ubret_library/lib/"
 else 
   "http://localhost:3001/"
 
