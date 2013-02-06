@@ -28,15 +28,15 @@ class InteractiveSubject extends Spine.Model
     for result in json
       if result.recent.subject.metadata.survey is 'sloan'
         item = @create
-          counters: result.recent.subject.metadata.counters
-          classification: result.recent.user.classification
-          image: result.recent.subject.location.standard
-          zooniverse_id: result.recent.subject.zooniverse_id
-          redshift: result.recent.subject.metadata.redshift
-          absolute_brightness: result.recent.subject.metadata.mag?.abs_r
-          apparent_brightness: result.recent.subject.metadata.mag?.r
-          color: result.recent.subject.metadata.mag?.u - result.recent.subject.metadata.mag?.r
-          absolute_radius: result.recent.subject.metadata.absolute_size
+          counters: result.recent.subjects[0].metadata.counters
+          classification: result.recents[0].user.classification
+          image: result.recent.subjects[0].location.standard
+          zooniverse_id: result.recent.subjects[0].zooniverse_id
+          redshift: result.recent.subjects[0].metadata.redshift
+          absolute_brightness: result.recent.subjects[0].metadata.mag?.abs_r
+          apparent_brightness: result.recent.subjects[0].metadata.mag?.r
+          color: result.recent.subjects[0].metadata.mag?.u - result.recent.subject.metadata.mag?.r
+          absolute_radius: result.recent.subjects[0].metadata.absolute_size
 
         @lastFetch.push item
 
