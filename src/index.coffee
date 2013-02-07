@@ -1,6 +1,6 @@
 window.Ubret = new Object unless typeof window.Ubret isnt 'undefined'
 
-Ubret.BaseUrl = if location.port < 1024 and not location.protocol is 'file:'
+Ubret.BaseUrl = if location.port < 1024 and
   "http://ubret.s3.amazonaws.com/ubret_library/lib/"
 else 
   "http://localhost:3001/"
@@ -51,6 +51,7 @@ Ubret.Loader = (tools, cb) ->
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
+    console.log Ubret.BaseUrl
     script.src = "#{Ubret.BaseUrl}#{source}"
     document.getElementsByTagName('head')[0].appendChild script
 
