@@ -56,7 +56,6 @@ Ubret.Loader = (tools, cb) ->
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
-    console.log Ubret.BaseUrl
     script.src = "#{Ubret.BaseUrl}#{source}"
     document.getElementsByTagName('head')[0].appendChild script
 

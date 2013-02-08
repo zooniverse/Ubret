@@ -4,7 +4,9 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   constructor: (selector) ->
     super selector
-    console.log 'SpacewarpViewer', selector
 
-
+  start: =>
+    super
+    console.log 'from start', @opts
+    
 window.Ubret.SpacewarpViewer = SpacewarpViewer
