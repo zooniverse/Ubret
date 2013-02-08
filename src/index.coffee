@@ -51,7 +51,7 @@ Ubret.Dependencies =
 
 Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->
-    not (typeof window[script] is 'undefined' or typeof Ubret[script] is 'undefined')
+    not (typeof window[script] is 'undefined' and typeof Ubret[script] is 'undefined')
   
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
@@ -84,6 +84,7 @@ Ubret.Loader = (tools, cb) ->
       return
     callback = if tools.length is 1 then cb else loadScripts
     tool = tools.pop()
+    console.log ((isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol))
     unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol)
       source = Ubret.Dependencies[tool].source
       loadScript source, callback
