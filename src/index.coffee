@@ -14,6 +14,8 @@ Ubret.Dependencies =
   "Leaflet": 
     symbol: "L"
     source: "vendor/leaflet.js"
+  "fits":
+    source: "vendor/fits.js"
   "Events" : 
     source: "ubret/events.js"
   "BaseTool": 
@@ -43,6 +45,9 @@ Ubret.Dependencies =
   "Spectra" :
     source: "ubret/spectra.js"
     deps: ["BaseTool"]
+  "SpacewarpViewer" :
+    source: "ubret/spacewarp_viewer.js"
+    deps: ["BaseTool", "fits"]
 
 Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->
@@ -65,7 +70,8 @@ Ubret.Loader = (tools, cb) ->
 
   findDeps = (deps, accum) ->
     dependencies = []
-    dependencies.push Ubret.Dependencies[dep].deps for dep in deps when Ubret.Dependencies
+    for dep in deps when Ubret.Dependencies
+      dependencies.push Ubret.Dependencies[dep].deps
     dependencies = unique dependencies
     if dependencies.length is 0
       return unique accum

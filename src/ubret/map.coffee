@@ -93,7 +93,6 @@ class Mapper extends Ubret.BaseTool
     @circles.push circle
 
   plotObjects: =>
-    console.log 'plotting objects'
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in @opts.data
