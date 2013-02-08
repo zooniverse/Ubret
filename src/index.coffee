@@ -46,7 +46,7 @@ Ubret.Dependencies =
     source: "lib/ubret/spectra.js"
     deps: ["BaseTool"]
   "SpacewarpViewer" :
-    source: "ubret/spacewarp_viewer.js"
+    source: "lib/ubret/spacewarp_viewer.js"
     deps: ["BaseTool", "fits"]
 
 Ubret.Loader = (tools, cb) ->
@@ -64,7 +64,8 @@ Ubret.Loader = (tools, cb) ->
     flattened = flattened.concat.apply(flattened, array)
     uniqueArray = new Array
     for item in flattened
-      unless (item in uniqueArray) or (typeof item is 'undefined')
+      continue unless item?
+      unless item in uniqueArray
         uniqueArray.push item 
     uniqueArray
 
@@ -81,9 +82,10 @@ Ubret.Loader = (tools, cb) ->
   loadScripts = ->
     if tools.length is 0 
       cb()
+      return
     callback = loadScripts
     tool = tools.pop()
-    unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol)
+    unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool]?.symbol)
       source = Ubret.Dependencies[tool].source
       loadScript source, callback
     else
