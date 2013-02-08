@@ -37,8 +37,8 @@ task 'server', "Serve contents of build", (options) ->
     print data.toString()
 
 task 'copy', 'Copy lib and vendor to build', (options) =>
-  cp = spawn 'cp', ['-r', 'lib/', 'build/']
-  cp2 = spawn 'cp', ['-r', 'vendor/', 'build/']
+  cp = spawn 'cp', ['-r', __dirname + '/lib', __dirname + '/build/']
+  cp2 = spawn 'cp', ['-r', __dirname + '/vendor', __dirname + '/build/']
   for copier in [cp, cp2]
     copier.stderr.on 'data', (data) ->
       process.stderr.write data.toString()
