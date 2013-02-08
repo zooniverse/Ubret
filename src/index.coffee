@@ -81,8 +81,8 @@ Ubret.Loader = (tools, cb) ->
 
   loadScripts = ->
     if tools.length is 0 
-      return
-    callback = if tools.length is 1 then cb else loadScripts
+      cb()
+    callback = loadScripts
     tool = tools.pop()
     unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool].symbol)
       source = Ubret.Dependencies[tool].source
