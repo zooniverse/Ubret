@@ -1,7 +1,7 @@
 window.Ubret = new Object unless typeof window.Ubret isnt 'undefined'
 
-Ubret.BaseUrl = if location.port < 1024 and not location.protocol is 'file:'
-  "http://ubret.s3.amazonaws.com/ubret_library/lib/"
+Ubret.BaseUrl = if location.port < 1024
+  "http://ubret.s3.amazonaws.com/ubret_library/"
 else 
   "http://localhost:3001/"
 
@@ -17,33 +17,33 @@ Ubret.Dependencies =
   "fits":
     source: "vendor/fits.js"
   "Events" : 
-    source: "ubret/events.js"
+    source: "lib/ubret/events.js"
   "BaseTool": 
-    source: "ubret/base_tool.js"
+    source: "lib/ubret/base_tool.js"
     deps: ["Events", "d3", "underscore"]
   "Graph" :
-    source: "ubret/graph.js"
+    source: "lib/ubret/graph.js"
     deps: ["BaseTool"]
   "Histogram" :
-    source: "ubret/histogram.js"
+    source: "lib/ubret/histogram.js"
     deps: ["Graph"]
   "Scatterplot" :
-    source: "ubret/scatterplot.js"
+    source: "lib/ubret/scatterplot.js"
     deps: ["Graph"]
   "SubjectViewer" :
-    source: "ubret/subject_viewer.js"
+    source: "lib/ubret/subject_viewer.js"
     deps: ["BaseTool"]
   "Mapper" :
-    source: "ubret/map.js"
+    source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]
   "Statistics" :
-    source: "ubret/statistics.js"
+    source: "lib/ubret/statistics.js"
     deps: ["BaseTool"]
   "Table" :
-    source: "ubret/table.js"
+    source: "lib/ubret/table.js"
     deps: ["BaseTool"]
   "Spectra" :
-    source: "ubret/spectra.js"
+    source: "lib/ubret/spectra.js"
     deps: ["BaseTool"]
   "SpacewarpViewer" :
     source: "ubret/spacewarp_viewer.js"
@@ -56,6 +56,7 @@ Ubret.Loader = (tools, cb) ->
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
+    console.log Ubret.BaseUrl
     script.src = "#{Ubret.BaseUrl}#{source}"
     document.getElementsByTagName('head')[0].appendChild script
 
