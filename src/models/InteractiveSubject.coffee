@@ -26,16 +26,16 @@ class InteractiveSubject extends Spine.Model
   @fromJSON: (json) =>
     @lastFetch = new Array
     for result in json
-      if result.recent.subject.metadata.survey is 'sloan'
+      if result.recent.subjects[0].metadata.survey is 'sloan'
         item = @create
           counters: result.recent.subjects[0].metadata.counters
-          classification: result.recents[0].user.classification
+          classification: result.recent.user.classification
           image: result.recent.subjects[0].location.standard
           zooniverse_id: result.recent.subjects[0].zooniverse_id
           redshift: result.recent.subjects[0].metadata.redshift
           absolute_brightness: result.recent.subjects[0].metadata.mag?.abs_r
           apparent_brightness: result.recent.subjects[0].metadata.mag?.r
-          color: result.recent.subjects[0].metadata.mag?.u - result.recent.subject.metadata.mag?.r
+          color: result.recent.subjects[0].metadata.mag?.u - result.recent.subjects[0].metadata.mag?.r
           absolute_radius: result.recent.subjects[0].metadata.absolute_size
 
         @lastFetch.push item
