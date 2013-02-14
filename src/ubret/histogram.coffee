@@ -44,6 +44,6 @@ class Histogram extends Ubret.Graph
         (d[@opts.axis1] > x[0]) and (d[@opts.axis1] < x[1]))
       .pluck('uid')
       .value()
-    @selectElements top
+    @selectIds top
     
 window.Ubret.Histogram = Histogram

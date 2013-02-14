@@ -30,7 +30,7 @@ task 'watch', 'Watch src/ for changes', (options) ->
 
 task 'server', "Serve contents of build", (options) ->
   port = options.port || 3001
-  node_static = spawn './node_modules/.bin/static', ['build', '--port', port]
+  node_static = spawn './node_modules/.bin/static', ['build', '--port', port, '--cache', '0']
   node_static.stderr.on 'data', (data) ->
     process.stderr.write data.toString()
   node_static.stdout.on 'data', (data) ->
