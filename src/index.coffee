@@ -55,12 +55,12 @@ Ubret.Dependencies =
 
 Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->
-    not (typeof window[script] is 'undefined' and typeof Ubret[script] is 'undefined')
+    (not typeof script is 'undefined') and (not (typeof window[script] is 'undefined' and typeof Ubret[script] is 'undefined'))
   
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
-    script.src = "#{Ubret.BaseUrl}#{source}"
+    script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getMilliseconds()}"
     document.getElementsByTagName('head')[0].appendChild script
 
   unique = (array) ->

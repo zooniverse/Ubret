@@ -10,6 +10,8 @@ class Events
   trigger: (event, args...) ->
     if _.isArray @events[event]
       eventCallback(args...) for eventCallback in @events[event]
+    if _.isArray @events['*']
+      eventCallback(args...) for eventCallback in @events['*']
 
   unbind: (event = null) ->
     # if event is null, unbind all events.
