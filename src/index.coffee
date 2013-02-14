@@ -9,6 +9,10 @@ Ubret.Dependencies =
   "underscore":
     symbol: "_"
     source: "vendor/underscore.js"
+  "Backbone":
+    symbol: "Backbone"
+    source: "vendor/backbone.js"
+    deps: ["underscore"]
   "d3": 
     source: "vendor/d3.js"
   "Leaflet": 
@@ -45,9 +49,9 @@ Ubret.Dependencies =
   "Spectra" :
     source: "lib/ubret/spectra.js"
     deps: ["BaseTool"]
-  "SpacewarpViewer" :
-    source: "lib/ubret/spacewarp_viewer.js"
-    deps: ["BaseTool", "fits"]
+  "SpacewarpViewer":
+    source: "lib/ubret/spacewarp_viewer/initialize.js"
+    deps: ["Backbone", "fits", "BaseTool"]
 
 Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->

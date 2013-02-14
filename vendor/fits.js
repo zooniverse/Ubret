@@ -13,7 +13,7 @@
 
   FITS = {};
 
-  FITS.version = '0.2.10';
+  FITS.version = '0.3.1';
 
   this.astro.FITS = FITS;
 
@@ -139,13 +139,12 @@
         return this.verifyBoolean(value);
       },
       XTENSION: function() {
-        var args, value;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        value = arguments[0];
         this.extension = true;
-        this.extensionType = value;
+        this.extensionType = arguments[0];
         this.verifyOrder("XTENSION", 0);
-        return value;
+        return this.extensionType;
       },
       BITPIX: function() {
         var args, key, value;
@@ -213,12 +212,11 @@
         return value;
       },
       EXTEND: function() {
-        var args, key, value;
+        var args, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "EXTEND";
         value = arguments[0];
         if (!this.isPrimary()) {
-          throw "" + key + " must only appear in the primary header";
+          throw "EXTEND must only appear in the primary header";
         }
         return this.verifyBoolean(value);
       },
@@ -233,12 +231,11 @@
         return parseFloat(arguments[0]);
       },
       BLANK: function() {
-        var args, key, value;
+        var args, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "BLANK";
         value = arguments[0];
         if (!(this.get("BIXPIX") > 0)) {
-          throw "" + key + " is not to be used for BITPIX = " + (this.get('BITPIX'));
+          throw "BLANK is not to be used for BITPIX = " + (this.get('BITPIX'));
         }
         return parseInt(value);
       },
@@ -253,85 +250,70 @@
         return parseFloat(arguments[0]);
       },
       EXTVER: function() {
-        var args, key, value;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "EXTVER";
-        value = arguments[0];
-        value = parseInt(value);
-        return value;
+        return parseInt(arguments[0]);
       },
       EXTLEVEL: function() {
-        var args, key, value;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "EXTLEVEL";
-        value = arguments[0];
-        value = parseInt(value);
-        return value;
+        return parseInt(arguments[0]);
       },
       TFIELDS: function() {
-        var args, key, value;
+        var args, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "TFIELDS";
-        value = arguments[0];
-        value = parseInt(value);
-        this.verifyBetween(key, value, 0, 999);
+        value = parseInt(arguments[0]);
+        this.verifyBetween("TFIELDS", value, 0, 999);
         return value;
       },
       TBCOL: function() {
-        var args, index, key, value;
+        var args, index, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "TBCOL";
         value = arguments[0];
         index = arguments[2];
-        this.verifyBetween(key, index, 0, this.get("TFIELDS"));
+        this.verifyBetween("TBCOL", index, 0, this.get("TFIELDS"));
         return value;
       },
       ZIMAGE: function() {
-        var args, key, value;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZIMAGE";
-        value = arguments[0];
-        return this.verifyBoolean(value);
+        return this.verifyBoolean(arguments[0]);
       },
       ZCMPTYPE: function() {
-        var args, key, value;
+        var args, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZCMPTYPE";
         value = arguments[0];
         if (value !== 'GZIP_1' && value !== 'RICE_1' && value !== 'PLIO_1' && value !== 'HCOMPRESS_1') {
-          throw "" + key + " value " + value + " is not permitted";
+          throw "ZCMPTYPE value " + value + " is not permitted";
         }
-        if (value !== 'RICE_1' && value !== 'GZIP_1') {
+        if (value !== 'RICE_1') {
           throw "Compress type " + value + " is not yet implement";
         }
         return value;
       },
       ZBITPIX: function() {
-        var args, key, value;
+        var args, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZBITPIX";
         value = parseInt(arguments[0]);
         if (value !== 8 && value !== 16 && value !== 32 && value !== 64 && value !== (-32) && value !== (-64)) {
-          throw "" + key + " value " + value + " is not permitted";
+          throw "ZBITPIX value " + value + " is not permitted";
         }
         return value;
       },
       ZNAXIS: function() {
-        var args, array, key, value;
+        var args, array, value;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZNAXIS";
         value = parseInt(arguments[0]);
         array = arguments[1];
         value = value;
         if (!array) {
-          this.verifyBetween(key, value, 0, 999);
+          this.verifyBetween("ZNAXIS", value, 0, 999);
         }
         return value;
       },
       ZTILE: function() {
-        var args, key;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZTILE";
         return parseInt(arguments[0]);
       },
       ZSIMPLE: function() {
@@ -344,15 +326,13 @@
         }
       },
       ZPCOUNT: function() {
-        var args, key;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZPCOUNT";
         return parseInt(arguments[0]);
       },
       ZGCOUNT: function() {
-        var args, key;
+        var args;
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        key = "ZGCOUNT";
         return parseInt(arguments[0]);
       }
     }
@@ -552,6 +532,94 @@
       }) * Math.abs(this.bitpix) / 8;
       this.frame = 0;
     }
+
+    Image.prototype.getFrameAsync = function(frame, callback) {
+      var URL, blob, blobUrl, data, fn, nPixels, onmessage, start, worker;
+      this.frame = frame != null ? frame : this.frame;
+      onmessage = function(e) {
+        var arr, bitpix, bscale, bzero, chunk, data, height, i, nPixels, swapEndian, value, width;
+        data = e.data;
+        bitpix = data.bitpix;
+        width = data.width;
+        height = data.height;
+        bzero = data.bzero;
+        bscale = data.bscale;
+        chunk = data.chunk;
+        nPixels = i = width * height;
+        switch (Math.abs(bitpix)) {
+          case 16:
+            swapEndian = function(value) {
+              return (value << 8) | (value >> 8);
+            };
+            break;
+          case 32:
+            swapEndian = function(value) {
+              return ((value & 0xFF) << 24) | ((value & 0xFF00) << 8) | ((value >> 8) & 0xFF00) | ((value >> 24) & 0xFF);
+            };
+            break;
+          default:
+            swapEndian = function(value) {
+              return value;
+            };
+        }
+        if (bitpix > 0) {
+          switch (bitpix) {
+            case 8:
+              arr = new Uint8Array(chunk);
+              arr = new Uint16Array(arr);
+              break;
+            case 16:
+              arr = new Uint16Array(chunk);
+              break;
+            case 32:
+              arr = new Int32Array(chunk);
+          }
+          while (nPixels--) {
+            value = arr[nPixels];
+            value = swapEndian(value);
+            arr[nPixels] = bzero + bscale * value + 0.5;
+          }
+        } else {
+          arr = new Uint32Array(chunk);
+          while (i--) {
+            value = arr[i];
+            arr[i] = swapEndian(value);
+          }
+          arr = new Float32Array(chunk);
+          while (nPixels--) {
+            arr[nPixels] = bzero + bscale * arr[nPixels];
+          }
+        }
+        return postMessage(arr);
+      };
+      fn = onmessage.toString().split('').reverse().join('').replace(' nruter', '');
+      fn = fn.split('').reverse().join('');
+      fn = "onmessage = " + fn;
+      blob = new Blob([fn], {
+        type: "application/javascript"
+      });
+      URL = URL || webkitURL;
+      blobUrl = URL.createObjectURL(blob);
+      worker = new Worker(blobUrl);
+      worker.onmessage = function(e) {
+        var arr;
+        arr = e.data;
+        if (callback != null) {
+          callback.call(this, arr);
+        }
+        return URL.revokeObjectURL(blobUrl);
+      };
+      nPixels = this.width * this.height;
+      start = this.offset + (this.frame * nPixels * this.bytes);
+      data = {};
+      data.bitpix = this.bitpix;
+      data.width = this.width;
+      data.height = this.height;
+      data.bzero = this.bzero;
+      data.bscale = this.bscale;
+      data.chunk = this.view.buffer.slice(start, start + nPixels * this.bytes);
+      return worker.postMessage(data);
+    };
 
     Image.prototype.getFrame = function(frame) {
       var arr, bitpix, buffer, chunk, i, nPixels, start, value;
@@ -756,8 +824,6 @@
 
     __extends(Table, _super);
 
-    Table.prototype.formPattern = /([AIFED])(\d+)\.*(\d+)*/;
-
     Table.prototype.dataAccessors = {
       A: function(value) {
         return value.trim();
@@ -778,27 +844,33 @@
 
     function Table(header, view, offset) {
       this.getRow = __bind(this.getRow, this);
-
-      var form, i, match, _fn, _i, _ref,
-        _this = this;
       Table.__super__.constructor.apply(this, arguments);
-      _fn = function() {
-        var accessor, dataType, decimals, length, _ref1;
-        _ref1 = match.slice(1), dataType = _ref1[0], length = _ref1[1], decimals = _ref1[2];
-        accessor = function(value) {
-          return _this.dataAccessors[dataType](value);
-        };
-        return _this.accessors.push(accessor);
-      };
-      for (i = _i = 1, _ref = this.cols; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-        form = header.get("TFORM" + i);
-        match = form.match(this.formPattern);
-        _fn();
-      }
+      this.setAccessors(header);
     }
 
+    Table.prototype.setAccessors = function(header) {
+      var descriptor, form, i, match, pattern, type, _i, _ref, _results,
+        _this = this;
+      pattern = /([AIFED])(\d+)\.*(\d+)*/;
+      _results = [];
+      for (i = _i = 1, _ref = this.cols; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
+        form = header.get("TFORM" + i);
+        type = header.get("TTYPE" + i);
+        match = pattern.exec(form);
+        descriptor = match[1];
+        _results.push((function(descriptor) {
+          var accessor;
+          accessor = function(value) {
+            return _this.dataAccessors[descriptor](value);
+          };
+          return _this.accessors.push(accessor);
+        })(descriptor));
+      }
+      return _results;
+    };
+
     Table.prototype.getRow = function(row) {
-      var i, index, line, value, _i, _j, _len, _ref;
+      var index, line, value, _i, _len;
       if (row == null) {
         row = null;
       }
@@ -806,17 +878,13 @@
         this.rowsRead = row;
       }
       this.offset = this.begin + this.rowsRead * this.rowByteSize;
-      line = "";
-      for (i = _i = 1, _ref = this.rowByteSize; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
-        line += this.view.getChar(this.offset);
-        this.offset += 1;
-      }
-      line = line.trim().split(/\s+/);
+      line = this.view.getString(this.offset, this.rowByteSize).trim().split(/\s+/);
       row = {};
-      for (index = _j = 0, _len = line.length; _j < _len; index = ++_j) {
+      for (index = _i = 0, _len = line.length; _i < _len; index = ++_i) {
         value = line[index];
         row[this.columns[index]] = this.accessors[index](value);
       }
+      this.offset += this.rowByteSize;
       this.rowsRead += 1;
       return row;
     };
@@ -1336,7 +1404,7 @@
         }
       }
       if (callback != null) {
-        return callback.call(this);
+        return callback.call(this, this);
       }
     };
 

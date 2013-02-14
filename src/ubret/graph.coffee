@@ -2,7 +2,7 @@
 class Graph extends Ubret.BaseTool
 
   constructor: (selector) ->
-    super selector 
+    super selector
 
     @opts.margin = @opts.margin or { left: 80, top: 20, bottom: 90, right: 20 }
     @opts.format = if @opts.format then d3.format(opts.format) else d3.format(',.02f')

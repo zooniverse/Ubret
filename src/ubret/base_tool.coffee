@@ -1,12 +1,13 @@
+
 class BaseTool extends Ubret.Events
   constructor: (@selector) ->
     super
-    @opts = new Object
-    @opts.selectedKeys = new Array
-    @opts.selectedIds = new Array
+    @opts = {}
+    @opts.selectedKeys = []
+    @opts.selectedIds = []
 
   toJSON: ->
-    json = new Object
+    json = {}
     json[key] = value for key, value of @opts when key isnt 'selector'
     json
 
@@ -129,5 +130,6 @@ class BaseTool extends Ubret.Events
       index = @opts.data.length - 1 
     @selectIds [@opts.data[index].uid]
     @start()
+
 
 window.Ubret.BaseTool = BaseTool
