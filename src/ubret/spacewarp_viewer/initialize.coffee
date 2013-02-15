@@ -87,6 +87,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     subject = @opts.data[0]
     prefix  = subject.metadata.id
+    console.log prefix
     
     # Create one deferred for each band
     dfs = []
@@ -98,15 +99,12 @@ class SpacewarpViewer extends Ubret.BaseTool
       .done( (e) =>
         @computeNormalizedScales()
         
-        # Set default parameters
-        @trigger 'fits:alpha', @defaultAlpha
-        @trigger 'fits:Q', @defaultQ
-        
         @wfits.setAlpha(@defaultAlpha)
         @wfits.setQ(@defaultQ)
         @wfits.setupMouseInteraction()
         
-        @trigger "fits:ready"
+        # Set color composite as default
+        @setBand('gri')
       )
     
     # Request FITS images
@@ -122,11 +120,14 @@ class SpacewarpViewer extends Ubret.BaseTool
           # Get image data
           arr = dataunit.getFrame()
           
+          # Compute extent
+          [min, max] = dataunit.getExtent(arr)
+          
           # Compute scale
           scale = @computeScale(header)
           
           # Initialize a model and push to collection
-          layer = new Layer({band: band, fits: fits, scale: scale})
+          layer = new Layer({band: band, fits: fits, scale: scale, minimum: min, maximum: max})
           @collection.add(layer)
           
           # Load texture
@@ -171,6 +172,37 @@ class SpacewarpViewer extends Ubret.BaseTool
       @trigger 'fits:scale', band, nscale
       @wfits.setScale band, nscale
     )
+    
+  setBand: (band) =>
+    if band is 'gri'
+      fn = 'drawColor'
+    else
+      fn = 'drawGrayscale'
+
+      # Compute the min/max of the image set
+      unless @collection.hasExtent
+        @collection.hasExtent = true
+        mins = @collection.map( (l) -> return l.get('minimum'))
+        maxs = @collection.map( (l) -> return l.get('maximum'))
+        globalMin = Math.min.apply(Math, mins)
+        globalMax = Math.max.apply(Math, maxs)
+        
+        @wfits.setGlobalExtent(globalMin, globalMax)
+        @wfits.setExtent(0, 1000)
+
+      @wfits.setBand(band)
+
+    # Call draw function
+    @wfits[fn]()
+    
+  updateAlpha: (value) =>
+    @wfits.setAlpha(value)
+    
+  updateQ: (value) =>
+    @wfits.setQ(value)
+    
+  updateScale: (band, value) =>
+    @wfits.setScale(band, value)
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
