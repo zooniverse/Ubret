@@ -41,7 +41,11 @@ class Statistics extends Ubret.BaseTool
       .data(@statistics)
       .enter().append('li')
       .attr('data-stat', (d) -> d[0])
-      .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{d3.format(@opts.displayFormat)(d[1])}</span>")
+      .html((d) => 
+        if isNaN(d[1]) or d[1] is Infinity
+          "<label>#{@formatKey(d[0])}:</label> <span>&nbsp</span>"
+        else
+          "<label>#{@formatKey(d[0])}:</label> <span>#{d3.format(@opts.displayFormat)(d[1])}</span>")
 
   # Statistics
   mean: =>
