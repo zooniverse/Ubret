@@ -34,7 +34,7 @@ class SubjectViewer extends Ubret.BaseTool
       .data((d) => @toArray(d)).enter()
         .append('li')
         .attr('data-key', (d) -> d[0])
-        .html((d) => "<label>#{@formatKey(d[0])}:</label> <span>#{d[1]}</span>")
+        .html((d) => "<label>#{@unitsFormatter(@formatKey(d[0]))}:</label> <span>#{d[2]}</span>")
 
     subject.select("[data-key=\"#{@selectedKey}\"]")
       .attr('class', 'selected')

@@ -87,7 +87,7 @@ class Spectra extends Ubret.BaseTool
         .attr('x', (width / 2))
         .attr("dy", ".71em")
         .style("text-anchor", "middle")
-        .text("Angstroms")
+        .text("Wavelength (Angstroms)")
 
     @svg.append("g")
         .attr("class", "y axis")

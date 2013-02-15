@@ -5,6 +5,7 @@ class BaseTool extends Ubret.Events
     @opts = {}
     @opts.selectedKeys = []
     @opts.selectedIds = []
+    @opts.unitsFormat = 'astro'
 
   toJSON: ->
     json = {}
@@ -15,6 +16,7 @@ class BaseTool extends Ubret.Events
     @opts.selector = d3.select @selector
     @opts.height = @opts.selector[0][0].clientHeight
     @opts.width = @opts.selector[0][0].clientWidth
+    @unitsFormatter = d3.units @opts.unitsFormat
     @opts.selector.html ''
 
   data: (data=[]) =>

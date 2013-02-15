@@ -57,7 +57,7 @@ class Graph extends Ubret.BaseTool
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
       .attr('y', @graphHeight + 50)
-      .text(@formatKey(@opts.axis1))
+      .text(@unitsFormatter(@formatKey(@opts.axis1)))
     
     # Set up y axis
     @y = d3.scale.linear()
@@ -80,7 +80,7 @@ class Graph extends Ubret.BaseTool
       .attr('y', -40)
       .attr('x', -(@graphHeight / 2))
       .attr('transform', "rotate(-90)")
-      .text(@formatKey(@opts.axis2))
+      .text(@unitsFormatter(@formatKey(@opts.axis2)))
   
   bufferAxes: (domain) ->
     for border, i in domain

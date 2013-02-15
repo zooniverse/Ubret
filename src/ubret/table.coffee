@@ -33,7 +33,7 @@ class Table extends Ubret.BaseTool
       .enter().append("th")
         .on('click', (d, i) => @sortRow d)
         .attr('data-key', (d) -> d)
-        .text( (d) => "#{@formatKey d} #{if d is @sortKey then @arrow() else ''}")
+        .text( (d) => "#{@unitsFormatter(@formatKey d)} #{if d is @sortKey then @arrow() else ''}")
 
   createRows: => 
     @tbody.selectAll('tr').remove()

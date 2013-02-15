@@ -15,6 +15,9 @@ Ubret.Dependencies =
     deps: ["underscore"]
   "d3": 
     source: "vendor/d3.js"
+  "d3.units":
+    source: "vendor/d3.units.js"
+    deps: ["d3"]
   "Leaflet": 
     symbol: "L"
     source: "vendor/leaflet.js"
@@ -24,7 +27,7 @@ Ubret.Dependencies =
     source: "lib/ubret/events.js"
   "BaseTool": 
     source: "lib/ubret/base_tool.js"
-    deps: ["Events", "d3", "underscore"]
+    deps: ["Events", "underscore", "d3.units"]
   "Graph" :
     source: "lib/ubret/graph.js"
     deps: ["BaseTool"]

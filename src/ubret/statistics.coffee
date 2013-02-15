@@ -35,7 +35,7 @@ class Statistics extends Ubret.BaseTool
   displayStats: => 
     @ul.selectAll('li').remove()
 
-    @title.text(@formatKey(@statKey))
+    @title.text(@unitsFormatter(@formatKey(@statKey)))
 
     li = @ul.selectAll('li')
       .data(@statistics)
