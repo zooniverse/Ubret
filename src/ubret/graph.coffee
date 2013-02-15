@@ -4,7 +4,7 @@ class Graph extends Ubret.BaseTool
   constructor: (selector) ->
     super selector
 
-    @opts.margin = @opts.margin or { left: 80, top: 20, bottom: 90, right: 20 }
+    @opts.margin = @opts.margin or { left: 70, top: 20, bottom: 80, right: 20 }
     @opts.format = if @opts.format then d3.format(opts.format) else d3.format(',.02f')
     
     @opts.color = @opts.color or '#0172E6'
@@ -22,8 +22,8 @@ class Graph extends Ubret.BaseTool
     @graphWidth  = @opts.width - (@opts.margin.left + @opts.margin.right)
 
     @svg = @opts.selector.append('svg')
-      .attr('width', @opts.width)
-      .attr('height', @opts.height)
+      .attr('width', @graphWidth + @opts.margin.left)
+      .attr('height', @graphHeight + @opts.margin.bottom)
       .append('g')
         .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
       
@@ -56,7 +56,7 @@ class Graph extends Ubret.BaseTool
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth / 2)
-      .attr('y', @graphHeight + 40)
+      .attr('y', @graphHeight + 50)
       .text(@formatKey(@opts.axis1))
     
     # Set up y axis
