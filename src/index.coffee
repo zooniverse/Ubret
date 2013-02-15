@@ -55,8 +55,8 @@ Ubret.Dependencies =
 
 Ubret.Loader = (tools, cb) ->
   isScriptLoaded = (script) ->
-    (not typeof script is 'undefined') and (not (typeof window[script] is 'undefined' and typeof Ubret[script] is 'undefined'))
-  
+    return (window[script]? or Ubret[script]?)
+    
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
