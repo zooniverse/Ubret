@@ -5,10 +5,13 @@ class Histogram extends Ubret.Graph
   constructor: (selector) ->
     super selector
     @opts.axis2  = 'Count'
-    @binFunc = d3.layout.histogram()
+
+  start: =>
+    @binFunc = if @opts.bins? then d3.layout.histogram(@opts.bins) else d3.layout.histogram()
+    super
 
   setupData: =>
-    data = _(@opts.data).map (d) => d[@opts.axis1]
+    data = _(@opts.data).pluck @opts.axis1
     @xDomain = d3.extent data
     @graphData = @binFunc data
     @yDomain = [0, d3.max(@graphData, (d) -> d.y)]
