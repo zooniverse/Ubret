@@ -58,7 +58,7 @@ class Table extends Ubret.BaseTool
 
   # Helpers
   paginate: =>
-    @numRows = Math.floor((@opts.height - 50 )/ 30) # Assumes thead height of 50px and tbody height of 30px
+    @numRows = Math.floor((@opts.height - 110 )/ 26) # Assumes thead height of 50px and tbody height of 30px
     @numPages = Math.ceil(@opts.data.length / @numRows)
 
     sortedData = _.sortBy @opts.data, (d) => d[@sortKey]
