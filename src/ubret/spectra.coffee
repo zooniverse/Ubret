@@ -32,10 +32,20 @@ class Spectra extends Ubret.BaseTool
     request.open("GET", url, true)
     request.onload = (e) =>
       lines = new Object
-      rawLines = JSON.parse(request.response)[subject.spectrumID]
-      lines[line.name] = line.wavelength for line in rawLines
+      rawLines = JSON.parse(request.response)[subject.spectrumID] 
+      lines[line.name] = line.wavelength * (1 + line.linez) for line in rawLines
       @plot(subject.wavelengths, subject.flux, subject.best_fit, lines)
     request.send()
+
+  legend: =>
+    list = @opts.selector.append('ul')
+      .attr('class', 'spectra-legend')
+
+    list.selectAll('li')
+      .data(['Spectra', 'Best Fit', 'Emission Lines'])
+        .enter().append('li')
+        .attr('class', (d) -> "#{d}-legend")
+        .text((d) -> d)
 
   plot: (wavelengths, fluxes, bestFit, spectralLines) =>
     margin =
@@ -45,12 +55,12 @@ class Spectra extends Ubret.BaseTool
       left: 80
     width = @opts.width - margin.left - margin.right
     height = @opts.height - margin.top - margin.bottom
-    
+  
     x = d3.scale.linear()
       .range([0, width])
       .domain(d3.extent(wavelengths))
     y = d3.scale.linear()
-      .range([0, height])
+      .range([height, 0])
       .domain(d3.extent(fluxes))
     x.ticks(8)
     
@@ -124,5 +134,6 @@ class Spectra extends Ubret.BaseTool
         .style("stroke", "rgb(255,0,0)")
         .style("stroke-width", 0.5)
 
+    @legend()
 
 window.Ubret.Spectra = Spectra
