@@ -24,6 +24,7 @@ class Mapper extends Ubret.BaseTool
     @limit = @limit or 30
 
   start: =>
+    @opts.spectrum = @opts.spectrum or 'visible'
     @createSky(@opts.spectrum)
     @plotObjects() 
     

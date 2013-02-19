@@ -16,25 +16,58 @@ d3.units = function (type) {
 
 d3.units.lookup = {
   astro: {
-    U: 'mag',
-    G: 'mag',
-    R: 'mag',
-    I: 'mag',
-    Z: 'mag',
+    U: {
+      label: 'u',
+      unit: 'mag'
+    },
+    G: {
+      label: 'g',
+      unit: 'mag'
+    },
+    R: {
+      label: 'r',
+      unit: 'mag'
+    },
+    I: {
+      label: 'i',
+      unit: 'mag'
+    },
+    Z: {
+      label: 'z',
+      unit: 'mag'
+    },
     Ra: {
       label: 'RA',
-      unit: 'º'
+      unit: 'deg'
     },
-    Dec: 'º',
-    B: 'º',
-    L: 'º',
-    "PetroR90 U" : 'arcsec',
-    "PetroR90 G" : 'arcsec',
-    "PetroR90 R" : 'arcsec',
-    "PetroR90 I" : 'arcsec',
-    "PetroR90 Z" : 'arcsec',
+    Dec: 'deg',
+    B: 'deg',
+    L: 'deg',
+    "PetroR90 U" : {
+      label: "PetroR90 u",
+      unit: 'arcsec'
+    },
+    "PetroR90 G" : {
+      label: "PetroR90 g",
+      unit: 'arcsec'
+    },
+    "PetroR90 R" : {
+      label: "PetroR90 r",
+      unit: 'arcsec'
+    },
+    "PetroR90 I" : {
+      label: "PetroR90 i",
+      unit: 'arcsec'
+    },
+    "PetroR90 Z" : {
+      label: "PetroR90 z",
+      unit: 'arcsec'
+    },
     "Absolute Size" : 'mag',
-    "PetroR50 R" : 'arcsec',
+    "PetroR50 R" : {
+      label: "PetroR50 r",
+      unit: 'arcsec'
+    },
     "Abs R" : 'kpc',
     "Petrorad Flux" : '?'
   }
