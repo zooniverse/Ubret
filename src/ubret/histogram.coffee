@@ -7,7 +7,7 @@ class Histogram extends Ubret.Graph
     @opts.axis2  = 'Count'
 
   start: =>
-    @binFunc = if @opts.bins? then d3.layout.histogram(@opts.bins) else d3.layout.histogram()
+    @binFunc = if @opts.bins? then d3.layout.histogram().bins(parseInt(@opts.bins)) else d3.layout.histogram()
     super
 
   setupData: =>

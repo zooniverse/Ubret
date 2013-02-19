@@ -22,8 +22,8 @@ class Graph extends Ubret.BaseTool
     @graphWidth  = @opts.width - (@opts.margin.left + @opts.margin.right)
 
     @svg = @opts.selector.append('svg')
-      .attr('width', @graphWidth + @opts.margin.left)
-      .attr('height', @graphHeight + @opts.margin.bottom)
+      .attr('width', @opts.width - 10)
+      .attr('height', @opts.height - 10)
       .append('g')
         .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
       
