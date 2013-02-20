@@ -17,7 +17,7 @@ class Spectra extends Ubret.BaseTool
 
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
-    @loadSpectra(subjects[0])
+    @loadSpectra(subjects[0]) unless _.isEmpty(subjects)
 
   loadSpectra: (subject) =>
     if @cache["#{subject.plate}-#{subject.mjd}-#{subject.fiberID}"]?
