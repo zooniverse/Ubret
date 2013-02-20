@@ -8,14 +8,12 @@ class SubjectViewer extends Ubret.BaseTool
 
   start: =>
     super
+    if _.isEmpty @opts.selectedIds
+      @selectIds [@opts.data[0].uid]
+
     subjects = _(@opts.data).filter (d) => 
       d.uid in @opts.selectedIds
-
-    if _.isEmpty subjects
-      @selectIds [@opts.data[0].uid]
-      @start()
-    else
-      @render(subjects)
+    @render(subjects)
 
   render: (subjects) =>
     @div = @opts.selector
