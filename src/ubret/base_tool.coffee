@@ -1,4 +1,3 @@
-
 class BaseTool extends Ubret.Events
   constructor: (@selector) ->
     super
