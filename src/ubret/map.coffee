@@ -27,15 +27,27 @@ class Mapper extends Ubret.BaseTool
     @opts.spectrum = @opts.spectrum or 'visible'
     @createSky(@opts.spectrum)
     @plotObjects() 
+    @setupMap()
+
+  setupMap: =>
+    zoom = @opts.zoom or 5
+    lng = @opts.center_lng or 180
+    lat = @opts.center_lat or 0
+    @map.setView([lat, lng], zoom)
+
+    @map.on 'zoomend', (e) =>
+      @settings
+        zoom: @map.getZoom()
+
+    @map.on 'moveend', (e) =>
+      center = @map.getCenter()
+      @settings
+        center_lat: center.lat
+        center_lng: center.lng
     
   createSky: (spectrum) =>
     unless @map
-      zoom = @opts.zoom or 5
-      @map = L.map(@selector.slice(1), Mapper.mapOptions).setView([0, 180], zoom)
-
-      @map.on 'zoomend', (e) =>
-        @settings
-          zoom: @map.getZoom()
+      @map = L.map(@selector.slice(1), Mapper.mapOptions)
 
 
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
@@ -77,13 +89,13 @@ class Mapper extends Ubret.BaseTool
     @layer.addTo @map
   
   plotObject: (subject, options) =>
-    coords = [subject.dec, subject.ra]
+    coords = [subject.dec, subject.ra - 180]
     options = 
       icon = new L.icon {
           iconSize: [25, 41]
           iconAnchor: [13, 41]
         }
-    
+   
     circle = new L.marker(coords, options)
     circle.uid = subject.uid
     

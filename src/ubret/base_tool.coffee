@@ -104,7 +104,7 @@ class BaseTool extends Ubret.Events
 
         # This might not be 100% solid.
         obj[setting] = value
-        @trigger 'update-setting', obj
+      @trigger 'update-setting', obj
     @
 
   childData: ->
