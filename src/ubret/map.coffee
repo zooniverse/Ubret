@@ -44,6 +44,12 @@ class Mapper extends Ubret.BaseTool
       @settings
         center_lat: center.lat
         center_lng: center.lng
+
+      bounds = @map.getBounds()
+      console.log bounds
+      {_northEast: {lat, lng}, _southWest: {lat, lng} = bounds
+      console.log _northEast
+      #selection = _(@opts.data).chain().filter((d) -> 
     
   createSky: (spectrum) =>
     unless @map
@@ -91,18 +97,23 @@ class Mapper extends Ubret.BaseTool
   plotObject: (subject, options) =>
     coords = [subject.dec, subject.ra - 180]
     options = 
-      icon = new L.icon {
-          iconSize: [25, 41]
-          iconAnchor: [13, 41]
-        }
-   
-    circle = new L.marker(coords, options)
+      icon = new L.icon
+        iconSize: [25, 41]
+        iconAnchor: [13, 41]
+        iconUrl: "marker-icon.png"
+ 
+    selectedOptions = 
+      icon =  new L.icon
+        iconSize: [25, 41]
+        iconAnchor: [13, 41]
+        iconUrl: "marker-icon.png"
+  
+    if subject.uid in @opts.selectedIds
+      circle = new L.marker(coords, selectedOptions)
+    else
+      circle = new L.marker(coords, options)
     circle.uid = subject.uid
-    
     circle.addTo(@map)
-      # .bindPopup('etc')
-      # .openPopup()
-
     @circles.push circle
 
   plotObjects: =>
@@ -110,7 +121,4 @@ class Mapper extends Ubret.BaseTool
     @circles = new Array
     @plotObject subject for subject in @opts.data
 
-    latlng = new L.LatLng(@opts.data[0].dec, @opts.data[0].ra)
-    @map.panTo latlng
-  
 window.Ubret.Mapper = Mapper
