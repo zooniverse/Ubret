@@ -13,10 +13,15 @@ class Layers extends Backbone.Collection
   
   getColorLayers: ->
     layers = []
-    layers.push @where({band: 'g'})[0]
-    layers.push @where({band: 'r'})[0]
     layers.push @where({band: 'i'})[0]
+    layers.push @where({band: 'r'})[0]
+    layers.push @where({band: 'g'})[0]
     return layers
+    
+  getColorScales: ->
+    colors = @getColorLayers()
+    return colors.map( (d) -> d.get('nscale'))
+
 
 # Model representing a single FITS image.  Used to store computed and state parameters
 class Layer extends Backbone.Model
@@ -49,7 +54,9 @@ class SpacewarpViewer extends Ubret.BaseTool
   constructor: (selector) ->
     super selector
     
-    # Run when the webfits api is received
+    @stretch = 'linear'
+    
+    # Run when the WebFITS API is received
     @on 'swviewer:ready', =>
       # NOTE: Dimensions and global extent are hard coded
       el = document.querySelector(@selector)
@@ -69,7 +76,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     context = canvas.getContext('webgl')
     context = canvas.getContext('experimental-webgl') unless context?
 
-    # Load appropriate webfits library asynchronously
+    # Load appropriate WebFITS library asynchronously
     lib = if context? then 'gl' else 'canvas'
     url = "javascripts/webfits-#{lib}.js"
     $.getScript(url, =>
@@ -96,14 +103,11 @@ class SpacewarpViewer extends Ubret.BaseTool
     $.when.apply(this, dfs)
       .done( (e) =>
         @computeNormalizedScales()
-        [g, r, i] = @collection.getColorLayers()
-        iScale = i.get('nscale')
-        rScale = r.get('nscale')
-        gScale = g.get('nscale')
+        scales = @collection.getColorScales()
         
         @wfits.setAlpha(@defaultAlpha)
         @wfits.setQ(@defaultQ)
-        @wfits.setScales(iScale, rScale, gScale)
+        @wfits.setScales.apply(@wfits, scales)
         @wfits.setupControls()
         
         # Set color composite as default
@@ -157,14 +161,14 @@ class SpacewarpViewer extends Ubret.BaseTool
 
   # Normalize scales for color bands
   computeNormalizedScales: =>
-    gri = @collection.getColorLayers()
+    colors = @collection.getColorLayers()
     
-    sum = gri.reduce( (memo, value) ->
+    sum = colors.reduce( (memo, value) ->
       return memo + value.get('scale')
     , 0)
     avg = sum / 3
     
-    _.each(gri, (d) =>
+    _.each(colors, (d) =>
       band = d.get('band')
       
       # Compute and set normalized scale
@@ -175,12 +179,11 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
     
   setBand: (band) =>
-    console.log 'setBand'
     if band is 'gri'
       fn = 'drawColor'
     else
-      fn = 'drawGrayscale'
-
+      fn = 'draw'
+      
       # Compute the min/max of the image set
       unless @collection.hasExtent
         @collection.hasExtent = true
@@ -188,11 +191,10 @@ class SpacewarpViewer extends Ubret.BaseTool
         maxs = @collection.map( (l) -> return l.get('maximum'))
         globalMin = Math.min.apply(Math, mins)
         globalMax = Math.max.apply(Math, maxs)
-        
-        @wfits.setGlobalExtent(globalMin, globalMax)
-        @wfits.setExtent(0, 1000)
-
-      @wfits.setBand(band)
+        @wfits.setExtent(globalMin, globalMax)
+      
+      @wfits.setImage(band)
+      @wfits.setStretch(@stretch)
 
     # Call draw function
     @wfits[fn]()
@@ -204,10 +206,16 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits.setQ(value)
     
   updateScale: (band, value) =>
-    @wfits.setScale(band, value)
+    scales = @collection.getColorScales()
+    index = if band is 'i' then 0 else if band is 'g' then 1 else 2
+    console.log 'index = ', index
+    scales[index] = value
+    @wfits.setScales.apply(@wfits, scales)
   
   updateStretch: (value) =>
+    @stretch = value
     @wfits.setStretch(value)
+    @wfits.draw()
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
