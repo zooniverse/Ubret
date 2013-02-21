@@ -49,18 +49,13 @@ class SpacewarpViewer extends Ubret.BaseTool
   constructor: (selector) ->
     super selector
     
-    # Request the appropriate webfits api (canvas or webgl)
-    @getApi()
-    
     # Run when the webfits api is received
     @on 'swviewer:ready', =>
       # NOTE: Dimensions and global extent are hard coded
       el = document.querySelector(@selector)
-      @wfits = new astro.WebFITS.Api(el, @dimension, @dimension)
-      @wfits.setGlobalExtent(@surveyMinPixel, @surveyMaxPixel)
-      ctx = @wfits.getContext()
+      @wfits = new astro.WebFITS(el, @dimension)
       
-      unless ctx?
+      unless @wfits.ctx?
         alert 'Something went wrong initializing the context'
       
       @unbind 'swviewer:ready'
@@ -82,12 +77,15 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
   
   start: =>
+    
+    # Request the appropriate WebFITS API (canvas or webgl)
+    @getApi()
+    
     # Initialize a collections for storing FITS images
     @collection = new Layers()
     
     subject = @opts.data[0]
     prefix  = subject.metadata.id
-    console.log prefix
     
     # Create one deferred for each band
     dfs = []
@@ -98,10 +96,15 @@ class SpacewarpViewer extends Ubret.BaseTool
     $.when.apply(this, dfs)
       .done( (e) =>
         @computeNormalizedScales()
+        [g, r, i] = @collection.getColorLayers()
+        iScale = i.get('nscale')
+        rScale = r.get('nscale')
+        gScale = g.get('nscale')
         
         @wfits.setAlpha(@defaultAlpha)
         @wfits.setQ(@defaultQ)
-        @wfits.setupMouseInteraction()
+        @wfits.setScales(iScale, rScale, gScale)
+        @wfits.setupControls()
         
         # Set color composite as default
         @setBand('gri')
@@ -131,7 +134,7 @@ class SpacewarpViewer extends Ubret.BaseTool
           @collection.add(layer)
           
           # Load texture
-          @wfits.loadTexture(band, arr)
+          @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
           
           dfs[index].resolve()
         )
@@ -168,12 +171,11 @@ class SpacewarpViewer extends Ubret.BaseTool
       nscale = d.get('scale') / avg or 1
       d.set('nscale', nscale)
       
-      # Send to web fits object
       @trigger 'fits:scale', band, nscale
-      @wfits.setScale band, nscale
     )
     
   setBand: (band) =>
+    console.log 'setBand'
     if band is 'gri'
       fn = 'drawColor'
     else
@@ -203,6 +205,9 @@ class SpacewarpViewer extends Ubret.BaseTool
     
   updateScale: (band, value) =>
     @wfits.setScale(band, value)
+  
+  updateStretch: (value) =>
+    @wfits.setStretch(value)
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
