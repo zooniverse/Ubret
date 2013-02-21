@@ -4,9 +4,6 @@ class Spectra extends Ubret.BaseTool
   constructor: (selector) ->
     super selector
     @cache = {}
-    @opts.fluxLine = true
-    @opts.bestFitLine = true
-    @opts.emissionLines = true
     @on 'next', @next
     @on 'prev', @prev
 
@@ -61,14 +58,12 @@ class Spectra extends Ubret.BaseTool
       .range([@height, 0])
       .domain(d3.extent(@subject.flux))
 
-
     @svg = @opts.selector.append('svg')
         .attr('width', @opts.width - 10)
         .attr('height', @opts.height - 10)
       .append('g')
         .attr('transform', "translate(#{margin.left}, #{margin.top})")
         .call(d3.behavior.zoom().x(@x).y(@y).scaleExtent([1, 8]).on("zoom", @zoom))
-
     
     @xAxis = d3.svg.axis()
       .scale(@x)
@@ -100,11 +95,11 @@ class Spectra extends Ubret.BaseTool
         .style("text-anchor", "end")
         .text("Flux (1E-17 erg/cm^2/s/Ang)")
 
-    @fluxLine() if @opts.fluxLine
-    @bestFitLine() if @opts.bestFitLine
-    @emissionLines() if @opts.emissionLines
+    @fluxLinedDraw() if @opts.fluxLine is 'show'
+    @bestFitLinedDraw() if @opts.bestFitLine is 'show'
+    @emissionLinesdDraw() if @opts.emissionLines is 'show'
    
-  fluxLine: =>
+  fluxLinedDraw: =>
     fluxLine = d3.svg.line()
       .x((d, i) => @x(@subject.wavelengths[i]))
       .y((d, i) => @y(d))
@@ -116,7 +111,7 @@ class Spectra extends Ubret.BaseTool
         .attr('fill', 'none')
         .attr('stroke', 'black')
 
-  bestFitLine: =>
+  bestFitLinedDraw: =>
     bestFitLine = d3.svg.line()
       .x((d, i) => @x(@subject.wavelengths[i]))
       .y((d, i) => @y(d))
@@ -128,7 +123,7 @@ class Spectra extends Ubret.BaseTool
         .attr('stroke', "blue")
         .attr('fill', 'none')
 
-  emissionLines: (redshiftCorrected=true) =>
+  emissionLinesdDraw: (redshiftCorrected=true) =>
     for name, line of @spectralLines
       multiplier = if redshiftCorrected then (1 + line.redshift) else 1
       @svg.append("line")
