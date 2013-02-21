@@ -4,6 +4,9 @@ class Spectra extends Ubret.BaseTool
   constructor: (selector) ->
     super selector
     @cache = {}
+    @opts.bestFitLine = 'show'
+    @opts.fluxLine = 'show'
+    @opts.emissionLines = 'show'
     @on 'next', @next
     @on 'prev', @prev
 
