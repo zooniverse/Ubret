@@ -61,7 +61,6 @@ class SpacewarpViewer extends Ubret.BaseTool
       # NOTE: Dimensions and global extent are hard coded
       el = document.querySelector(@selector)
       @wfits = new astro.WebFITS(el, @dimension)
-      
       unless @wfits.ctx?
         alert 'Something went wrong initializing the context'
       
@@ -125,22 +124,22 @@ class SpacewarpViewer extends Ubret.BaseTool
           dataunit = hdu.data
           
           # Get image data
-          arr = dataunit.getFrame()
-          
-          # Compute extent
-          [min, max] = dataunit.getExtent(arr)
-          
-          # Compute scale
-          scale = @computeScale(header)
-          
-          # Initialize a model and push to collection
-          layer = new Layer({band: band, fits: fits, scale: scale, minimum: min, maximum: max})
-          @collection.add(layer)
-          
-          # Load texture
-          @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
-          
-          dfs[index].resolve()
+          arr = dataunit.getFrameAsync( ->
+            # Compute extent
+            [min, max] = dataunit.getExtent(arr)
+
+            # Compute scale
+            scale = @computeScale(header)
+
+            # Initialize a model and push to collection
+            layer = new Layer({band: band, fits: fits, scale: scale, minimum: min, maximum: max})
+            @collection.add(layer)
+
+            # Load texture
+            @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
+
+            dfs[index].resolve()
+          )
         )
   
   log10: (x) ->
@@ -180,10 +179,8 @@ class SpacewarpViewer extends Ubret.BaseTool
     
   setBand: (band) =>
     if band is 'gri'
-      fn = 'drawColor'
+      @wfits.drawColor('i', 'r', 'g')
     else
-      fn = 'draw'
-      
       # Compute the min/max of the image set
       unless @collection.hasExtent
         @collection.hasExtent = true
@@ -195,10 +192,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       
       @wfits.setImage(band)
       @wfits.setStretch(@stretch)
-
-    # Call draw function
-    @wfits[fn]()
-    
+  
   updateAlpha: (value) =>
     @wfits.setAlpha(value)
     
@@ -208,14 +202,12 @@ class SpacewarpViewer extends Ubret.BaseTool
   updateScale: (band, value) =>
     scales = @collection.getColorScales()
     index = if band is 'i' then 0 else if band is 'g' then 1 else 2
-    console.log 'index = ', index
     scales[index] = value
     @wfits.setScales.apply(@wfits, scales)
   
   updateStretch: (value) =>
     @stretch = value
     @wfits.setStretch(value)
-    @wfits.draw()
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
