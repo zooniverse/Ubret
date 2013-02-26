@@ -53,12 +53,11 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   constructor: (selector) ->
     super selector
-    
+    # Default stretch
     @stretch = 'linear'
     
     # Run when the WebFITS API is received
     @on 'swviewer:ready', =>
-      # NOTE: Dimensions and global extent are hard coded
       el = document.querySelector(@selector)
       @wfits = new astro.WebFITS(el, @dimension)
       unless @wfits.ctx?
@@ -83,7 +82,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
   
   start: =>
-    
     # Request the appropriate WebFITS API (canvas or webgl)
     @getApi()
     
@@ -99,7 +97,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       dfs.push new $.Deferred()
     
     # Setup callback for when all requests are received
-    $.when.apply(this, dfs)
+    $.when.apply(@, dfs)
       .done( (e) =>
         @computeNormalizedScales()
         scales = @collection.getColorScales()
@@ -110,7 +108,7 @@ class SpacewarpViewer extends Ubret.BaseTool
         @wfits.setupControls()
         
         # Set color composite as default
-        @setBand('gri')
+        @trigger 'swviewer:loaded'
       )
     
     # Request FITS images
@@ -124,7 +122,7 @@ class SpacewarpViewer extends Ubret.BaseTool
           dataunit = hdu.data
           
           # Get image data
-          arr = dataunit.getFrameAsync( ->
+          dataunit.getFrameAsync(0, (arr) =>
             # Compute extent
             [min, max] = dataunit.getExtent(arr)
 
@@ -137,7 +135,6 @@ class SpacewarpViewer extends Ubret.BaseTool
 
             # Load texture
             @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
-
             dfs[index].resolve()
           )
         )
