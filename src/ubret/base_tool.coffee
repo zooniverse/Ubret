@@ -5,6 +5,7 @@ class BaseTool extends Ubret.Events
     @opts.selectedKeys = []
     @opts.selectedIds = []
     @opts.unitsFormat = 'astro'
+    @opts.data = []
 
   toJSON: ->
     json = {}
@@ -12,8 +13,9 @@ class BaseTool extends Ubret.Events
     json
 
   start: =>
+    throw new Error "No Data" if _.isEmpty(@opts.data)
+    throw new Error "Must Set Height" if _.isUndefined(@opts.height)
     @opts.selector = d3.select @selector
-    @opts.height = @opts.selector[0][0].clientHeight
     @opts.width = @opts.selector[0][0].clientWidth
     @unitsFormatter = d3.units @opts.unitsFormat
     @opts.selector.html ''

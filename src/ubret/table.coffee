@@ -6,8 +6,8 @@ class Table extends Ubret.BaseTool
     @opts.sortOrder = 'top'
     @opts.currentPage = 0
     @pages = new Array
-    @on 'next-page', @nextPage
-    @on 'prev-page', @prevPage
+    @on 'next', @nextPage
+    @on 'prev', @prevPage
 
   start: =>
     super
