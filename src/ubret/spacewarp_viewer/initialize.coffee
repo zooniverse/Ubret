@@ -53,18 +53,24 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   constructor: (selector) ->
     super selector
-    # Default stretch
-    @stretch = 'linear'
     
-    # Run when the WebFITS API is received
-    @on 'swviewer:ready', =>
-      el = document.querySelector(@selector)
-      @wfits = new astro.WebFITS(el, @dimension)
-      unless @wfits.ctx?
-        alert 'Something went wrong initializing the context'
-      
-      @unbind 'swviewer:ready'
+    # Set parameters
+    @stretch = 'linear'
+    @collection = new Layers()
+    
+    # Set various deferred objects to handle asynchronous requests.
+    @dfs =
+      webfits: new $.Deferred()
+      u: new $.Deferred()
+      g: new $.Deferred()
+      r: new $.Deferred()
+      i: new $.Deferred()
+      z: new $.Deferred()
+    
+    @getApi()
+    @on 'data-received', @requestChannels
   
+  # Request the appropriate WebFITS API (WebGL or Canvas)
   getApi: =>
     unless DataView?
       alert 'Sorry, your browser does not support features needed for this tool.'
@@ -78,40 +84,21 @@ class SpacewarpViewer extends Ubret.BaseTool
     lib = if context? then 'gl' else 'canvas'
     url = "javascripts/webfits-#{lib}.js"
     $.getScript(url, =>
-      @trigger 'swviewer:ready'
+      @initWebFITS()
+      @dfs.webfits.resolve()
     )
   
-  start: =>
-    # Request the appropriate WebFITS API (canvas or webgl)
-    @getApi()
-    
-    # Initialize a collections for storing FITS images
-    @collection = new Layers()
+  # Request FITS files for each channel
+  requestChannels: =>
+    console.log 'requestChannels'
     
     subject = @opts.data[0]
     prefix  = subject.metadata.id
     
-    # Create one deferred for each band
-    dfs = []
-    for band, index in @bands
-      dfs.push new $.Deferred()
+    # Set callback for when all channels and WebFITS Api received
+    $.when.apply(null, _.values(@dfs))
+      .done(@allChannelsReceived)
     
-    # Setup callback for when all requests are received
-    $.when.apply(@, dfs)
-      .done( (e) =>
-        @computeNormalizedScales()
-        scales = @collection.getColorScales()
-        
-        @wfits.setAlpha(@defaultAlpha)
-        @wfits.setQ(@defaultQ)
-        @wfits.setScales.apply(@wfits, scales)
-        @wfits.setupControls()
-        
-        # Set color composite as default
-        @trigger 'swviewer:loaded'
-      )
-    
-    # Request FITS images
     for band, index in @bands
       do (band, index) =>
         path = "#{@source}#{prefix}_#{band}.fits.fz"
@@ -135,9 +122,34 @@ class SpacewarpViewer extends Ubret.BaseTool
 
             # Load texture
             @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
-            dfs[index].resolve()
+            @dfs[band].resolve()
           )
         )
+  
+  # Initialize a WebFITS object
+  initWebFITS: =>
+    el = document.querySelector(@selector)
+    @wfits = new astro.WebFITS(el, @dimension)
+
+    unless @wfits.ctx?
+      alert 'Something went wrong initializing the context'
+  
+  # Call when all FITS received and WebFITS library is received
+  allChannelsReceived: (e) =>
+    console.log 'allChannelsReceived'
+    @dfs = undefined
+    
+    @computeNormalizedScales()
+    scales = @collection.getColorScales()
+    
+    @wfits.setAlpha(@defaultAlpha)
+    @wfits.setQ(@defaultQ)
+    @wfits.setScales.apply(@wfits, scales)
+    @wfits.setupControls()
+    @trigger 'swviewer:loaded'
+  
+  start: =>
+    console.log 'start'
   
   log10: (x) ->
     return Math.log(x) / Math.log(10)
