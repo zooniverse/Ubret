@@ -28,6 +28,8 @@ class Table extends Ubret.BaseTool
   createHeader: =>
     @thead.selectAll('th').remove()
 
+    console.log @opts.keys
+
     @thead.selectAll("th")
       .data(@opts.keys)
       .enter().append("th")
