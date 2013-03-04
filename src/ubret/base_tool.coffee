@@ -79,7 +79,7 @@ class BaseTool extends Ubret.Events
     @opts.parentTool.on 'selection', @selectIds
     @opts.parentTool.on 'keys-selection', @selectKeys
     @opts.parentTool.on 'add-filter', @filters
-    @opts.parentTool.on '*', @start
+    @opts.parentTool.on 'data-received selection keys-selection', @start
 
     @data(tool.childData())
       .keys(tool.opts.keys)
@@ -134,6 +134,5 @@ class BaseTool extends Ubret.Events
       index = @opts.data.length - 1 
     @selectIds [@opts.data[index].uid]
     @start()
-
 
 window.Ubret.BaseTool = BaseTool

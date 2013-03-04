@@ -47,7 +47,7 @@ class Mapper extends Ubret.BaseTool
 
       bounds = @map.getBounds()
       console.log bounds
-      {_northEast: {lat, lng}, _southWest: {lat, lng} = bounds
+      {_northEast: {lat, lng}, _southWest: {lat, lng}} = bounds
       console.log _northEast
       #selection = _(@opts.data).chain().filter((d) -> 
     
@@ -57,8 +57,8 @@ class Mapper extends Ubret.BaseTool
 
 
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
-      maxZoom: 7
-    )
+      maxZoom: 7)
+
     @layer.getTileUrl = (tilePoint) ->
       zoom = @_getZoomForUrl()
       convertTileUrl = (x, y, s, zoom) ->

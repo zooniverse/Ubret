@@ -2,10 +2,12 @@ class Events
   constructor: ->
     @events = new Object
 
-  on: (event, callback) ->
-    unless _.isArray @events[event]
-      @events[event] = new Array
-    @events[event].push callback
+  on: (events, callback) ->
+    allEvents = events.split(' ')
+    for event in allEvents
+      unless _.isArray @events[event]
+        @events[event] = new Array
+      @events[event].push callback
 
   trigger: (event, args...) ->
     if _.isArray @events[event]
