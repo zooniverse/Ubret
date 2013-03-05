@@ -1,26 +1,22 @@
-class SubjectViewer extends Ubret.BaseTool
+class SubjectViewer extends Ubret.Sequential
   name: 'Subject Viewer'
   
-  constructor: (selector) ->
-    super selector
-    @on 'next', @next
-    @on 'prev', @prev
+  constructor: ->
+    super 
 
-  start: =>
-    super
-    if _.isEmpty @opts.selectedIds
-      @selectIds [@opts.data[0].uid]
+  events:
+    'next' : 'next'
+    'prev' : 'prev'
+    'keys data selection next-selected prev-selected' : 'render'
 
-    subjects = _(@opts.data).filter (d) => 
-      d.uid in @opts.selectedIds
-    @render(subjects)
-
-  render: (subjects) =>
+  render: =>
+    unless @opts.selector? and (not _.isEmpty @opts.data) then return
+    @selectSubject()
     @div = @opts.selector
     @div.selectAll('div.subject').remove()
 
     subject = @div.selectAll('div.subject')
-      .data(subjects).enter()
+      .data(@subject).enter()
         .append('div')
         .attr('class', 'subject')
 

@@ -14,7 +14,7 @@ class Table extends Ubret.BaseTool
     'prev' : 'prevPage'
     'selector' : 'createTable'
     'keys setting:sortOrder keys-selection' : 'createHeader'
-    'data selection keys-selection ' : 'createRows'
+    'data selection keys-selection height' : 'createRows'
     'setting:sortOrder setting:currentPage' : 'createRows'
 
   # Drawing

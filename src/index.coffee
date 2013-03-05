@@ -28,6 +28,9 @@ Ubret.Dependencies =
   "BaseTool": 
     source: "lib/ubret/base_tool.js"
     deps: ["Events", "underscore", "d3.units"]
+  "Sequential":
+    source: "lib/ubret/sequential.js"
+    deps: ["BaseTool"]
   "Graph" :
     source: "lib/ubret/graph.js"
     deps: ["BaseTool"]
@@ -39,7 +42,7 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "SubjectViewer" :
     source: "lib/ubret/subject_viewer.js"
-    deps: ["BaseTool"]
+    deps: ["Sequential"]
   "Mapper" :
     source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]
@@ -63,28 +66,26 @@ Ubret.Loader = (tools, cb) ->
   loadScript = (source, cb=null) ->
     script = document.createElement 'script'
     script.onload = cb
-    script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getMilliseconds()}"
+    script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getTime()}"
     document.getElementsByTagName('head')[0].appendChild script
 
   unique = (array) ->
     flattened = []
     flattened = flattened.concat.apply(flattened, array)
     uniqueArray = new Array
-    for item in flattened
-      continue unless item?
+    for item in flattened.reverse()
+      continue unless item? or item is 'undefined'
       unless item in uniqueArray
         uniqueArray.push item 
-    uniqueArray
+    uniqueArray.reverse()
 
   findDeps = (deps, accum) ->
     dependencies = []
-    for dep in deps when Ubret.Dependencies
-      dependencies.push Ubret.Dependencies[dep].deps
-    dependencies = unique dependencies
+    dependencies.push Ubret.Dependencies[dep].deps for dep in deps when Ubret.Dependencies[dep]?
     if dependencies.length is 0
       return unique accum
     else
-      return findDeps(dependencies, accum.concat(dependencies))
+      return findDeps((unique dependencies), accum.concat(dependencies))
 
   loadScripts = ->
     if tools.length is 0 
