@@ -1,11 +1,16 @@
 class BaseTool extends Ubret.Events
-  constructor: (@selector) ->
-    super
+  constructor: ->
     @opts = {}
+    super
     @opts.selectedKeys = []
     @opts.selectedIds = []
     @opts.unitsFormat = 'astro'
+    @unitsFormatter = d3.units @opts.unitsFormat
     @opts.data = []
+    @setDefaults()
+
+  setDefaults: ->
+    @settings @defaults
 
   toJSON: ->
     json = {}
@@ -17,19 +22,29 @@ class BaseTool extends Ubret.Events
     throw new Error "Must Set Height" if _.isUndefined(@opts.height)
     @opts.selector = d3.select @selector
     @opts.width = @opts.selector[0][0].clientWidth
-    @unitsFormatter = d3.units @opts.unitsFormat
     @opts.selector.html ''
 
-  data: (data=[]) =>
+  selector: (selector=null, triggerEvent=true) ->
+    if selector
+      @opts.el = document.createElement('div')
+      @opts.el.id = selector
+      @opts.selector = d3.select @opts.el
+      @trigger 'selector', @opts.selector if triggerEvent
+    @
+
+  height: (height=0, triggerEvent=true) ->
+    @opts.height = height
+    @trigger 'height', @opts.height
+    @
+
+  data: (data=[], triggerEvent=true) =>
     @opts.data = _(data).sortBy (d) -> d.uid
-    @trigger 'data-received', @childData()
+    @trigger 'data', @childData() if triggerEvent
     @
 
   keys: (keys=[], triggerEvent = true) =>
     @opts.keys = keys
-
-    if triggerEvent
-      @trigger 'keys-received', @opts.keys
+    @trigger 'keys', @opts.keys if triggerEvent
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
@@ -37,9 +52,7 @@ class BaseTool extends Ubret.Events
       @opts.selectedIds = ids
     else
       @opts.selectedIds.push ids unless _.isUndefined ids
-
-    if triggerEvent
-      @trigger 'selection', ids unless ids.length is 0
+    @trigger 'selection', ids unless ids.length is 0 if triggerEvent
     @
 
   selectKeys: (keys=[], triggerEvent = true) =>
@@ -47,22 +60,18 @@ class BaseTool extends Ubret.Events
       @opts.selectedKeys = keys
     else
       @opts.selectedKeys.push keys unless _.isUndefined keys
-
-    if triggerEvent
-      @trigger 'keys-selection', keys
+    @trigger 'keys-selection', keys if triggerEvent
     @
 
-  filters: (filters=[]) =>
+  filters: (filters=[], triggerEvent=true) =>
     if _.isArray filters
       @opts.filters = filters
     else
       @opts.filters.push filters
-    @trigger 'add-filters', filters
+    @trigger 'add-filters', filters if triggerEvent
     @
 
-  parentTool: (tool = null) =>
-    unless tool then return @opts.parentTool
-
+  parentTool: (tool = null, triggerEvent=true) =>
     # Only bother checking sameness if parentTool is set.
     if @opts.parentTool?
       # Don't re-assign events if parentTool is the same
@@ -74,19 +83,18 @@ class BaseTool extends Ubret.Events
 
     @opts.parentTool = tool
 
-    @opts.parentTool.on 'keys-received', @keys
-    @opts.parentTool.on 'data-received', @data 
-    @opts.parentTool.on 'selection', @selectIds
-    @opts.parentTool.on 'keys-selection', @selectKeys
-    @opts.parentTool.on 'add-filter', @filters
-    @opts.parentTool.on 'data-received selection keys-selection', @start
-
     @data(tool.childData())
       .keys(tool.opts.keys)
       .selectIds(tool.opts.selectedIds)
       .selectKeys(tool.opts.selectedKeys)
 
-    @trigger 'bound-to', tool
+    @opts.parentTool.on 
+      'keys': @keys
+      'data': @data 
+      'selection': @selectIds
+      'keys-selection': @selectKeys
+      'add-filter': @filters
+    @trigger 'bound-to', tool if triggerEvent
     @
 
   removeParentTool: =>
@@ -95,18 +103,15 @@ class BaseTool extends Ubret.Events
       delete @opts.parentTool
     @
 
-  settings: (settings) =>
-    obj = {}
+  settings: (settings, triggerEvent=true) =>
     unless _.isUndefined settings
       for setting, value of settings
         if typeof @[setting] is 'function'
           @[setting](value)
         else
           @opts[setting] = value
-
-        # This might not be 100% solid.
-        obj[setting] = value
-      @trigger 'update-setting', obj
+        @trigger "setting:#{setting}", value
+      @trigger 'setting', settings if triggerEvent
     @
 
   childData: ->
@@ -116,23 +121,5 @@ class BaseTool extends Ubret.Events
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
-
-  next: =>
-    lastUid = _(@opts.selectedIds).last()
-    lastSubject = _(@opts.data).find((d) => d.uid is lastUid)
-    index = _(@opts.data).indexOf(lastSubject) + 1
-    if index >= @opts.data.length
-      index = 0
-    @selectIds [@opts.data[index].uid]
-    @start()
-
-  prev: =>
-    lastUid = _(@opts.selectedIds).first()
-    lastSubject = _(@opts.data).find((d) => d.uid is lastUid)
-    index = _(@opts.data).indexOf(lastSubject) - 1
-    if index is 0
-      index = @opts.data.length - 1 
-    @selectIds [@opts.data[index].uid]
-    @start()
 
 window.Ubret.BaseTool = BaseTool
