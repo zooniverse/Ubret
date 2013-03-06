@@ -1,8 +1,8 @@
 # Abstract class for plots.  All plots should inherit from this object
 class Graph extends Ubret.BaseTool
 
-  constructor: (selector) ->
-    super selector
+  constructor: ->
+    super
 
     @opts.margin = @opts.margin or { left: 70, top: 20, bottom: 80, right: 20 }
     @opts.format = if @opts.format 
@@ -21,7 +21,7 @@ class Graph extends Ubret.BaseTool
   setupGraph: =>
     return unless @opts.width? and @opts.height?
 
-    if !@svg
+    unless @svg?
       @svg = @opts.selector.append('svg')
         .attr('width', @opts.width - 10)
         .attr('height', @opts.height - 10)

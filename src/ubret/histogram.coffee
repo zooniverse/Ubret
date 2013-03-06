@@ -39,12 +39,15 @@ class Histogram extends Ubret.Graph
         .attr('fill', '#0071E5')
         .attr('stroke', '#FAFAFA')
 
+    @drawBrush()
+
   drawBrush: =>
-    brush = @svg.append('g')
+    @brush.remove() if @brush
+    @brush = @svg.append('g')
       .attr('class', 'brush')
       .attr('width', @graphWidth())
       .attr('height', @graphHeight())
-      .call(d3.svg.brush().x(@x)
+      .call(d3.svg.brush().x(@x())
       .on('brushend', @brushend))
       .selectAll('rect')
       .attr('height', @graphHeight())
