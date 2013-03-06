@@ -5,18 +5,9 @@ class Statistics extends Ubret.BaseTool
     super selector
     @opts.displayFormat = ',.03f'
 
-  start: =>
-    super
-    # Assign a selected key so the tool renders immediately.
-    @statKey = _.last(@opts.selectedKeys) or 'uid'
-    @statData = _.pluck @opts.data, @statKey
-
-    @count = @statData.length
-    @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
-
-    @createList()
-    @createStats()
-    @displayStats()
+  events: 
+    'selector' : 'createList'
+    'data keys-selection' : 'displayStats'
 
   createList: =>
     @wrapper = @opts.selector.append('div')
@@ -28,11 +19,17 @@ class Statistics extends Ubret.BaseTool
     @ul = @wrapper.append('ul')
       .attr('class', 'statistics')
 
-  createStats: =>
-    @statistics = new Array
-    @statistics.push [stat, @[stat]()] for stat in ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
+  statistics: ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
 
   displayStats: => 
+    @statKey = _.last(@opts.selectedKeys)
+    return unless !@ul
+    console.log 'here'
+    @statData = _.pluck @opts.data, @statKey
+
+    @count = @statData.length
+    @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
+
     @ul.selectAll('li').remove()
 
     @title.text(@unitsFormatter(@formatKey(@statKey)))
@@ -42,6 +39,7 @@ class Statistics extends Ubret.BaseTool
       .enter().append('li')
       .attr('data-stat', (d) -> d[0])
       .html((d) => 
+        stat = @[d]()
         if isNaN(d[1]) or d[1] is Infinity
           "<label>#{@formatKey(d[0])}:</label> <span>&nbsp</span>"
         else
