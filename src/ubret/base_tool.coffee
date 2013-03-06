@@ -1,4 +1,6 @@
 class BaseTool extends Ubret.Events
+  nonDisplayKeys: ['id', 'uid', 'image', 'thumb']
+
   constructor: ->
     @opts = {}
     super
@@ -34,12 +36,18 @@ class BaseTool extends Ubret.Events
 
   height: (height=0, triggerEvent=true) ->
     @opts.height = height
-    @trigger 'height', @opts.height
+    @trigger 'height', @opts.height if triggerEvent
+    @
+
+  width: (width=0, triggerEvent=true) ->
+    @opts.width = width
+    @trigger 'width', @opts.width if triggerEvent
     @
 
   data: (data=[], triggerEvent=true) =>
     @opts.data = _(data).sortBy (d) -> d.uid
-    @trigger 'data', @childData() if triggerEvent
+    @keys @dataKeys(@opts.data[0])
+    @trigger 'data', @childData() if triggerEvent and (not _.isEmpty @opts.data)
     @
 
   keys: (keys=[], triggerEvent = true) =>
@@ -84,7 +92,6 @@ class BaseTool extends Ubret.Events
     @opts.parentTool = tool
 
     @data(tool.childData())
-      .keys(tool.opts.keys)
       .selectIds(tool.opts.selectedIds)
       .selectKeys(tool.opts.selectedKeys)
 
@@ -104,14 +111,13 @@ class BaseTool extends Ubret.Events
     @
 
   settings: (settings, triggerEvent=true) =>
-    unless _.isUndefined settings
-      for setting, value of settings
-        if typeof @[setting] is 'function'
-          @[setting](value)
-        else
-          @opts[setting] = value
-        @trigger "setting:#{setting}", value
-      @trigger 'setting', settings if triggerEvent
+    for setting, value of settings
+      if typeof @[setting] is 'function'
+        @[setting](value)
+      else
+        @opts[setting] = value
+      @trigger "setting:#{setting}", value if triggerEvent
+    @trigger 'settings', settings if triggerEvent
     @
 
   childData: ->
@@ -121,5 +127,10 @@ class BaseTool extends Ubret.Events
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
+
+  dataKeys: (datum) =>
+    keys = new Array
+    keys.push key for key, value of datum when not(key in @nonDisplayKeys)
+    keys
 
 window.Ubret.BaseTool = BaseTool

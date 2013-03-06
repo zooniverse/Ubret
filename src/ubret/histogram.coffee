@@ -1,42 +1,53 @@
 class Histogram extends Ubret.Graph
   name: 'Histogram'
-  axes: 1
   
   constructor: (selector) ->
     super selector
     @opts.axis2  = 'Count'
 
-  start: =>
-    @binFunc = if @opts.bins? then d3.layout.histogram().bins(parseInt(@opts.bins)) else d3.layout.histogram()
-    super
-
-  setupData: =>
+  graphData: =>
+    return if _.isEmpty(@opts.data) or !@opts.axis1
+    @binFunc = if @opts.bins? 
+      d3.layout.histogram().bins(parseInt(@opts.bins)) 
+    else 
+      d3.layout.histogram()
     data = _(@opts.data).pluck @opts.axis1
-    @xDomain = d3.extent data
-    @graphData = @binFunc data
-    @yDomain = [0, d3.max(@graphData, (d) -> d.y)]
+    @binFunc data
+
+  yDomain: =>
+    data = @graphData()
+    return if _.isUndefined(data)
+    [0, d3.max(data, (d) -> d.y)]
 
   drawData: =>
-    @bars = @svg.append('g').selectAll('.bar')
-      .data(@graphData)
-      .enter().append('rect')
-        .attr('class', 'bar')
-        .attr('x', (d) => @x(d.x))
-        .attr('width', @x(@graphData[1].x) - @x(@graphData[0].x))
-        .attr('y', (d) => @y(d.y))
-        .attr('height', (d) => @graphHeight - @y(d.y))
+    data = @graphData()
+    return if _.isUndefined(data)
+    @svg.selectAll('g.bar').remove()
+
+    bars = @svg.selectAll('g.bar')
+      .data(data)
+
+    bars.enter().append('g')
+      .attr("class", 'bar')
+      .append("rect")
+
+    bars.selectAll("rect")
+        .attr('width', @x()(data[1].x) - @x()(data[0].x))
+        .attr('height', (d) => @graphHeight() - @y()(d.y))
+        .attr('x', (d) => @x()(d.x))
+        .attr('y', (d) => @y()(d.y))
         .attr('fill', '#0071E5')
         .attr('stroke', '#FAFAFA')
 
   drawBrush: =>
-    @brush = @svg.append('g')
+    brush = @svg.append('g')
       .attr('class', 'brush')
-      .attr('width', @graphWidth)
-      .attr('height', @graphHeight)
+      .attr('width', @graphWidth())
+      .attr('height', @graphHeight())
       .call(d3.svg.brush().x(@x)
       .on('brushend', @brushend))
       .selectAll('rect')
-      .attr('height', @graphHeight)
+      .attr('height', @graphHeight())
       .attr('opacity', 0.5)
       .attr('fill', '#CD3E20')
 

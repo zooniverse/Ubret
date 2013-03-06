@@ -13,7 +13,7 @@ class Table extends Ubret.BaseTool
     'next' : 'nextPage'
     'prev' : 'prevPage'
     'selector' : 'createTable'
-    'keys setting:sortOrder keys-selection' : 'createHeader'
+    'data setting:sortOrder keys-selection' : 'createHeader'
     'data selection keys-selection height' : 'createRows'
     'setting:sortOrder setting:currentPage' : 'createRows'
 
@@ -24,7 +24,7 @@ class Table extends Ubret.BaseTool
     @tbody = table.append('tbody')
 
   createHeader: =>
-    unless @thead? and @opts.keys? then return
+    unless @thead? and (not _.isEmpty(@opts.data)) then return
     @thead.selectAll('th').remove()
 
     @thead.selectAll("th")

@@ -5,88 +5,104 @@ class Graph extends Ubret.BaseTool
     super selector
 
     @opts.margin = @opts.margin or { left: 70, top: 20, bottom: 80, right: 20 }
-    @opts.format = if @opts.format then d3.format(opts.format) else d3.format(',.02f')
-    
+    @opts.format = if @opts.format 
+      d3.format(opts.format) 
+    else
+      d3.format(',.02f')
     @opts.color = @opts.color or '#0172E6'
     @opts.selectionColor = @opts.selectionColor or '#CD3E20'
 
+  events: 
+    'settings data width height' : 'drawAxis1'
+    'settings data height width' : 'drawAxis2'
+    'selector height width' : 'setupGraph'
+    'data settings width height' : 'drawData'
+
   setupGraph: =>
-    # Check that all axes are defined
-    for axis in [1..@axes]
-      key = "axis#{axis}"
-      return if @opts[key] in ["", undefined] # Check both since the class variable may be undefined or an empty string from selection
-    
-    @opts.selector.selectAll('svg').remove()
-    
-    @graphHeight = @opts.height - (@opts.margin.top + @opts.margin.bottom)
-    @graphWidth  = @opts.width - (@opts.margin.left + @opts.margin.right)
+    return unless @opts.width? and @opts.height?
 
-    @svg = @opts.selector.append('svg')
-      .attr('width', @opts.width - 10)
-      .attr('height', @opts.height - 10)
-      .append('g')
-        .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
-      
-    @setupData()  # Implemented by subclasses
-    @drawAxes()
-    @drawData()   # Implemented by subclasses
-    @drawBrush()  # Implemented by subclasses
-  
-  start: =>
-    super
-    @setupGraph()
-  
-  drawAxes: =>
-    # Set up x axis
-    @x = d3.scale.linear()
-      .range([0, @graphWidth])
-      .domain(@xDomain)
+    if !@svg
+      @svg = @opts.selector.append('svg')
+        .attr('width', @opts.width - 10)
+        .attr('height', @opts.height - 10)
+        .append('g')
+          .attr('class', 'chart')
+          .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
+    else
+      @opts.selector.select('svg')
+        .attr('width', @opts.width - 10)
+        .attr('height', @opts.height - 10)
 
+      @svg.select('g.chart')
+        .attr('width', @opts.width - 10)
+        .attr('height', @opts.height - 10)
+
+  graphWidth: =>
+    @opts.width - (@opts.margin.left + @opts.margin.right)
+
+  graphHeight: =>
+    @opts.height - (@opts.margin.top + @opts.margin.bottom)
+
+  xDomain: =>
+    return unless @opts.axis1?
+    d3.extent _(@opts.data).pluck(@opts.axis1)
+
+  yDomain: =>
+    return unless @opts.axis2?
+    d3.extent _(@opts.data).pluck(@opts.axis2)
+
+  x: =>
+    domain = @xDomain()
+    return unless domain?
+    d3.scale.linear()
+      .range([0, @graphWidth()])
+      .domain(domain)
+
+  y: =>
+    domain = @yDomain()
+    return unless domain?
+    d3.scale.linear()
+      .range([@graphHeight(), 0])
+      .domain(domain)
+
+  drawAxis1: =>
+    return unless @opts.axis1? and not (_.isEmpty @opts.data)
     xAxis = d3.svg.axis()
-      .scale(@x)
+      .scale(@x())
       .orient('bottom')
-    
-    @svg.append('g')
+   
+    @svg.select("g.x").remove()
+    axis = @svg.append('g')
       .attr('class', 'x axis')
-      .attr('transform', "translate(0, #{@graphHeight})")
+      .attr('transform', "translate(0, #{@graphHeight()})")
       .call(xAxis)
-    
-    @svg.append('g')
-      .append('text')
+
+    axis.append('text')
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
-      .attr('x', @graphWidth / 2)
-      .attr('y', @graphHeight + 50)
+      .attr('x', @graphWidth() / 2)
+      .attr('y', 50)
       .text(@unitsFormatter(@formatKey(@opts.axis1)))
-    
-    # Set up y axis
-    @y = d3.scale.linear()
-      .range([@graphHeight, 0])
-      .domain(@yDomain)
-    
+   
+  drawAxis2: =>
+    return unless @opts.axis2? and not (_.isEmpty @opts.data)
     yAxis = d3.svg.axis()
-      .scale(@y)
+      .scale(@y())
       .orient('left')
 
-    @svg.append('g')
+    axis = @svg.select('g.y').remove()
+
+    axis = @svg.append('g')
       .attr('class', 'y axis')
       .attr('transform', "translate(0, 0)")
       .call(yAxis)
 
-    @svg.append('g')
-      .append('text')
+    axis.append('text')
       .attr('class', 'y label')
       .attr('text-anchor', 'middle')
       .attr('y', -40)
-      .attr('x', -(@graphHeight / 2))
+      .attr('x', -(@graphHeight() / 2))
       .attr('transform', "rotate(-90)")
       .text(@unitsFormatter(@formatKey(@opts.axis2)))
   
-  bufferAxes: (domain) ->
-    for border, i in domain
-      if border > 0
-        border = border - (border * 0.15)
-      else
-        border = border + (border * 0.15)
-
 window.Ubret.Graph = Graph
