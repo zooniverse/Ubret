@@ -1,15 +1,18 @@
-class BaseTool extends Ubret.Events
-  nonDisplayKeys: ['id', 'uid', 'image', 'thumb']
+class BaseTool
+  nonDisplayKeys: ['id', 'uid', 'image', 'thumb', 'plate', 'mjd', 'fiberID']
 
   constructor: ->
+    _.extend @, Ubret.Events
+
     @opts = {}
-    super
+    @opts.events = {}
     @opts.selectedKeys = []
     @opts.selectedIds = []
-    @opts.unitsFormat = 'astro'
-    @unitsFormatter = d3.units @opts.unitsFormat
     @opts.data = []
+
+    @unitsFormatter = d3.units 'astro'
     @setDefaults()
+    @bindEvents @events
 
   setDefaults: ->
     @settings @defaults

@@ -1,9 +1,6 @@
-class Events
-  constructor: ->
-    @opts.events = new Object
-    @bindEvents @events
-
-  bindEvents: (events) =>
+Ubret.Events = 
+  bindEvents: (events) ->
+    console.log events
     for event, func of events
       func = @[func] if _.isString func
       @on event, func
@@ -18,16 +15,14 @@ class Events
     else if _.isObject events
       @bindEvents events
 
-
   trigger: (event, args...) ->
+    console.log event, @opts.events[event]
     if _.isArray @opts.events[event]
-      eventCallback(args...) for eventCallback in @opts.events[event]
+      eventCallback.apply(@, args) for eventCallback in @opts.events[event]
     if _.isArray @opts.events['*']
-      eventCallback(args...) for eventCallback in @opts.events['*']
+      eventCallback.apply(@, args) for eventCallback in @opts.events['*']
 
   unbind: (event = null) ->
     # if event is null, unbind all events.
     unless event? then @opts.events = {}; return
     @opts.events = _.omit @opts.events, event
-
-window.Ubret.Events = Events

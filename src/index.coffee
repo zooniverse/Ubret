@@ -42,7 +42,7 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "SubjectViewer" :
     source: "lib/ubret/subject_viewer.js"
-    deps: ["Sequential"]
+    deps: ["BaseTool", "Sequential"]
   "Mapper" :
     source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]
@@ -54,7 +54,7 @@ Ubret.Dependencies =
     deps: ["BaseTool"]
   "Spectra" :
     source: "lib/ubret/spectra.js"
-    deps: ["BaseTool"]
+    deps: ["Sequential", "Graph"]
   "SpacewarpViewer":
     source: "lib/ubret/spacewarp_viewer/initialize.js"
     deps: ["Backbone", "fits", "BaseTool"]

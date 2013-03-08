@@ -1,7 +1,8 @@
-class SubjectViewer extends Ubret.Sequential
+class SubjectViewer extends Ubret.BaseTool
   name: 'Subject Viewer'
   
   constructor: ->
+    _.extend @, Ubret.Sequential
     super 
 
   events:
