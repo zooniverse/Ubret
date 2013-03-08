@@ -23,10 +23,9 @@ class Statistics extends Ubret.BaseTool
 
   displayStats: => 
     @statKey = _.last(@opts.selectedKeys)
-    return unless !@ul
-    console.log 'here'
-    @statData = _.pluck @opts.data, @statKey
+    return unless @ul?
 
+    @statData = _.pluck @opts.data, @statKey
     @count = @statData.length
     @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
 
@@ -40,10 +39,10 @@ class Statistics extends Ubret.BaseTool
       .attr('data-stat', (d) -> d[0])
       .html((d) => 
         stat = @[d]()
-        if isNaN(d[1]) or d[1] is Infinity
-          "<label>#{@formatKey(d[0])}:</label> <span>&nbsp</span>"
+        if isNaN(stat) or stat is Infinity
+          "<label>#{@formatKey(d)}:</label> <span>&nbsp</span>"
         else
-          "<label>#{@formatKey(d[0])}:</label> <span>#{d3.format(@opts.displayFormat)(d[1])}</span>")
+          "<label>#{@formatKey(d)}:</label> <span>#{d3.format(@opts.displayFormat)(stat)}</span>")
 
   # Statistics
   mean: =>
