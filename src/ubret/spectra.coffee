@@ -6,26 +6,25 @@ class Spectra extends Ubret.Graph
   constructor: ->
     _.extend @, Ubret.Sequential
     super 
-    @settings
-      bestFitLine: 'show'
-      fluxLine: 'show'
-      emissionLines: 'show'
-      axis1: 'Wavelengths (angstroms)'
-      axis2: 'Flux (1E-17 erg/cm^2/s/Ang)'
+
+  defaults:
+    bestFitLine: 'show'
+    fluxLine: 'show'
+    emissionLines: 'show'
+    axis1: 'Wavelengths (angstroms)'
+    axis2: 'Flux (1E-17 erg/cm^2/s/Ang)'
 
   events:
     'selector height width' : 'setupGraph'
-    'data next prev' : 'spectraSubject'
-    'height spectra-loaded width' : 'drawAxis1'
-    'width height spectra-loaded' : 'drawAxis2'
-    'height width spectra-loaded' : 'drawLines'
+    'data selection' : 'spectraSubject'
+    'width height spectra-loaded' : 'drawGraph'
     'setting:bestFitLine' : 'bestFitLineDraw'
     'setting:fluxLine' : 'fluxLineDraw'
     'setting:emissionLines' : 'emissionLinesDraw'
     'next' : 'next'
     'prev' : 'prev'
 
-  count: 0
+  apiURL: "http://api.sdss3.org/spectrum"
 
   spectraSubject: =>
     @selectSubject()
@@ -41,7 +40,7 @@ class Spectra extends Ubret.Graph
 
   loadSpectra: () =>
     request = new XMLHttpRequest()
-    url = "http://api.sdss3.org/spectrum?plate=#{@subject.plate}&mjd=#{@subject.mjd}&fiber=#{@subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
+    url = "#{@apiURL}?plate=#{@subject.plate}&mjd=#{@subject.mjd}&fiber=#{@subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
     request.open("GET", url, true)
     request.onload = =>
       subject = JSON.parse request.response
@@ -50,7 +49,7 @@ class Spectra extends Ubret.Graph
 
   loadSpectralLines: (subject) =>
     request = new XMLHttpRequest()
-    url = "http://api.sdss3.org/spectrumLines?id=#{subject.spectrumID}"
+    url = "#{@apiURL}Lines?id=#{subject.spectrumID}"
     request.open("GET", url, true)
     request.onload = (e) =>
       lines = new Object
@@ -71,12 +70,14 @@ class Spectra extends Ubret.Graph
     return unless subject?
     d3.extent subject.flux
 
-  drawLines: =>
+  drawGraph: =>
+    @drawAxis1()
+    @drawAxis2()
     @fluxLineDraw()
     @bestFitLineDraw()
     @emissionLinesDraw()
 
-  fluxLineDraw: () =>
+  fluxLineDraw: =>
     [subject, lines] = @spectraSubject()
     @svg.selectAll("path.fluxes").remove() if @svg?
     return unless @opts.fluxLine is 'show' and subject?
@@ -94,7 +95,7 @@ class Spectra extends Ubret.Graph
         .attr('fill', 'none')
         .attr('stroke', 'black')
 
-  bestFitLineDraw: () =>
+  bestFitLineDraw: =>
     [subject, lines] = @spectraSubject()
     @svg.selectAll("path.best-fit").remove() if @svg?
     return unless @opts.bestFitLine is 'show' and subject?

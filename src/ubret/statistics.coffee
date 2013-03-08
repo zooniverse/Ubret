@@ -23,7 +23,7 @@ class Statistics extends Ubret.BaseTool
 
   displayStats: => 
     @statKey = _.last(@opts.selectedKeys)
-    return unless @ul?
+    return unless @ul? and @statKey?
 
     @statData = _.pluck @opts.data, @statKey
     @count = @statData.length

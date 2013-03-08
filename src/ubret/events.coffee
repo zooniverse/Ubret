@@ -1,6 +1,5 @@
 Ubret.Events = 
   bindEvents: (events) ->
-    console.log events
     for event, func of events
       func = @[func] if _.isString func
       @on event, func
@@ -16,7 +15,6 @@ Ubret.Events =
       @bindEvents events
 
   trigger: (event, args...) ->
-    console.log event, @opts.events[event]
     if _.isArray @opts.events[event]
       eventCallback.apply(@, args) for eventCallback in @opts.events[event]
     if _.isArray @opts.events['*']

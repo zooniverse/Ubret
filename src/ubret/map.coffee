@@ -4,58 +4,56 @@ class Mapper extends Ubret.BaseTool
   # Set the default image path for Leaflet
   L.Icon.Default.imagePath = '/images'
 
-  default_icon: new L.icon {
+  defaultIcon: new L.icon
       className: 'default_icon'
       iconUrl: '/images/marker-icon.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
-    }
 
-  selected_icon: new L.icon {
+  selectedIcon: new L.icon
       className: 'selected_icon'
       iconUrl: '/images/marker-icon-orange.png'
       iconSize: [25, 41]
       iconAnchor: [13, 41]
-    }
 
-  constructor: (selector) ->
+  constructor: ->
     super 
     @circles = []
     @limit = @limit or 30
 
-  start: =>
-    @opts.spectrum = @opts.spectrum or 'visible'
-    @createSky(@opts.spectrum)
-    @plotObjects() 
-    @setupMap()
+  defaults: 
+    spectrum: 'visible'
+    zoom: 5
+    center_lng: 100
+    center_lat: 0
 
-  setupMap: =>
-    zoom = @opts.zoom or 5
-    lng = @opts.center_lng or 180
-    lat = @opts.center_lat or 0
-    @map.setView([lat, lng], zoom)
+  events:
+    'selector' : 'createMap'
+    'data setting:spectrum' : 'createSky'
+    'data' : 'plotObjects'
+    'setting:center_lng setting:center_lat setting:zoom' : 'moveTo'
 
-    @map.on 'zoomend', (e) =>
-      @settings
-        zoom: @map.getZoom()
+  moveTo: ->
+    @map.setView([@opts.center_lat, @opts.center_lng], @opts.zoom) if @map?
 
-    @map.on 'moveend', (e) =>
-      center = @map.getCenter()
-      @settings
-        center_lat: center.lat
-        center_lng: center.lng
+  createMap: ->
+    @map = L.map(@opts.el, Mapper.mapOptions)
+    #@map.on 'zoomend', (e) =>
+    #@settings
+    #zoom: @map.getZoom()
 
-      bounds = @map.getBounds()
-      console.log bounds
-      {_northEast: {lat, lng}, _southWest: {lat, lng}} = bounds
-      console.log _northEast
-      #selection = _(@opts.data).chain().filter((d) -> 
-    
-  createSky: (spectrum) =>
-    unless @map
-      @map = L.map(@selector.slice(1), Mapper.mapOptions)
+    #@map.on 'moveend', (e) =>
+    #center = @map.getCenter()
+    #@settings
+    #center_lat: center.lat
+    #center_lng: center.lng
 
 
+    @moveTo()
+
+  createSky: ->
+    return unless @map?
+    spectrum = @opts.spectrum
     @layer = L.tileLayer("/images/tiles/#{spectrum}/" + '#{tilename}.jpg',
       maxZoom: 7)
 
@@ -94,29 +92,18 @@ class Mapper extends Ubret.BaseTool
 
     @layer.addTo @map
   
-  plotObject: (subject, options) =>
+  plotObject: (subject, options) ->
     coords = [subject.dec, subject.ra - 180]
-    options = 
-      icon = new L.icon
-        iconSize: [25, 41]
-        iconAnchor: [13, 41]
-        iconUrl: "marker-icon.png"
- 
-    selectedOptions = 
-      icon =  new L.icon
-        iconSize: [25, 41]
-        iconAnchor: [13, 41]
-        iconUrl: "marker-icon.png"
   
     if subject.uid in @opts.selectedIds
-      circle = new L.marker(coords, selectedOptions)
+      circle = new L.marker(coords, {icon: @selectedIcon})
     else
-      circle = new L.marker(coords, options)
+      circle = new L.marker(coords, {icon: @defaultIcon})
     circle.uid = subject.uid
     circle.addTo(@map)
     @circles.push circle
 
-  plotObjects: =>
+  plotObjects: ->
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in @opts.data
