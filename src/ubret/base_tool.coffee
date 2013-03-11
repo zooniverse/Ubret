@@ -31,9 +31,9 @@ class BaseTool
 
   selector: (selector=null, triggerEvent=true) ->
     if selector
-      @opts.el = document.createElement('div')
-      @opts.el.id = selector
-      @opts.selector = d3.select @opts.el
+      @el = document.createElement('div')
+      @el.id = selector
+      @opts.selector = d3.select @el
       @trigger 'selector', @opts.selector if triggerEvent
     @
 

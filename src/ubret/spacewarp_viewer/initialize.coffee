@@ -68,7 +68,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       z: new $.Deferred()
     
     @getApi()
-    @on 'data-received', @requestChannels
+    @on 'data', @requestChannels
   
   # Request the appropriate WebFITS API (WebGL or Canvas)
   getApi: =>

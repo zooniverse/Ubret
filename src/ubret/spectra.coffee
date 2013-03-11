@@ -8,6 +8,7 @@ class Spectra extends Ubret.Graph
     super 
 
   defaults:
+    margin: {left: 70, top: 20, bottom: 80, right: 20}
     bestFitLine: 'show'
     fluxLine: 'show'
     emissionLines: 'show'

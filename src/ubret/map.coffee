@@ -16,40 +16,50 @@ class Mapper extends Ubret.BaseTool
       iconSize: [25, 41]
       iconAnchor: [13, 41]
 
+  mapOptions: 
+    minZoom: 0
+    maxZoom: 7
+    center: [0, 0]
+    zoom: 5
+
   constructor: ->
     super 
     @circles = []
-    @limit = @limit or 30
 
   defaults: 
     spectrum: 'visible'
-    zoom: 5
-    center_lng: 100
-    center_lat: 0
 
   events:
-    'selector' : 'createMap'
+    'selector height width' : 'createMap'
     'data setting:spectrum' : 'createSky'
     'data' : 'plotObjects'
     'setting:center_lng setting:center_lat setting:zoom' : 'moveTo'
 
   moveTo: ->
+    return unless @opts.center_lat? and @opts.center_lng? and @opts.zoom?
     @map.setView([@opts.center_lat, @opts.center_lng], @opts.zoom) if @map?
 
   createMap: ->
-    @map = L.map(@opts.el, Mapper.mapOptions)
-    #@map.on 'zoomend', (e) =>
-    #@settings
-    #zoom: @map.getZoom()
+    return unless @opts.width? and @opts.height?
 
-    #@map.on 'moveend', (e) =>
-    #center = @map.getCenter()
-    #@settings
-    #center_lat: center.lat
-    #center_lng: center.lng
+    @el.style.height = @opts.height + "px"
+    @el.style.width = @opts.width + "px"
 
+    if @map?
+      @map.invalidateSize()
+    else
+      @map = L.map(@el, @mapOptions)
+      @map._onResize() # I Should not have to do this Leaflet issue #694
 
-    @moveTo()
+      @map.on 'zoomend', (e) =>
+        @settings
+          zoom: @map.getZoom()
+
+      @map.on 'moveend', (e) =>
+        {lat, lng} = @map.getCenter()
+        @settings
+          center_lat: lat
+          center_lng: lng
 
   createSky: ->
     return unless @map?
@@ -86,10 +96,8 @@ class Mapper extends Ubret.BaseTool
         y: y
         src: f
         s: s
-
       url = convertTileUrl(tilePoint.x, tilePoint.y, 1, zoom)
       return "/images/tiles/#{spectrum}/#{url.src}.jpg"
-
     @layer.addTo @map
   
   plotObject: (subject, options) ->
@@ -104,6 +112,7 @@ class Mapper extends Ubret.BaseTool
     @circles.push circle
 
   plotObjects: ->
+    return unless @map?
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in @opts.data

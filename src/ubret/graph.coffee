@@ -4,13 +4,11 @@ class Graph extends Ubret.BaseTool
   constructor: ->
     super
 
-    @opts.margin = @opts.margin or { left: 70, top: 20, bottom: 80, right: 20 }
-    @opts.format = if @opts.format 
-      d3.format(opts.format) 
-    else
-      d3.format(',.02f')
-    @opts.color = @opts.color or '#0172E6'
-    @opts.selectionColor = @opts.selectionColor or '#CD3E20'
+  defaults: 
+    color: '#0172E6'
+    selectionColor: '#CD3E20'
+    format: d3.format(',.02f')
+    margin: {left: 70, top: 20, bottom: 80, right: 20}
 
   events: 
     'settings data width height' : 'drawAxis1'

@@ -36,7 +36,7 @@ class Histogram extends Ubret.Graph
         .attr('height', (d) => @graphHeight() - @y()(d.y))
         .attr('x', (d) => @x()(d.x))
         .attr('y', (d) => @y()(d.y))
-        .attr('fill', '#0071E5')
+        .attr('fill', @opts.color)
         .attr('stroke', '#FAFAFA')
 
     @drawBrush()
