@@ -59,6 +59,7 @@ class BaseTool
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
+    return @ if _.isEmpty ids
     if _.isArray ids
       @opts.selectedIds = ids
     else
@@ -67,6 +68,7 @@ class BaseTool
     @
 
   selectKeys: (keys=[], triggerEvent = true) =>
+    return @ if _.isEmpty keys
     if _.isArray keys
       @opts.selectedKeys = keys
     else
