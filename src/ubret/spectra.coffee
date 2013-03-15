@@ -17,8 +17,7 @@ class Spectra extends Ubret.Graph
 
   events:
     'selector height width' : 'setupGraph'
-    'data selection' : 'spectraSubject'
-    'width height spectra-loaded' : 'drawGraph'
+    'data selection width height spectra-loaded' : 'drawGraph'
     'setting:bestFitLine' : 'bestFitLineDraw'
     'setting:fluxLine' : 'fluxLineDraw'
     'setting:emissionLines' : 'emissionLinesDraw'
@@ -72,11 +71,13 @@ class Spectra extends Ubret.Graph
     d3.extent subject.flux
 
   drawGraph: =>
-    @drawAxis1()
-    @drawAxis2()
-    @fluxLineDraw()
-    @bestFitLineDraw()
-    @emissionLinesDraw()
+    [subject, _] = @spectraSubject() 
+    if subject
+      @drawAxis1() 
+      @drawAxis2() 
+      @fluxLineDraw()
+      @bestFitLineDraw()
+      @emissionLinesDraw()
 
   fluxLineDraw: =>
     [subject, lines] = @spectraSubject()
@@ -118,13 +119,14 @@ class Spectra extends Ubret.Graph
     [subject, lines] = @spectraSubject()
     @svg.selectAll('line.emissions').remove() if @svg?
     return unless @opts.emissionLines is 'show' and lines?
+    x = @x()
 
     for name, line of lines
       multiplier = if redshiftCorrected then (1 + line.redshift) else 1
       @svg.append("line")
         .attr('class', 'emissions')
-        .attr("x1", @x()(line.wavelength * multiplier))
-        .attr("x2", @x()(line.wavelength * multiplier))
+        .attr("x1", x(line.wavelength * multiplier))
+        .attr("x2", x(line.wavelength * multiplier))
         .attr("y1", 0)
         .attr("y2", @graphHeight())
         .style("stroke", "rgb(255,0,0)")
