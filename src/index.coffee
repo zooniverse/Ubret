@@ -1,6 +1,6 @@
-window.Ubret = {} unless typeof window.Ubret isnt 'undefined'
+Ubret = {}
 
-Ubret.BaseUrl = if location.port < 1024
+Ubret.BaseUrl = if location?.port < 1024
   "http://ubret.s3.amazonaws.com/ubret_library/"
 else 
   "http://localhost:3001/"
@@ -59,16 +59,37 @@ Ubret.Dependencies =
     source: "lib/ubret/spacewarp_viewer/initialize.js"
     deps: ["Backbone", "fits", "BaseTool"]
 
+loadScript = (source, cb=null) ->
+  script = document.createElement 'script'
+  script.onload = cb
+  script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getTime()}"
+  document.getElementsByTagName('head')[0].appendChild script
+
 Ubret.Loader = (tools, cb) ->
+  tools = Ubret.DependencyResolver tools
+
   isScriptLoaded = (script) ->
+    return false unless window?
     return (window[script]? or Ubret[script]?)
     
-  loadScript = (source, cb=null) ->
-    script = document.createElement 'script'
-    script.onload = cb
-    script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getTime()}"
-    document.getElementsByTagName('head')[0].appendChild script
+  loadScripts = ->
+    if tools.length is 0 
+      cb()
+      return
+    callback = loadScripts
+    tool = tools.pop()
+    unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool]?.symbol)
+      source = Ubret.Dependencies[tool].source
+      loadScript source, callback
+    else
+      loadScripts()
 
+  loadScripts()
+
+Ubret.ToolsetLoader = (toolset, cb) ->
+  loadScript("sets/#{toolset}.js", cb)
+
+Ubret.DependencyResolver = (tools) ->
   unique = (array) ->
     flattened = []
     flattened = flattened.concat.apply(flattened, array)
@@ -87,17 +108,7 @@ Ubret.Loader = (tools, cb) ->
     else
       return findDeps((unique dependencies), accum.concat(dependencies))
 
-  loadScripts = ->
-    if tools.length is 0 
-      cb()
-      return
-    callback = loadScripts
-    tool = tools.pop()
-    unless (isScriptLoaded tool) or (isScriptLoaded Ubret.Dependencies[tool]?.symbol)
-      source = Ubret.Dependencies[tool].source
-      loadScript source, callback
-    else
-      loadScripts()
+  tools.concat findDeps(tools, [])
 
-  tools = tools.concat findDeps(tools, [])
-  loadScripts()
+window?.Ubret = Ubret
+module?.exports = Ubret

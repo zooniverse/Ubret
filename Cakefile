@@ -1,6 +1,19 @@
 fs = require 'fs'
-{spawn} = require 'child_process' 
+{spawn, exec} = require 'child_process' 
 {print} = require 'util'
+
+Toolsets =   
+  galaxy_zoo: [ "Spectra", 
+                "Table",
+                "Statistics",
+                "Mapper",
+                "SubjectViewer",
+                "Scatterplot",
+                "Histogram"]
+              
+  spacewarp: [ "SpacewarpViewer" ]
+  
+  navigator: ["Histogram", "Scatterplot"]
 
 option '-s', '--server', 'starts node static server on the build directory'
 option '-p', '--port [PORT]', 'sets port for server to start on'
@@ -46,3 +59,17 @@ task 'copy', 'Copy lib and vendor to build', (options) =>
       process.stdout.write data.toString()
     copier.on 'exit', (code) ->
       callback?() if code is 0
+
+task 'build:toolsets', 'Concat Toolset for production', ->
+  invoke 'build'
+  Ubret = require './lib/index'
+
+  for name, set of Toolsets
+    deps = Ubret.DependencyResolver(set).reverse()
+      .map((dep) -> Ubret.Dependencies[dep].source)
+    setFile = new String
+    exec("uglifyjs #{deps.join(' ')} --output build/sets/#{name}.js",
+      (error, stdout, stderr) ->
+        console.log stdout
+        console.error stderr
+        console.error error if error)
