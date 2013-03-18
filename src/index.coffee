@@ -31,6 +31,8 @@ Ubret.Dependencies =
   "Sequential":
     source: "lib/ubret/sequential.js"
     deps: ["BaseTool"]
+  "Paginated" :
+    source: "lib/ubret/paginated.js"
   "Graph" :
     source: "lib/ubret/graph.js"
     deps: ["BaseTool"]
@@ -51,7 +53,7 @@ Ubret.Dependencies =
     deps: ["BaseTool"]
   "Table" :
     source: "lib/ubret/table.js"
-    deps: ["BaseTool"]
+    deps: ["BaseTool", "Paginated"]
   "Spectra" :
     source: "lib/ubret/spectra.js"
     deps: ["Sequential", "Graph"]

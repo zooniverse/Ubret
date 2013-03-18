@@ -1,40 +1,27 @@
 class BaseTool
   nonDisplayKeys: ['id', 'uid', 'image', 'thumb', 'plate', 'mjd', 'fiberID']
 
-  constructor: ->
+  constructor: (options) ->
     _.extend @, Ubret.Events
 
-    @opts = {}
-    @opts.events = {}
-    @opts.selectedKeys = []
-    @opts.selectedIds = []
-    @opts.data = []
-
+    @opts = {events: {}, selectedIds: [], data: []}
     @unitsFormatter = d3.units 'astro'
-    @setDefaults()
     @bindEvents @events
-
-  setDefaults: ->
-    @settings @defaults
+    
+    if options.selector
+      @selector options.selector
+      delete options.selector
+    @[key](value, false) for key, value of options when _.isFunction(@[key])
 
   toJSON: ->
     json = {}
     json[key] = value for key, value of @opts when key isnt 'selector'
     json
 
-  start: =>
-    throw new Error "No Data" if _.isEmpty(@opts.data)
-    throw new Error "Must Set Height" if _.isUndefined(@opts.height)
-    @opts.selector = d3.select @selector
-    @opts.width = @opts.selector[0][0].clientWidth
-    @opts.selector.html ''
-
-  selector: (selector=null, triggerEvent=true) ->
-    if selector
-      @el = document.createElement('div')
-      @el.id = selector
-      @opts.selector = d3.select @el
-      @trigger 'selector', @opts.selector if triggerEvent
+  selector: (selector=null) ->
+    @el = document.createElement('div')
+    @el.id = selector
+    @d3el = d3.select @el
     @
 
   height: (height=0, triggerEvent=true) ->
@@ -67,15 +54,6 @@ class BaseTool
     @trigger 'selection', ids unless ids.length is 0 if triggerEvent
     @
 
-  selectKeys: (keys=[], triggerEvent = true) =>
-    return @ if _.isEmpty keys
-    if _.isArray keys
-      @opts.selectedKeys = keys
-    else
-      @opts.selectedKeys.push keys unless _.isUndefined keys
-    @trigger 'keys-selection', keys if triggerEvent
-    @
-
   filters: (filters=[], triggerEvent=true) =>
     if _.isArray filters
       @opts.filters = filters
@@ -98,13 +76,11 @@ class BaseTool
 
     @data(tool.childData())
       .selectIds(tool.opts.selectedIds)
-      .selectKeys(tool.opts.selectedKeys)
 
     @opts.parentTool.on 
       'keys': @keys
       'data': @data 
       'selection': @selectIds
-      'keys-selection': @selectKeys
       'add-filter': @filters
     @trigger 'bound-to', tool if triggerEvent
     @

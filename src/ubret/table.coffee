@@ -1,30 +1,41 @@
 class Table extends Ubret.BaseTool
   name: 'Table'
   
-  constructor: (options) ->
+  constructor: ->
+    _.extend @, Ubret.Paginated
     super 
-    @pages = new Array
-
-  defaults: 
-    sortOrder: 'top'
-    currentPage: 0
 
   events:
     'next' : 'nextPage'
     'prev' : 'prevPage'
-    'selector' : 'createTable'
-    'data setting:sortOrder keys-selection' : 'createHeader'
-    'data selection keys-selection height' : 'createRows'
-    'setting:sortOrder setting:currentPage' : 'createRows'
+    'setting:sortColumn setting:sortOrder': 'sort'
+    'selection next prev height' : 'drawRows'
+    'next prev height' : 'drawPages'
+
+  selector: ->
+    super
+    @table = @d3el.append('table')
+    @
+
+  keys: ->
+    super
+    @drawHeader()
+    @
+
+  data: ->
+    super
+    @drawRows()
+    @drawPages()
+    @
+
+  sort: ->
+    return if _.isEmpty(@opts.data) or not @table
+    @drawHeader()
+    @drawRows()
 
   # Drawing
-  createTable: =>
-    table = @opts.selector.append('table')
-    @thead = table.append('thead')
-    @tbody = table.append('tbody')
-
-  createHeader: =>
-    unless @thead? and (not _.isEmpty(@opts.data)) then return
+  drawHeader: ->
+    @thead = @table.insert('thead', ":first-child") unless @thead
     @thead.selectAll('th').remove()
 
     @thead.selectAll("th")
@@ -34,18 +45,18 @@ class Table extends Ubret.BaseTool
         .attr('data-key', (d) -> d)
         .text( (d) => 
           @unitsFormatter(@formatKey d) + ' ' +
-            if d is @sortKey() then @arrow() else '')
+            if d is @opts.sortColumn then @arrow() else '')
 
-  createRows: => 
-    unless @tbody? and (not _.isEmpty(@opts.data)) then return
-    @paginate()
-
+  drawRows: -> 
+    @tbody = @table.append('tbody') unless @tbody
     @tbody.selectAll('tr').remove()
+
     tr = @tbody.selectAll('tr')
-      .data(@pages[@opts.currentPage])
+      .data(@page(@opts.currentPage))
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
-        .attr('class', (d) => if d.uid in @opts.selectedIds then 'selected' else '')
+        .attr('class', (d) => 
+          if d.uid in @opts.selectedIds then 'selected' else '')
         .on('click', @selection)
     
     tr.selectAll('td')
@@ -53,53 +64,35 @@ class Table extends Ubret.BaseTool
       .enter().append('td')
         .text((d) -> return d)
 
-    @createPages()
-
-  createPages: =>
+  drawPages: ->
     @p.remove() if @p
-    @p = @opts.selector
+    @p = @d3el
       .append('p')
       .attr('class', 'pages')
-      .text("Page: #{parseInt(@opts.currentPage) + 1} of #{@numPages}")
+      .text("Page: #{parseInt(@opts.currentPage) + 1} of #{@pages()}")
 
-  # Helpers
+  # Pagination
+  perPage: -> 
+    # Assumes top margin + bottom margins = 130px,
+    # and table cells are 27px high.
+    Math.floor((@opts.height - 130 )/ 27) 
 
-  sortKey: =>
-    @opts.selectedKeys[0] or 'uid'
+  pageSort: (data) ->
+    sorted = _.sortBy(data, (d) => d[@opts.sortColumn])
+    sorted.reverse() if @opts.sortOrder is 'bottom'
+    sorted
 
-  paginate: =>
-    # Assumes thead height of 50px and tbody height of 30px
-    @numRows = Math.floor((@opts.height - 130 )/ 27) 
-    @numPages = Math.ceil(@opts.data.length / @numRows)
-
-    sortedData = _.sortBy @opts.data, (d) => d[@sortKey()]
-    sortedData.reverse() if @opts.sortOrder is 'bottom'
-    @pages[number] = sortedData.slice((number * @numRows), 
-      ((number + 1) * @numRows)) for number in [0..(@numPages - 1)]
-
-  currentPage: (page) =>
-    if page < 0
-      @opts.currentPage = @numPages - 1
-    else if page >= @numPages
-      @opts.currentPage = page % @numPages
-    else
-      @opts.currentPage = page
-
-  toArray: (data) =>
-    ret = new Array
-    for key in @opts.keys
-      ret.push data[key]
-    return ret
-
+  # UI Events
   sortRow: (key) ->
-    if key is @sortKey()
+    if key is @opts.sortColumn
       if @opts.sortOrder is 'top'
         @settings {sortOrder: 'bottom'}
       else 
         @settings {sortOrder: 'top'}
     else
-      @settings {sortOrder: 'top'}
-      @selectKeys [key]
+      @settings 
+        sortOrder: 'top'
+        sortColumn: key
 
   selection: (d, i) =>
     ids = @opts.selectedIds
@@ -112,18 +105,17 @@ class Table extends Ubret.BaseTool
       ids = [d.uid]
     @selectIds ids
 
+  # Helpers
+  toArray: (data) =>
+    ret = new Array
+    for key in @opts.keys
+      ret.push data[key]
+    return ret
+
   arrow: =>
     if @opts.sortOrder is 'top'
       return '▲'
     else
       return '▼'
-
-  nextPage: =>
-    @settings
-      currentPage: parseInt(@opts.currentPage) + 1
-
-  prevPage: =>
-    @settings
-      currentPage: parseInt(@opts.currentPage) - 1
 
 window.Ubret.Table = Table

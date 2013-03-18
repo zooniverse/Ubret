@@ -29,6 +29,7 @@ task 'build', 'Build lib/ from src', (options) ->
     print data.toString()
   coffee.on 'exit', (code) ->
     invoke 'copy'
+    invoke 'build:toolsets'
     callback?() if code is 0
 
 task 'watch', 'Watch src/ for changes', (options) ->
@@ -39,6 +40,7 @@ task 'watch', 'Watch src/ for changes', (options) ->
     process.stderr.write data.toString()
   coffee_src.stdout.on 'data', (data) ->
     invoke 'copy'
+    invoke 'build:toolsets'
     print data.toString()
 
 task 'server', "Serve contents of build", (options) ->
@@ -61,7 +63,6 @@ task 'copy', 'Copy lib and vendor to build', (options) =>
       callback?() if code is 0
 
 task 'build:toolsets', 'Concat Toolset for production', ->
-  invoke 'build'
   Ubret = require './lib/index'
 
   for name, set of Toolsets
@@ -70,6 +71,4 @@ task 'build:toolsets', 'Concat Toolset for production', ->
     setFile = new String
     exec("uglifyjs #{deps.join(' ')} --output build/sets/#{name}.js",
       (error, stdout, stderr) ->
-        console.log stdout
-        console.error stderr
-        console.error error if error)
+        console.log error if error)
