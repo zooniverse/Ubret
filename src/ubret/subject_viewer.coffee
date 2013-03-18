@@ -2,44 +2,50 @@ class SubjectViewer extends Ubret.BaseTool
   name: 'Subject Viewer'
   
   constructor: ->
-    _.extend @, Ubret.Sequential
+    _.extend @, Ubret.Paginated
     super 
 
+  perPage: 1
+
+  pageSort: (data) -> 
+    if _.isEmpty @opts.selectedIds
+      data
+    else
+      _.filter data, (d) => 
+        d.uid in @opts.selectedIds
+
   events:
-    'next' : 'next'
-    'prev' : 'prev'
-    'keys data selection next-selected prev-selected' : 'render'
+    'next' : 'nextPage'
+    'prev' : 'prevPage'
+    'data selection next prev' : 'render'
 
   render: =>
-    unless @opts.selector? and (not _.isEmpty @opts.data) then return
-    @selectSubject()
-    @div = @opts.selector
-    @div.selectAll('div.subject').remove()
+    return if @d3el? and _.isEmpty(@opts.data)
+    @d3el.selectAll('div.subject').remove()
 
-    subject = @div.selectAll('div.subject')
-      .data(@subject).enter()
-        .append('div')
-        .attr('class', 'subject')
+    subjectData = @currentPageData()
 
-    subject.append('img')
-        .attr('src', (d) -> 
-          d.image)
+    subject = @d3el.append('div')
+      .attr('class', 'subject')
 
     subject.append('ul').selectAll('ul')
-      .data((d) => @toArray(d)).enter()
+      .data(@toArray(subjectData)).enter()
         .append('li')
         .attr('data-key', (d) -> d[0])
-        .html((d) => "<label>#{@unitsFormatter(@formatKey(d[0]))}:</label> <span>#{d[1]}</span>")
+        .html((d) => 
+          "<label>#{@unitsFormatter(@formatKey(d[0]))}:</label> 
+            <span>#{d[1]}</span>")
 
-    subject.select("[data-key=\"#{@selectedKey}\"]")
-      .attr('class', 'selected')
-
-    header = subject.selectAll('ul')
+    subject.selectAll('ul')
       .insert('li', ':first-child')
         .attr('class', 'heading')
         .html('<label>Key</label> <span>Value</span>')
 
+    subject.insert('img', ":first-child")
+        .attr('src', subjectData[0].image)
+
   toArray: (data) =>
+    data = data[0]
     arrayedData = new Array
     arrayedData.push [key, data[key]] for key in @opts.keys
     arrayedData

@@ -46,12 +46,11 @@ class BaseTool
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
-    return @ if _.isEmpty ids
     if _.isArray ids
       @opts.selectedIds = ids
     else
       @opts.selectedIds.push ids unless _.isUndefined ids
-    @trigger 'selection', ids unless ids.length is 0 if triggerEvent
+    @trigger 'selection', ids if triggerEvent
     @
 
   filters: (filters=[], triggerEvent=true) =>

@@ -19,11 +19,13 @@ class Table extends Ubret.BaseTool
 
   keys: ->
     super
+    return @ unless @d3el
     @drawHeader()
     @
 
   data: ->
     super
+    return @ unless @d3el
     @drawRows()
     @drawPages()
     @
@@ -52,7 +54,7 @@ class Table extends Ubret.BaseTool
     @tbody.selectAll('tr').remove()
 
     tr = @tbody.selectAll('tr')
-      .data(@page(@opts.currentPage))
+      .data(@currentPageData())
       .enter().append('tr')
         .attr('data-id', (d) -> d.uid)
         .attr('class', (d) => 
@@ -101,6 +103,9 @@ class Table extends Ubret.BaseTool
         ids.push d.uid
       else
         ids = _.without ids, d.uid 
+    else if d.uid in ids
+      ids = _.without ids, d.uid
+      console.log ids
     else
       ids = [d.uid]
     @selectIds ids
