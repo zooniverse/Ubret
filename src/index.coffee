@@ -44,7 +44,7 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "SubjectViewer" :
     source: "lib/ubret/subject_viewer.js"
-    deps: ["BaseTool", "Sequential"]
+    deps: ["BaseTool", "Paginated"]
   "Mapper" :
     source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]

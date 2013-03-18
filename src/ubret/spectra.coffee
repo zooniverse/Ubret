@@ -4,7 +4,7 @@ class Spectra extends Ubret.Graph
   cache: {}
   
   constructor: ->
-    _.extend @, Ubret.Sequential
+    _.extend @, Ubret.Paginated
     super 
 
   defaults:
@@ -25,18 +25,6 @@ class Spectra extends Ubret.Graph
     'prev' : 'prev'
 
   apiURL: "http://api.sdss3.org/spectrum"
-
-  spectraSubject: =>
-    @selectSubject()
-    if @subject? 
-      [@subject] = @subject
-      key = "#{@subject.plate}-#{@subject.mjd}-#{@subject.fiberID}"
-      cached = @cache[key]
-      if cached?
-        return cached
-      else
-        @loadSpectra() 
-    [undefined, undefined]
 
   loadSpectra: () =>
     request = new XMLHttpRequest()
