@@ -105,7 +105,6 @@ class Table extends Ubret.BaseTool
         ids = _.without ids, d.uid 
     else if d.uid in ids
       ids = _.without ids, d.uid
-      console.log ids
     else
       ids = [d.uid]
     @selectIds ids

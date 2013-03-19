@@ -7,10 +7,10 @@ class Statistics extends Ubret.BaseTool
 
   events: 
     'selector' : 'createList'
-    'data keys-selection' : 'displayStats'
+    'data setting:statKey' : 'displayStats'
 
   createList: =>
-    @wrapper = @opts.selector.append('div')
+    @wrapper = @d3el.append('div')
       .attr('class', 'stats')
 
     @title = @wrapper.append('h3')
@@ -22,16 +22,15 @@ class Statistics extends Ubret.BaseTool
   statistics: ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
 
   displayStats: => 
-    @statKey = _.last(@opts.selectedKeys)
-    return unless @ul? and @statKey? and !(_.isEmpty(@opts.data))
+    return unless @ul? and @opts.statKey? and !(_.isEmpty(@opts.data))
 
-    @statData = _.pluck @opts.data, @statKey
+    @statData = _.pluck @opts.data, @opts.statKey
     @count = @statData.length
     @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
 
     @ul.selectAll('li').remove()
 
-    @title.text(@unitsFormatter(@formatKey(@statKey)))
+    @title.text(@unitsFormatter(@formatKey(@opts.statKey)))
 
     li = @ul.selectAll('li')
       .data(@statistics)

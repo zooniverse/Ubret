@@ -41,6 +41,10 @@ class Histogram extends Ubret.Graph
 
     @drawBrush()
 
+  drawAxis2: =>
+    return unless @opts.axis1?
+    super
+
   drawBrush: =>
     @brush.remove() if @brush
     @brush = @svg.append('g')

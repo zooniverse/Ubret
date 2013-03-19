@@ -2,13 +2,11 @@
 class Graph extends Ubret.BaseTool
 
   constructor: ->
+    @format = d3.format(',.02f')
     @margin = {left: 70, top: 20, bottom: 80, right: 20}
     super
 
   defaults: 
-    color: '#0172E6'
-    selectionColor: '#CD3E20'
-    format: d3.format(',.02f')
 
   events: 
     'settings data width height' : 'drawAxis1'
