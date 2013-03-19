@@ -2,17 +2,8 @@ class SubjectViewer extends Ubret.BaseTool
   name: 'Subject Viewer'
   
   constructor: ->
-    _.extend @, Ubret.Paginated
+    _.extend @, Ubret.Sequential
     super 
-
-  perPage: 1
-
-  pageSort: (data) -> 
-    if _.isEmpty @opts.selectedIds
-      data
-    else
-      _.filter data, (d) => 
-        d.uid in @opts.selectedIds
 
   events:
     'next' : 'nextPage'

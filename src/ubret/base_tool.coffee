@@ -11,7 +11,7 @@ class BaseTool
     if options.selector
       @selector options.selector
       delete options.selector
-    @[key](value, false) for key, value of options when _.isFunction(@[key])
+    @[key](value) for key, value of options when _.isFunction(@[key])
 
   toJSON: ->
     json = {}
@@ -22,6 +22,7 @@ class BaseTool
     @el = document.createElement('div')
     @el.id = selector
     @d3el = d3.select @el
+    @trigger 'selector', @d3el
     @
 
   height: (height=0, triggerEvent=true) ->

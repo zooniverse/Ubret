@@ -2,13 +2,13 @@
 class Graph extends Ubret.BaseTool
 
   constructor: ->
+    @margin = {left: 70, top: 20, bottom: 80, right: 20}
     super
 
   defaults: 
     color: '#0172E6'
     selectionColor: '#CD3E20'
     format: d3.format(',.02f')
-    margin: {left: 70, top: 20, bottom: 80, right: 20}
 
   events: 
     'settings data width height' : 'drawAxis1'
@@ -20,14 +20,15 @@ class Graph extends Ubret.BaseTool
     return unless @opts.width? and @opts.height?
 
     unless @svg?
-      @svg = @opts.selector.append('svg')
+      @svg = @d3el.append('svg')
         .attr('width', @opts.width - 10)
         .attr('height', @opts.height - 10)
         .append('g')
           .attr('class', 'chart')
-          .attr('transform', "translate(#{@opts.margin.left}, #{@opts.margin.top})")
+          .attr('transform', 
+            "translate(#{@margin.left}, #{@margin.top})")
     else
-      @opts.selector.select('svg')
+      @d3el.select('svg')
         .attr('width', @opts.width - 10)
         .attr('height', @opts.height - 10)
 
@@ -36,10 +37,10 @@ class Graph extends Ubret.BaseTool
         .attr('height', @opts.height - 10)
 
   graphWidth: =>
-    @opts.width - (@opts.margin.left + @opts.margin.right)
+    @opts.width - (@margin.left + @margin.right)
 
   graphHeight: =>
-    @opts.height - (@opts.margin.top + @opts.margin.bottom)
+    @opts.height - (@margin.top + @margin.bottom)
 
   xDomain: =>
     return unless @opts.axis1?

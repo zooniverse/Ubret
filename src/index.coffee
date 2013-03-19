@@ -30,9 +30,16 @@ Ubret.Dependencies =
     deps: ["Events", "underscore", "d3.units"]
   "Sequential":
     source: "lib/ubret/sequential.js"
-    deps: ["BaseTool"]
+    deps: ["Paginated"]
   "Paginated" :
     source: "lib/ubret/paginated.js"
+    deps: ["underscore"]
+  "Promise" :
+    source: "lib/ubret/promise.js"
+    deps: ["underscore"]
+  "Ajax":
+    source: "lib/ubret/xhr.js"
+    deps: ["Promise"]
   "Graph" :
     source: "lib/ubret/graph.js"
     deps: ["BaseTool"]
@@ -44,7 +51,7 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "SubjectViewer" :
     source: "lib/ubret/subject_viewer.js"
-    deps: ["BaseTool", "Paginated"]
+    deps: ["BaseTool", "Sequential"]
   "Mapper" :
     source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]
@@ -56,7 +63,7 @@ Ubret.Dependencies =
     deps: ["BaseTool", "Paginated"]
   "Spectra" :
     source: "lib/ubret/spectra.js"
-    deps: ["Sequential", "Graph"]
+    deps: ["Sequential", "Graph", "Ajax"]
   "SpacewarpViewer":
     source: "lib/ubret/spacewarp_viewer/initialize.js"
     deps: ["Backbone", "fits", "BaseTool"]
