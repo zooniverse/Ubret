@@ -1,6 +1,6 @@
 Ubret.Events = 
   on: (event, callbacks) ->
-    if _.isString events
+    if _.isString event
         unless _.isArray @opts.events[event]
           @opts.events[event] = new Array
         if _.isFunction callbacks
@@ -8,8 +8,8 @@ Ubret.Events =
         else
           for callback in callbacks.split(' ')
             @opts.events[event].push @[callback]
-    else if _.isObject events
-      @bindEvents events
+    else if _.isObject event
+      @bindEvents event
 
   trigger: (event, args...) ->
     if _.isArray @opts.events[event]

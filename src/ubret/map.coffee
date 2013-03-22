@@ -26,14 +26,15 @@ class Mapper extends Ubret.BaseTool
     super 
     @circles = []
 
-  defaults: 
-    spectrum: 'visible'
-
   events:
-    'selector height width' : 'createMap'
-    'data setting:spectrum' : 'createSky'
-    'data' : 'plotObjects'
-    'setting:center_lng setting:center_lat setting:zoom' : 'moveTo'
+    'selector' : 'createMap'
+    'height' : 'createMap'
+    'width' : 'createMap'
+    'data' : 'plotObjects createSky'
+    'setting:spectrum' : 'createSky'
+    'setting:center_lng' : 'moveTo'
+    'setting:center_lat' : 'moveTo'
+    'setting:zoom' : 'moveTo'
 
   moveTo: ->
     return unless @opts.center_lat? and @opts.center_lng? and @opts.zoom?

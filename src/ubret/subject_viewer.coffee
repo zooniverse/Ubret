@@ -6,9 +6,10 @@ class SubjectViewer extends Ubret.BaseTool
     super 
 
   events:
-    'next' : 'nextPage'
-    'prev' : 'prevPage'
-    'data selection next prev' : 'render'
+    'next' : 'nextPage render'
+    'prev' : 'prevPage render'
+    'data' : 'render'
+    'selection' : 'render'
 
   render: =>
     return if @d3el? and _.isEmpty(@opts.data)

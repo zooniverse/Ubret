@@ -6,10 +6,13 @@ class Spectra extends Ubret.Graph
     super 
 
   events:
-    'next' : 'nextPage'
-    'prev' : 'prevPage'
-    'height width selector' : 'setupGraph'
-    'data selection next prev height width': 'drawGraph'
+    'next' : 'nextPage drawGraph'
+    'prev' : 'prevPage drawGraph'
+    'height' : 'setupGraph drawGraph'
+    'width' : 'setupGraph drawGraph'
+    'selector' : 'setupGraph'
+    'data': 'drawGraph'
+    'selection': 'drawGraph'
     'setting:bestFitLine' : 'bestFitLineDraw'
     'setting:fluxLine' : 'fluxLineDraw'
     'setting:emissionLines' : 'emissionLinesDraw'

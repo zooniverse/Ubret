@@ -6,13 +6,12 @@ class Graph extends Ubret.BaseTool
     @margin = {left: 70, top: 20, bottom: 80, right: 20}
     super
 
-  defaults: 
-
   events: 
-    'settings data width height' : 'drawAxis1'
-    'settings data height width' : 'drawAxis2'
-    'selector height width' : 'setupGraph'
-    'data settings width height' : 'drawData'
+    'height' : 'setupGraph drawAxis1 drawAxis2 drawData'
+    'width' : 'setupGraph drawAxis1 drawAxis2 drawData'
+    'settings' : 'drawAxis1 drawAxis2 drawData'
+    'data' : 'drawAxis1 drawAxis2 drawData'
+    'selector ' : 'setupGraph'
 
   setupGraph: =>
     return unless @opts.width? and @opts.height?

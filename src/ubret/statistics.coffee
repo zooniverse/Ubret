@@ -7,7 +7,8 @@ class Statistics extends Ubret.BaseTool
 
   events: 
     'selector' : 'createList'
-    'data setting:statKey' : 'displayStats'
+    'data' : 'displayStats'
+    'setting:statKey' : 'displayStats'
 
   createList: =>
     @wrapper = @d3el.append('div')

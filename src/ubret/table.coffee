@@ -6,11 +6,12 @@ class Table extends Ubret.BaseTool
     super 
 
   events:
-    'next' : 'nextPage'
-    'prev' : 'prevPage'
-    'setting:sortColumn setting:sortOrder': 'sort'
-    'selection next prev height' : 'drawRows'
-    'next prev height' : 'drawPages'
+    'next' : 'nextPage drawRows drawPages' 
+    'prev' : 'prevPage drawRows drawPages' 
+    'setting:sortColumn' : 'sort'
+    'setting:sortOrder': 'sort'
+    'selection' : 'drawRows'
+    'height' : 'drawRows drawPages'
 
   selector: ->
     super
