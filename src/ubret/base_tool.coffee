@@ -62,6 +62,16 @@ class BaseTool
     @trigger 'add-filters', filters if triggerEvent
     @
 
+  settings: (settings, triggerEvent=true) =>
+    for setting, value of settings
+      if typeof @[setting] is 'function'
+        @[setting](value)
+      else
+        @opts[setting] = value
+      @trigger "setting:#{setting}", value if triggerEvent
+    @trigger 'settings', settings if triggerEvent
+    @
+
   parentTool: (tool = null, triggerEvent=true) =>
     # Only bother checking sameness if parentTool is set.
     if @opts.parentTool?
@@ -89,16 +99,6 @@ class BaseTool
     if @opts.parentTool?
       @opts.parentTool.unbind()
       delete @opts.parentTool
-    @
-
-  settings: (settings, triggerEvent=true) =>
-    for setting, value of settings
-      if typeof @[setting] is 'function'
-        @[setting](value)
-      else
-        @opts[setting] = value
-      @trigger "setting:#{setting}", value if triggerEvent
-    @trigger 'settings', settings if triggerEvent
     @
 
   childData: ->

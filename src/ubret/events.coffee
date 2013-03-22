@@ -1,16 +1,13 @@
 Ubret.Events = 
-  bindEvents: (events) ->
-    for event, func of events
-      func = @[func] if _.isString func
-      @on event, func
-
-  on: (events, callback) ->
+  on: (event, callbacks) ->
     if _.isString events
-      allEvents = events.split(' ')
-      for event in allEvents
         unless _.isArray @opts.events[event]
           @opts.events[event] = new Array
-        @opts.events[event].push callback
+        if _.isFunction callbacks
+          @opts.events[event].push callbacks
+        else
+          for callback in callbacks.split(' ')
+            @opts.events[event].push @[callback]
     else if _.isObject events
       @bindEvents events
 
@@ -24,3 +21,8 @@ Ubret.Events =
     # if event is null, unbind all events.
     unless event? then @opts.events = {}; return
     @opts.events = _.omit @opts.events, event
+
+  # Private
+  bindEvents: (events) ->
+    for event, funcs of events
+      @on event, funcs
