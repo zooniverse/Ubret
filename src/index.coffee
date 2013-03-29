@@ -28,6 +28,11 @@ Ubret.Dependencies =
   "BaseTool": 
     source: "lib/ubret/base_tool.js"
     deps: ["Events", "underscore", "d3.units"]
+  "Fql":
+    source: "lib/ubret/fql.js"
+  "Fql-Grammar":
+    source: "lib/ubret/fql_grammar.js"
+    deps: ["Fql"]
   "Sequential":
     source: "lib/ubret/sequential.js"
     deps: ["Paginated"]

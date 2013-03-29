@@ -68,6 +68,7 @@ class Table extends Ubret.BaseTool
         .text((d) -> return d)
 
   drawPages: ->
+    return if _.isEmpty @opts.data
     @p.remove() if @p
     @p = @d3el
       .append('p')

@@ -138,7 +138,7 @@ Wrapper for `Ubret.Ajax('GET', url)`.
 Wrapper for `Ubret.Ajax('POST', url)`.
 
 ### Ubret.Promise
-An implementation of the [Promise/A+ Spec](http://promises-aplus.github.com/promises-spec/). It is returns by the Ubret.Ajax method.
+An implementation of the [Promise/A+ Spec](http://promises-aplus.github.com/promises-spec/). Ubret.Ajax returns a promise. 
 
 #### @then(successCb, failCb)
 Either callback is optional. It returns another promise that will be fulfilled after the then returns. 

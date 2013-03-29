@@ -72,3 +72,7 @@ task 'build:toolsets', 'Concat Toolset for production', ->
     exec("uglifyjs #{deps.join(' ')} --output build/sets/#{name}.js",
       (error, stdout, stderr) ->
         console.log error if error)
+
+task 'build:grammar', "Build FQL grammar using pegjs", ->
+  exec('./node_modules/.bin/pegjs -e "window.Ubret.Fql.Parser" fql_grammar.pegjs lib/ubret/fql_grammar.js')
+  invoke 'copy'
