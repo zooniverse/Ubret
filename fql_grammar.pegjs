@@ -2,64 +2,85 @@ start = statement+
 
 statement
   = newField 
+  / filter
 
 newField
-  = "New Field" _ name:[A-z0-9 ]+ "," _ exp:expression LineEnd { return new Fql.NewField(name.join(""), exp); }
+  = "New Field" _ name:[A-z0-9 ]+ "," _ exp:expression _ LineEnd { return new Ubret.Fql.NewField(name.join(""), exp); }
+
+filter
+  = "New Filter" _ pred:expression _ LineEnd { return new Ubret.Fql.Filter(pred); }
 
 expression
-  = rightOperator
+  = predicate
+  / rightOperator
   / leftOperator
   / unary
+
+predicate
+  = left:rightOperator _ comp:comparison _ right:predicate { return new comp(left, right); }
+  / rightOperator
+
+comparison
+  = "=" { return Ubret.Fql.Equality; }
+  / "is" { return Ubret.Fql.Equality; }
+  / "==" { return Ubret.Fql.Equality; }
+  / "!=" { return Ubret.Fql.NotEquality; }
+  / ">" { return Ubret.Fql.GreaterThan; }
+  / "<" { return Ubret.Fql.LessThan; }
+  / ">=" { return Ubret.Fql.GreaterThanOrEqual; }
+  / "<=" { return Ubret.Fql.LessThanOrEqual; }
 
 rightOperator = additive / subtractive
 
 additive
-  = left:leftOperator _ "+" _ right:rightOperator { return new Fql.Add(left, right) }
+  = left:leftOperator _ "+" _ right:rightOperator { return new Ubret.Fql.Add(left, right) }
   / leftOperator
 
 subtractive
-  = left:leftOperator _ "-" _ right:rightOperator { return new Fql.Subtract(left, right) }
+  = left:leftOperator _ "-" _ right:rightOperator { return new Ubret.Fql.Subtract(left, right) }
   / leftOperator
 
 leftOperator = multiplicative / divisive
 
 multiplicative
-  = left:unary _ "*" _ right:leftOperator { return new Fql.Multiply(left, right) }
+  = left:unary _ "*" _ right:leftOperator { return new Ubret.Fql.Multiply(left, right) }
   / unary
 
 divisive
-  = left:unary _ "*" _ right:leftOperator { return new Fql.Divide(left, right) }
+  = left:unary _ "/" _ right:leftOperator { return new Ubret.Fql.Divide(left, right) }
   / unary
 
 unary = log / pow / negate / reciprocate
 
 log
-  = "log" _ exp:primary "," base:number { return new Fql.Log(exp, base) }
+  = "log" _ exp:primary "," base:number { return new Ubret.Fql.Log(exp, base) }
   / primary
 
 pow
-  = exp:primary _ "^" _ base:number { return new Fql.Pow(exp, base) }
+  = exp:primary _ "^" _ base:number { return new Ubret.Fql.Pow(exp, base) }
   / primary
 
 negate
-  = "-" exp:primary { return new Fql.Negate(exp) }
+  = "-" exp:primary { return new Ubret.Fql.Negate(exp) }
   / primary
 
 reciprocate
-  = "recip" _ exp:primary { return new Fql.Reciprocal(exp) }
+  = "recip" _ exp:primary { return new Ubret.Fql.Reciprocal(exp) }
   / primary
 
 primary
   = "(" exp:expression ")" { return exp }
   / value
 
-value = number / field
+value 
+  = field
+  / number 
 
 number 
-  = digits:[0-9.]+ { return new Fql.Number(parseFloat(digits.join(""))) }
+  = digits:[0-9.]+ { return new Ubret.Fql.Number(parseFloat(digits.join(""))) }
 
 field
-  = "." letters:[A-z0-9_]+ {return new Fql.Field(letters.join("")) }
+  = "." letters:[A-z0-9_]+ {return new Ubret.Fql.Field(letters.join("")) }
 
 _ = [ ]?
 

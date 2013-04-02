@@ -74,5 +74,6 @@ task 'build:toolsets', 'Concat Toolset for production', ->
         console.log error if error)
 
 task 'build:grammar', "Build FQL grammar using pegjs", ->
-  exec('./node_modules/.bin/pegjs -e "window.Ubret.Fql.Parser" fql_grammar.pegjs lib/ubret/fql_grammar.js')
+  exec('./node_modules/.bin/pegjs -e "window.Ubret.Fql.Parser" fql_grammar.pegjs lib/ubret/fql_grammar.js', (err, stdout, stderr) ->
+    console.log err if err)
   invoke 'copy'

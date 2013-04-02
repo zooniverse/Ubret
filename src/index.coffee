@@ -27,7 +27,7 @@ Ubret.Dependencies =
     source: "lib/ubret/events.js"
   "BaseTool": 
     source: "lib/ubret/base_tool.js"
-    deps: ["Events", "underscore", "d3.units"]
+    deps: ["Events", "underscore", "d3.units", "Fql-Grammar"]
   "Fql":
     source: "lib/ubret/fql.js"
   "Fql-Grammar":

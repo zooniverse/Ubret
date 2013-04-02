@@ -4,7 +4,7 @@ class BaseTool
   constructor: (options) ->
     _.extend @, Ubret.Events
 
-    @opts = {events: {}, selectedIds: [], data: []}
+    @opts = {events: {}, selectedIds: [], data: [], filters: [], fields: []}
     @unitsFormatter = d3.units 'astro'
     @bindEvents @events
     
@@ -56,10 +56,20 @@ class BaseTool
 
   filters: (filters=[], triggerEvent=true) =>
     if _.isArray filters
-      @opts.filters = filters
+      @opts.filters.concat filters
     else
       @opts.filters.push filters
     @trigger 'add-filters', filters if triggerEvent
+    @trigger 'data' if triggerEvent
+    @
+
+  fields: (fields=[], triggerEvent=true) =>
+    if _.isArray fields 
+      @opts.fields.concat fields 
+    else
+      @opts.fields.push fields
+    @trigger 'add-fields', files if triggerEvent
+    @trigger 'data' if triggerEvent
     @
 
   settings: (settings, triggerEvent=true) =>
@@ -100,6 +110,25 @@ class BaseTool
       @opts.parentTool.unbind()
       delete @opts.parentTool
     @
+
+  preparedData: =>
+    data = @addFields(@filter(@opts.data)).value()
+    console.log data.length
+    data
+
+  filter: (data) =>
+    data = _(data).chain()
+    for filter in @opts.filters
+      data = data.filter(filter)
+    data
+
+  addFields: (data) =>
+    data = _(data).chain()
+    for field in @opts.fields
+      data = data.map((i) ->
+        i[field.name] = field.func(i)
+        i)
+    data
 
   childData: ->
     @opts.data

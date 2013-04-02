@@ -6,14 +6,14 @@ Ubret.Paginated =
   page: (number) ->
     startIndex = number * _.result(@, 'perPage')
     endIndex = (number + 1) * _.result(@, 'perPage')
-    sortedData = @pageSort(@opts.data)
+    sortedData = @pageSort(@preparedData())
     sortedData.slice(startIndex, endIndex)
 
   pages: ->
-    Math.ceil(@pageSort(@opts.data).length / _.result(@, 'perPage'))
+    Math.ceil(@pageSort(@preparedData()).length / _.result(@, 'perPage'))
 
   currentPage: (page) ->
-    if _.isEmpty(@opts.data)
+    if _.isEmpty(@preparedData())
       @opts.currentPage = page
     else if page < 0
       @opts.currentPage = @pages() - 1

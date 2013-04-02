@@ -6,33 +6,28 @@ class Table extends Ubret.BaseTool
     super 
 
   events:
-    'next' : 'nextPage drawRows drawPages' 
-    'prev' : 'prevPage drawRows drawPages' 
+    'next' : 'nextPage drawTable'
+    'prev' : 'prevPage drawTable'
     'setting:sortColumn' : 'sort'
     'setting:sortOrder': 'sort'
     'selection' : 'drawRows'
-    'height' : 'drawRows drawPages'
+    'height' : 'drawTable'
+    'keys' : 'drawHeader'
+    'data' : 'drawTable'
 
   selector: ->
     super
     @table = @d3el.append('table')
     @
 
-  keys: ->
-    super
-    return @ unless @d3el
-    @drawHeader()
-    @
-
-  data: ->
-    super
+  drawTable: ->
     return @ unless @d3el
     @drawRows()
     @drawPages()
     @
 
   sort: ->
-    return if _.isEmpty(@opts.data) or not @table
+    return if _.isEmpty(@preparedData()) or not @table
     @drawHeader()
     @drawRows()
 
@@ -68,7 +63,7 @@ class Table extends Ubret.BaseTool
         .text((d) -> return d)
 
   drawPages: ->
-    return if _.isEmpty @opts.data
+    return if _.isEmpty @preparedData()
     @p.remove() if @p
     @p = @d3el
       .append('p')
