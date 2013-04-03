@@ -37,7 +37,7 @@ class BaseTool
 
   data: (data=[], triggerEvent=true) =>
     @opts.data = _(data).sortBy (d) -> d.uid
-    @keys @dataKeys(@opts.data[0])
+    @keys @_dataKeys(@opts.data[0])
     @trigger 'data', @childData() if triggerEvent and (not _.isEmpty @opts.data)
     @
 
@@ -56,20 +56,20 @@ class BaseTool
 
   filters: (filters=[], triggerEvent=true) =>
     if _.isArray filters
-      @opts.filters.concat filters
+      @opts.filters = @opts.filters.concat filters
     else
       @opts.filters.push filters
     @trigger 'add-filters', filters if triggerEvent
-    @trigger 'data' if triggerEvent
+    @trigger 'data' if triggerEvent and not _.isEmpty(@opts.data)
     @
 
   fields: (fields=[], triggerEvent=true) =>
     if _.isArray fields 
-      @opts.fields.concat fields 
+      @opts.fields = @opts.fields.concat fields 
     else
       @opts.fields.push fields
-    @trigger 'add-fields', files if triggerEvent
-    @trigger 'data' if triggerEvent
+    @trigger 'add-fields', fields if triggerEvent
+    @trigger 'data' if triggerEvent and not _.isEmpty(@opts.data)
     @
 
   settings: (settings, triggerEvent=true) =>
@@ -111,36 +111,40 @@ class BaseTool
       delete @opts.parentTool
     @
 
-  preparedData: =>
-    data = @addFields(@filter(@opts.data)).value()
-    console.log data.length
-    data
-
-  filter: (data) =>
-    data = _(data).chain()
-    for filter in @opts.filters
-      data = data.filter(filter)
-    data
-
-  addFields: (data) =>
-    data = _(data).chain()
-    for field in @opts.fields
-      data = data.map((i) ->
-        i[field.name] = field.func(i)
-        i)
-    data
-
   childData: ->
-    @opts.data
+    @preparedData()
 
-  # Helpers
+  preparedData: =>
+    data = @_mAddFields(@_mFilter(@opts.data, @opts.filters), @opts.fields).value()
+    @keys @_dataKeys(data[0])
+    data
+
   formatKey: (key) ->
     (key.replace(/_/g, " ")).replace /(\b[a-z])/g, (char) ->
       char.toUpperCase()
 
-  dataKeys: (datum) =>
+  # Private
+  @_memoizeHash: -> 
+    btoa(JSON.stringify(arguments))
+
+  @_filter: (data, filters) ->
+    data = _.chain(data)
+    for filter in filters
+      data = data.filter(filter)
+    data
+
+  @_addFields: (data, fields) ->
+    for field in fields
+      data = data.map (i) ->
+        i[field.field] = field.func(i); i
+    data
+
+  _dataKeys: (datum) =>
     keys = new Array
     keys.push key for key, value of datum when not(key in @nonDisplayKeys)
     keys
+
+  _mFilter: _.memoize @_filter, @_memoizeHash
+  _mAddFields: _.memoize @_addFields, @_memoizeHash
 
 window.Ubret.BaseTool = BaseTool

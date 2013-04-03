@@ -40,7 +40,7 @@ class Spectra extends Ubret.Graph
     d3.extent @spectra.flux
 
   drawGraph: =>
-    return if _.isEmpty(@opts.data) or _.isUndefined(@svg)
+    return if _.isEmpty(@preparedData()) or _.isUndefined(@svg)
     [subject] = @currentPageData()
     @loadSpectra(subject).then (specData) =>
       {@spectra, @lines} = specData

@@ -12,7 +12,7 @@ class SubjectViewer extends Ubret.BaseTool
     'selection' : 'render'
 
   render: =>
-    return if @d3el? and _.isEmpty(@opts.data)
+    return if @d3el? and _.isEmpty(@preparedData())
     @d3el.selectAll('div.subject').remove()
 
     subjectData = @currentPageData()

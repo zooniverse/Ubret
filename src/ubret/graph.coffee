@@ -41,11 +41,11 @@ class Graph extends Ubret.BaseTool
 
   xDomain: =>
     return unless @opts.axis1?
-    d3.extent _(@opts.data).pluck(@opts.axis1)
+    d3.extent _(@preparedData()).pluck(@opts.axis1)
 
   yDomain: =>
     return unless @opts.axis2?
-    d3.extent _(@opts.data).pluck(@opts.axis2)
+    d3.extent _(@preparedData()).pluck(@opts.axis2)
 
   x: =>
     domain = @xDomain()
@@ -62,7 +62,7 @@ class Graph extends Ubret.BaseTool
       .domain(domain)
 
   drawAxis1: =>
-    return unless @opts.axis1? and not (_.isEmpty @opts.data)
+    return unless @opts.axis1? and not (_.isEmpty @preparedData())
     xAxis = d3.svg.axis()
       .scale(@x())
       .orient('bottom')
@@ -81,7 +81,7 @@ class Graph extends Ubret.BaseTool
       .text(@unitsFormatter(@formatKey(@opts.axis1)))
    
   drawAxis2: =>
-    return unless @opts.axis2? and not (_.isEmpty @opts.data)
+    return unless @opts.axis2? and not (_.isEmpty @preparedData())
     yAxis = d3.svg.axis()
       .scale(@y())
       .orient('left')

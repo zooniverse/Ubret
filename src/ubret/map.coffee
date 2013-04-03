@@ -116,6 +116,6 @@ class Mapper extends Ubret.BaseTool
     return unless @map?
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
-    @plotObject subject for subject in @opts.data
+    @plotObject subject for subject in @preparedData()
 
 window.Ubret.Mapper = Mapper

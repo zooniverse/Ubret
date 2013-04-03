@@ -6,12 +6,12 @@ class Histogram extends Ubret.Graph
     @opts.axis2  = 'Count'
 
   graphData: =>
-    return if _.isEmpty(@opts.data) or !@opts.axis1
+    return if _.isEmpty(@preparedData()) or !@opts.axis1
     @binFunc = if @opts.bins? 
       d3.layout.histogram().bins(parseInt(@opts.bins)) 
     else 
       d3.layout.histogram()
-    data = _(@opts.data).pluck @opts.axis1
+    data = _(@preparedData()).pluck @opts.axis1
     @binFunc data
 
   yDomain: =>
@@ -60,7 +60,7 @@ class Histogram extends Ubret.Graph
 
   brushend: =>
     x = d3.event.target.extent()
-    top = _.chain(@opts.data)
+    top = _.chain(@preparedData())
       .filter( (d) =>
         (d[@opts.axis1] > x[0]) and (d[@opts.axis1] < x[1]))
       .pluck('uid')

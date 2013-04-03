@@ -6,8 +6,8 @@ class Scatterplot extends Ubret.Graph
     super 
   
   graphData: =>
-    return if _.isEmpty(@opts.data) or !@opts.axis1 or !@opts.axis2
-    _.map(@opts.data, (d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
+    return if _.isEmpty(@preparedData()) or !@opts.axis1 or !@opts.axis2
+    _.map(@preparedData(), (d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
 
   drawData: =>
     data = @graphData()

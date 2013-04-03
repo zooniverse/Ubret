@@ -23,9 +23,9 @@ class Statistics extends Ubret.BaseTool
   statistics: ['mean', 'median', 'mode', 'min', 'max', 'variance', 'standardDeviation', 'skew', 'kurtosis']
 
   displayStats: => 
-    return unless @ul? and @opts.statKey? and !(_.isEmpty(@opts.data))
+    return unless @ul? and @opts.statKey? and !(_.isEmpty(@preparedData()))
 
-    @statData = _.pluck @opts.data, @opts.statKey
+    @statData = _.pluck @preparedData(), @opts.statKey
     @count = @statData.length
     @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
 

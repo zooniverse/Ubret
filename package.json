@@ -16,8 +16,7 @@
   "gitHead": "54bc83544cee8d22d4c832c9666793b2e6903451",
   "dependencies": {
     "coffee-script": "1.4.0",
-    "uglify-js": "2.2.5",
-    "pegjs" : "0.7.0"
+    "uglify-js": "2.2.5"
   },
   "devDependencies": {
     "node-static": "git://github.com/edpaget/node-static#890ea6756d52038d42b6e8290ca8cf755f24054c"
