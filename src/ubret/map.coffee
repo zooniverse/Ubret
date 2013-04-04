@@ -42,7 +42,6 @@ class Mapper extends Ubret.BaseTool
 
   createMap: ->
     return unless @opts.width? and @opts.height?
-
     @el.style.height = @opts.height + "px"
     @el.style.width = @opts.width + "px"
 
@@ -51,16 +50,8 @@ class Mapper extends Ubret.BaseTool
     else
       @map = L.map(@el, @mapOptions)
       @map._onResize() # I Should not have to do this Leaflet issue #694
-
-      @map.on 'zoomend', (e) =>
-        @settings
-          zoom: @map.getZoom()
-
-      @map.on 'moveend', (e) =>
-        {lat, lng} = @map.getCenter()
-        @settings
-          center_lat: lat
-          center_lng: lng
+      @map.on 'zoomend', @mapZoom
+      @map.on 'moveend', @mapMove
 
   createSky: ->
     return unless @map?
@@ -117,5 +108,15 @@ class Mapper extends Ubret.BaseTool
     @map.removeLayer(marker) for marker in @circles
     @circles = new Array
     @plotObject subject for subject in @preparedData()
+
+  mapZoom: (e) =>
+    @settings 
+      zoom: @map.getZoom()
+
+  mapMove: (e) =>
+   {lat, lng} = @map.getCenter()
+   @settings
+     center_lat: lat
+     center_lng: lng
 
 window.Ubret.Mapper = Mapper

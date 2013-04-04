@@ -71,7 +71,9 @@ Ubret.Dependencies =
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'
   script.onload = cb
-  script.src = "#{Ubret.BaseUrl}#{source}?t=#{new Date().getTime()}"
+  src = "#{Ubret.BaseUrl}#{source}"
+  src = src + "?t=#{new Date().getTime()}" if parseInt(location.port) isnt 80
+  script.src = src
   document.getElementsByTagName('head')[0].appendChild script
 
 Ubret.Loader = (tools, cb) ->
