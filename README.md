@@ -81,7 +81,10 @@ Sets `@opts.keys` with the kinds of keys that be displayed in the tools. Trigger
 If ids is an Array, sets `@opts.selectedIds` to the value of ids. Otherwise it appends ids to the end of `@opts.selectedIds`. Triggers `'selection'` event. 
 
 #### @filters(filters=[], triggerEvent=true)
-If filters is an Array, sets `@opts.filters` to the value of filters. Otherwise it appends filters to the end of `@opts.filters`. Triggers the `'add-filters'` event. 
+Appends filters, a predicate function that can be passed to Underscore's `_.filter` function, to the end of `@opts.filters`. Triggers a `'data'` event with `@preparedData()` if data has been passed to the tool. Triggers the `'add-filters'` event. 
+
+#### @fields(fields=[], triggerEvent=true)
+Appends fields, an object containing a field name and a function that returns the value of the new field, to the end of `@opts.fields`. Triggers a `'data'` event with `@preparedData()` if data has been passed to the tool. Triggers the `'add-fields'` event. 
 
 #### @settings(settings, triggerEvent=true)
 Accepts settings as an object. For each key/value pair in settings, it tests whether `@[setting_key]` is a function and calls it with the value of the pair if that is the case. Otherwise sets `@opts[setting_key] = setting_value`. In both cases it triggers as a `'setting:key_name'` event for each key/value pair, and a `'settings'` event when it has finished with all settings. 
@@ -89,12 +92,14 @@ Accepts settings as an object. For each key/value pair in settings, it tests whe
 #### @parentTool(tool=null, triggerEvent=true)
 Removes any current parent tool if one exists, and unbinds the parentTool's events. Sets `@opts.parentTool` to the new parentTool, and sets up event listeners on the parent tool. Triggers the `'bound-to'` event. 
 
+#### @preparedData()
+Returns the tool's data with all fields and new fiels applied to it. It is memoized, so subsequent calls, when the data, filters and fields haven't changed, do not result in recalculation. You should always use a call to this function instead of using `@opts.data` (unless you've got a good reason not to). 
+
 #### @removeParentTool
 Remove the current parentTool and unbinds its event events, if a parent tool exists. 
 
 #### @childData
-Returns `@opts.data`. Override in a tool to only provide a subset of a tool's data to child tools. 
-
+Returns `@preparedData()`. Override in a tool to only provide a subset of a tool's data to child tools. 
 
 ### Ubret.Events
 A very small probably incorrect API for handling events in tools. 

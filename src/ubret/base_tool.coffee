@@ -60,7 +60,7 @@ class BaseTool
     else
       @opts.filters.push filters
     @trigger 'add-filters', filters if triggerEvent
-    @trigger 'data' if triggerEvent and not _.isEmpty(@opts.data)
+    @trigger 'data', @preparedData() if triggerEvent and not _.isEmpty(@opts.data)
     @
 
   fields: (fields=[], triggerEvent=true) =>
@@ -69,7 +69,7 @@ class BaseTool
     else
       @opts.fields.push fields
     @trigger 'add-fields', fields if triggerEvent
-    @trigger 'data' if triggerEvent and not _.isEmpty(@opts.data)
+    @trigger 'data', @preparedData() if triggerEvent and not _.isEmpty(@opts.data)
     @
 
   settings: (settings, triggerEvent=true) =>
