@@ -174,17 +174,18 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
     
   setBand: (band) =>
+    console.log 'setBand', band
     if band is 'gri'
       @wfits.drawColor('i', 'r', 'g')
     else
       # Compute the min/max of the image set
       unless @collection.hasExtent
-        @collection.hasExtent = true
         mins = @collection.map( (l) -> return l.get('minimum'))
         maxs = @collection.map( (l) -> return l.get('maximum'))
         globalMin = Math.min.apply(Math, mins)
         globalMax = Math.max.apply(Math, maxs)
         @wfits.setExtent(globalMin, globalMax)
+        @collection.hasExtent = true
       
       @wfits.setImage(band)
       @wfits.setStretch(@stretch)
