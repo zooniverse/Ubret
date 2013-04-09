@@ -91,7 +91,6 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Request FITS files for each channel
   requestChannels: =>
-    console.log 'requestChannels'
     
     subject = @opts.data[0]
     prefix  = subject.metadata.id
@@ -114,11 +113,8 @@ class SpacewarpViewer extends Ubret.BaseTool
             # Compute extent
             [min, max] = dataunit.getExtent(arr)
 
-            # Compute scale
-            scale = @computeScale(header)
-
             # Initialize a model and push to collection
-            layer = new Layer({band: band, fits: fits, scale: scale, minimum: min, maximum: max})
+            layer = new Layer({band: band, fits: fits, minimum: min, maximum: max})
             @collection.add(layer)
 
             # Load texture
@@ -142,30 +138,21 @@ class SpacewarpViewer extends Ubret.BaseTool
     @computeNormalizedScales()
     scales = @collection.getColorScales()
     
+    @wfits.setCalibrations(1, 1, 1)
+    @wfits.setScales.apply(@wfits, @defaultScales)
     @wfits.setAlpha(@defaultAlpha)
     @wfits.setQ(@defaultQ)
-    @wfits.setScales.apply(@wfits, @defaultScales)
+    
+    # Default to color composite
+    @wfits.drawColor('i', 'r', 'g')
+    
+    # Enable mouse controls
     @wfits.setupControls()
+    
     @trigger 'swviewer:loaded'
   
   start: =>
     console.log 'start'
-  
-  log10: (x) ->
-    return Math.log(x) / Math.log(10)
-    
-  # Automatically determine the scale for a given image
-  # TODO: Generalize for telescopes other than CFHTLS
-  computeScale: (header) =>
-    # Get the zero point and exposure time
-    zpoint = header.get('MZP_AB') or header.get('PHOT_C')
-    exptime = header.get('EXPTIME')
-    
-    # Get the filter and wavelength
-    filter = header.get('FILTER')
-    wavelength = @wavelengths[filter]
-    
-    return Math.pow(10, zpoint + 2.5 * @log10(wavelength) - 26.0)
 
   # Normalize scales for color bands
   computeNormalizedScales: =>
