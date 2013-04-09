@@ -135,7 +135,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     console.log 'allChannelsReceived'
     @dfs = undefined
     
-    @computeNormalizedScales()
     scales = @collection.getColorScales()
     
     @wfits.setCalibrations(1, 1, 1)
@@ -154,27 +153,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   start: =>
     console.log 'start'
 
-  # Normalize scales for color bands
-  computeNormalizedScales: =>
-    colors = @collection.getColorLayers()
-    
-    sum = colors.reduce( (memo, value) ->
-      return memo + value.get('scale')
-    , 0)
-    avg = sum / 3
-    
-    _.each(colors, (d) =>
-      band = d.get('band')
-      
-      # Compute and set normalized scale
-      nscale = d.get('scale') / avg or 1
-      d.set('nscale', nscale)
-      
-      @trigger 'fits:scale', band, nscale
-    )
-    
   setBand: (band) =>
-    console.log 'setBand', band
     if band is 'gri'
       @wfits.drawColor('i', 'r', 'g')
     else
@@ -182,9 +161,9 @@ class SpacewarpViewer extends Ubret.BaseTool
       unless @collection.hasExtent
         mins = @collection.map( (l) -> return l.get('minimum'))
         maxs = @collection.map( (l) -> return l.get('maximum'))
-        globalMin = Math.min.apply(Math, mins)
-        globalMax = Math.max.apply(Math, maxs)
-        @wfits.setExtent(globalMin, globalMax)
+        @min = Math.min.apply(Math, mins)
+        @max = Math.max.apply(Math, maxs)
+        @wfits.setExtent(@min, @max)
         @collection.hasExtent = true
       
       @wfits.setImage(band)
@@ -205,6 +184,14 @@ class SpacewarpViewer extends Ubret.BaseTool
   updateStretch: (value) =>
     @stretch = value
     @wfits.setStretch(value)
+
+  getExtent: (value) ->
+    return (@max - @min) * value / 1000
+
+  updateExtent: (min, max) =>
+    min = @getExtent(min)
+    max = @getExtent(max)
+    @wfits.setExtent(min, max)
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
