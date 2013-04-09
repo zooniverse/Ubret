@@ -34,7 +34,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   name: 'SpacewarpViewer'
   dimension: 440
   bands:  ['u', 'g', 'r', 'i', 'z']
-  source: 'http://www.spacewarps.org.s3.amazonaws.com/beta/subjects/raw/'
+  source: 'http://spacewarps.org.s3.amazonaws.com/subjects/raw/'
   
   # Look up table for filter to wavelength conversion (CFHTLS specific)
   # CFHT MegaCam (from http://www.cfht.hawaii.edu/Instruments/Imaging/Megacam/specsinformation.html)
@@ -46,9 +46,10 @@ class SpacewarpViewer extends Ubret.BaseTool
     'i.MP9702': 7700
     'z.MP9801': 9000
   
-  # Default parameter values
-  defaultAlpha: 0.03
+  # Default parameters
+  defaultAlpha: 0.09
   defaultQ: 1
+  defaultScales: [0.4, 0.6, 1.7]
   
   
   constructor: (selector) ->
@@ -128,8 +129,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Initialize a WebFITS object
   initWebFITS: =>
-    el = document.querySelector(@selector)
-    @wfits = new astro.WebFITS(el, @dimension)
+    @wfits = new astro.WebFITS(@el, @dimension)
 
     unless @wfits.ctx?
       alert 'Something went wrong initializing the context'
@@ -144,7 +144,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     @wfits.setAlpha(@defaultAlpha)
     @wfits.setQ(@defaultQ)
-    @wfits.setScales.apply(@wfits, scales)
+    @wfits.setScales.apply(@wfits, @defaultScales)
     @wfits.setupControls()
     @trigger 'swviewer:loaded'
   
