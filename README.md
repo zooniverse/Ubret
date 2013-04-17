@@ -9,7 +9,7 @@ To watch files for changes and build:
 
     cake watch
 
-To build and server built files: 
+To build and serve built files: 
 
     cake -s watch
 
@@ -30,7 +30,7 @@ To load tools you'll just need to pass an array of tool names, and a callback to
 
     Ubret.ToolLoader(["Table", "Histogram"], -> console.log 'Tools are loaded")
 
-Because that loaded method is super slow there are three provided minified tool sets that can also be loaded. 
+Because that loading method is super slow there are three provided minified tool sets that can also be loaded. 
 
     Ubret.ToolsetLoader("galaxy_zoo", -> console.log 'Tools are loaded')
 
