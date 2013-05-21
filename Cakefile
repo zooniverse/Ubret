@@ -68,6 +68,7 @@ task 'build:toolsets', 'Concat Toolset for production', ->
   for name, set of Toolsets
     deps = Ubret.DependencyResolver(set).reverse()
       .map((dep) -> Ubret.Dependencies[dep].source)
+      .filter((dep) -> dep isnt "vendor/backbone.js")
     setFile = new String
     exec("uglifyjs #{deps.join(' ')} --output build/sets/#{name}.js",
       (error, stdout, stderr) ->
