@@ -33,7 +33,13 @@ class SubjectViewer extends Ubret.BaseTool
         .attr('class', 'heading')
         .html('<label>Key</label> <span>Value</span>')
 
-    subject.insert('img', ":first-child")
+    if _.isArray(subjectData[0].image)
+      subject.insert('div.images', ":first-child")
+        .selectAll('div.images')
+        .data(subjectData[0].image).enter()
+          .append('img').attr('src', (d) -> d)
+    else
+      subject.insert('img', ":first-child")
         .attr('src', subjectData[0].image)
 
   toArray: (data) =>

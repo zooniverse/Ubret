@@ -67,6 +67,9 @@ Ubret.Dependencies =
   "SpacewarpViewer":
     source: "lib/ubret/spacewarp_viewer/initialize.js"
     deps: ["Backbone", "fits", "BaseTool"]
+  "ImageGallery":
+    source: "lib/ubret/image_gallery.js"
+    deps: ["Sequential", "BaseTool"]
 
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'
