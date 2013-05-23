@@ -30,14 +30,15 @@ class ImageGallery extends Ubret.BaseTool
       .enter().append('img')
         .attr('src', (d) -> d[1]).attr('data-uid', (d) -> d[0])
         .attr('class', (d) =>
-          if @firstSelected().uid is d[0]
+          if @firstSelected()?.uid is d[0]
             'selected'
           else
             '')
         .on('click', (d, i) => @selectIds([d[0]]))
     
     @d3el.append('div').attr('class', 'selection')
-      .append('img').attr('src', @firstSelected().image)
+      .append('img').attr('src', @firstSelected()?.image)
+    console.log 'here'
 
   firstSelected: =>
     _.filter(@preparedData(), (d) => 

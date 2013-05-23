@@ -1,6 +1,7 @@
 fs = require 'fs'
 {spawn, exec} = require 'child_process' 
 {print} = require 'util'
+Ubret = require './lib/index'
 
 Toolsets =   
   galaxy_zoo: [ "Spectra", 
@@ -12,6 +13,9 @@ Toolsets =
                 "Histogram"]
               
   spacewarp: [ "SpacewarpViewer" ]
+
+  serengeti: [ "Table", "Statistics", "Mapper", 
+    "SubjectViewer", "Histogram", "ImageGallery"]
   
   navigator: ["Histogram", "Scatterplot"]
 
@@ -63,8 +67,6 @@ task 'copy', 'Copy lib and vendor to build', (options) =>
       callback?() if code is 0
 
 task 'build:toolsets', 'Concat Toolset for production', ->
-  Ubret = require './lib/index'
-
   for name, set of Toolsets
     deps = Ubret.DependencyResolver(set).reverse()
       .map((dep) -> Ubret.Dependencies[dep].source)
