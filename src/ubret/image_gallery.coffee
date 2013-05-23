@@ -21,11 +21,12 @@ class ImageGallery extends Ubret.BaseTool
 
   render: =>
     return if @d3el? and _.isEmpty(@preparedData())
-    @d3el.selectAll('div.images').remove()
-    @d3el.selectAll('div.selection').remove()
+    @d3el.selectAll('div.images img').remove()
+    @d3el.selectAll('div.selection img').remove()
 
-    @images = @d3el.append('div').attr('class', 'images')
-      .selectAll('img')
+    @images = @images or @d3el.append('div').attr('class', 'images')
+
+    @images.selectAll('img')
       .data(@toArray(@currentPageData()))
       .enter().append('img')
         .attr('src', (d) -> d[1]).attr('data-uid', (d) -> d[0])
@@ -36,15 +37,19 @@ class ImageGallery extends Ubret.BaseTool
             '')
         .on('click', (d, i) => @selectIds([d[0]]))
     
-    @d3el.append('div').attr('class', 'selection')
-      .append('img').attr('src', @firstSelected()?.image)
-    console.log 'here'
+    @selection = @selection or @d3el.append('div').attr('class', 'selection')
+
+    if _.isArray(@firstSelected()?.image)
+      @multiViewer = @multiViewer?.newImages(@firstSelected()?.image) or 
+        new Ubret.MultiImageView(@selection[0][0], @firstSelected()?.image)
+    else
+      @selection.append('img').attr('src', @firstSelected()?.image)
 
   firstSelected: =>
     _.filter(@preparedData(), (d) => 
       d.uid in @opts.selectedIds)[0]
 
   toArray: (data) =>
-    _.map data, (d) -> [d.uid, d.image]
+    _.map data, (d) -> [d.uid, d.thumb]
 
 window.Ubret.ImageGallery = ImageGallery

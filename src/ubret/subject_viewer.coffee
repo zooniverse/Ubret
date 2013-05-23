@@ -34,12 +34,11 @@ class SubjectViewer extends Ubret.BaseTool
         .html('<label>Key</label> <span>Value</span>')
 
     if _.isArray(subjectData[0].image)
-      subject.insert('div.images', ":first-child")
-        .selectAll('div.images')
-        .data(subjectData[0].image).enter()
-          .append('img').attr('src', (d) -> d)
+      images = subject.insert('div.images', ":first-child")
+      new Ubret.MultiImageView(images[0][0], subjectData[0].image)
     else
       subject.insert('img', ":first-child")
+        .attr('class', 'image')
         .attr('src', subjectData[0].image)
 
   toArray: (data) =>

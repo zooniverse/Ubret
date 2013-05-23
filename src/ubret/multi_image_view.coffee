@@ -1,6 +1,14 @@
 class MultiImageView
 
-  constructor: (@el, @imageSrcs, @onReady) ->
+  # @el should either be a query string or a document element
+  constructor: (@el, @imageSrcs, @height, @width) ->
+    @index = 0
+    if typeof @el is 'string'
+      @el = document.querySelector(@el)[0]
+    @preloadImages()
+
+  newImages: (imageSrcs) =>
+    @imageSrcs = imageSrcs
     @preloadImages()
 
   preloadImages: =>
@@ -10,7 +18,7 @@ class MultiImageView
     inc = => 
       loadedImages += 1
       if (loadedImages is @imageSrcs.length)
-        @onReady()
+        @render()
 
     for src in @imageSrcs
       img = new Image
@@ -18,9 +26,36 @@ class MultiImageView
       img.onload = inc
       @images.push img
 
-  render: =>
-    d3.select(@el).
-      .append('img').attr('src')
+  drawImage: => 
+    @ctx = @ctx or @canvas.getContext('2d')
+    @ctx.drawImage(@images[@index], 0, 0) 
 
+  play: =>
+    @animateImages = true
+    @animate()
+
+  stop: =>
+    @animateImages = false
+
+  animate: =>
+    return unless @animateImages
+    @index += 1
+    @index = 0 if @index >= @images.length
+    @drawImage()
+    setTimeout(@animate, 750)
+
+  createCanvas: =>
+    canvas = document.createElement('canvas')
+    canvas.setAttribute('class', 'image')
+    canvas.setAttribute('height', @height or @images[0].height)
+    canvas.setAttribute('width', @height or @images[0].width)
+    @el.appendChild canvas
+    canvas.addEventListener('mouseover', @play, true)
+    canvas.addEventListener('mouseout', @stop, true)
+    canvas
+
+  render: =>
+    @canvas = @canvas or @createCanvas()
+    @drawImage()
 
 window.Ubret.MultiImageView = MultiImageView

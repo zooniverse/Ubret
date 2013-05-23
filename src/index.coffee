@@ -51,7 +51,7 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "SubjectViewer" :
     source: "lib/ubret/subject_viewer.js"
-    deps: ["BaseTool", "Sequential"]
+    deps: ["MultiImageView", "BaseTool", "Sequential"]
   "Mapper" :
     source: "lib/ubret/map.js"
     deps: ["BaseTool", "Leaflet"]
@@ -69,7 +69,9 @@ Ubret.Dependencies =
     deps: ["Backbone", "fits", "BaseTool"]
   "ImageGallery":
     source: "lib/ubret/image_gallery.js"
-    deps: ["Sequential", "BaseTool"]
+    deps: ["MultiImageView", "Sequential", "BaseTool"]
+  "MultiImageView":
+    source: "lib/ubret/multi_image_view.js"
 
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'
