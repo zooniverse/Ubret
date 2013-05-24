@@ -28,7 +28,6 @@ class BarGraph extends Ubret.Graph
   drawData: =>
     data = @graphData()
     return if _.isUndefined(data)
-    console.log data
     @svg.selectAll('g.bar').remove()
     @svg.selectAll('g.label').remove()
 
@@ -54,7 +53,11 @@ class BarGraph extends Ubret.Graph
 
     labels.selectAll('text')
       .attr('x', (d) => @x()(d[2] + .5))
-      .attr('y', @graphHeight() + 20)
+      .attr('y', (d) => 
+        if d[2] % 2 is 0
+          @graphHeight() + 27
+        else
+          @graphHeight() + 12)
       .attr('text-anchor', 'middle')
       .text((d) -> d[0])
 
