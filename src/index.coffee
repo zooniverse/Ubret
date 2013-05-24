@@ -72,6 +72,9 @@ Ubret.Dependencies =
     deps: ["MultiImageView", "Sequential", "BaseTool"]
   "MultiImageView":
     source: "lib/ubret/multi_image_view.js"
+  "BarGraph":
+    source: "lib/ubret/bar_graph.js"
+    deps: ["Graph"]
 
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'

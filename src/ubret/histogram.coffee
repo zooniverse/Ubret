@@ -1,8 +1,8 @@
 class Histogram extends Ubret.Graph
   name: 'Histogram'
   
-  constructor: (selector) ->
-    super selector
+  constructor: ->
+    super 
     @opts.axis2  = 'Count'
 
   graphData: =>
@@ -32,12 +32,12 @@ class Histogram extends Ubret.Graph
       .append("rect")
 
     bars.selectAll("rect")
-        .attr('width', @x()(data[1].x) - @x()(data[0].x))
-        .attr('height', (d) => @graphHeight() - @y()(d.y))
-        .attr('x', (d) => @x()(d.x))
-        .attr('y', (d) => @y()(d.y))
-        .attr('fill', @opts.color)
-        .attr('stroke', '#FAFAFA')
+      .attr('width', @x()(data[1].x) - @x()(data[0].x))
+      .attr('height', (d) => @graphHeight() - @y()(d.y))
+      .attr('x', (d) => @x()(d.x))
+      .attr('y', (d) => @y()(d.y))
+      .attr('fill', @opts.color)
+      .attr('stroke', '#FAFAFA')
 
     @drawBrush()
 

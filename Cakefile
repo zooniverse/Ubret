@@ -15,7 +15,7 @@ Toolsets =
   spacewarp: [ "SpacewarpViewer" ]
 
   serengeti: [ "Table", "Statistics", "Mapper", 
-    "SubjectViewer", "Histogram", "ImageGallery"]
+    "SubjectViewer", "BarGraph", "ImageGallery"]
   
   navigator: ["Histogram", "Scatterplot"]
 

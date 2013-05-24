@@ -16,6 +16,8 @@ class Graph extends Ubret.BaseTool
   setupGraph: =>
     return unless @opts.width? and @opts.height?
 
+    console.log "Here in: #{@name}"
+
     unless @svg?
       @svg = @d3el.append('svg')
         .attr('width', @opts.width - 10)
@@ -73,6 +75,9 @@ class Graph extends Ubret.BaseTool
       .attr('transform', "translate(0, #{@graphHeight()})")
       .call(xAxis)
 
+    @labelAxis1(axis)
+
+  labelAxis1: (axis) =>
     axis.append('text')
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
@@ -93,6 +98,9 @@ class Graph extends Ubret.BaseTool
       .attr('transform', "translate(0, 0)")
       .call(yAxis)
 
+    @labelAxis2(axis)
+
+  labelAxis2: (axis) =>
     axis.append('text')
       .attr('class', 'y label')
       .attr('text-anchor', 'middle')
