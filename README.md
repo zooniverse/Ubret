@@ -30,7 +30,7 @@ To load tools you'll just need to pass an array of tool names, and a callback to
 
     Ubret.ToolLoader(["Table", "Histogram"], -> console.log 'Tools are loaded")
 
-Because that loading method is super slow there are three provided minified tool sets that can also be loaded. 
+Because that loading method is super slow there are four provided minified tool sets that can also be loaded. 
 
     Ubret.ToolsetLoader("galaxy_zoo", -> console.log 'Tools are loaded')
 
@@ -39,6 +39,7 @@ The tool sets are
 * `galaxy_zoo` with Table, Histogram, Scatterplot, Spectra, SubjectViewer, Map, and Statistics
 * `navigator` with Histogram and Scatterplot
 * `spacewarp` with SpacewarpViewer
+* `serengeti` with Table, Histogram, SubjectViewer, ImageGallery, Map, and Statistics
 
 ## API Documentation
 
@@ -147,6 +148,12 @@ An implementation of the [Promise/A+ Spec](http://promises-aplus.github.com/prom
 
 #### @then(successCb, failCb)
 Either callback is optional. It returns another promise that will be fulfilled after the then returns. 
+
+### Ubret.MutliImageView
+A class for viewing all the images of multi-image Zooniverse subjects. Create with `new Ubret.MultiImageView(selector or dom node, array of image uris)`. 
+
+#### @newImages(image_sources)
+Updates the images being displayed in the Multi Image View. 
 
 ## Examples
 The Table tool, and the Spectra Tool, should be fairly well documented. 

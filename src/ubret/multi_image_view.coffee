@@ -10,6 +10,7 @@ class MultiImageView
   newImages: (imageSrcs) =>
     @imageSrcs = imageSrcs
     @preloadImages()
+    @
 
   preloadImages: =>
     @images = []

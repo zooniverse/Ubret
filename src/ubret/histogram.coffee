@@ -52,7 +52,7 @@ class Histogram extends Ubret.Graph
       .attr('width', @graphWidth())
       .attr('height', @graphHeight())
       .call(d3.svg.brush().x(@x())
-      .on('brushend', @brushend))
+        .on('brushend', @brushend))
       .selectAll('rect')
       .attr('height', @graphHeight())
       .attr('opacity', 0.5)
