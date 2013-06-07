@@ -91,7 +91,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     lib = if context? then 'gl' else 'canvas'
     url = "javascripts/webfits-#{lib}.js"
     $.getScript(url, =>
-      @initWebFITS()
       @dfs.webfits.resolve()
     )
   
@@ -102,6 +101,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Request FITS files for each channel
   requestChannels: ->
+    @initWebFITS()
     
     # Set various deferred objects to handle asynchronous requests.
     @dfs =
@@ -144,6 +144,8 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Initialize a WebFITS object
   initWebFITS: =>
+    @wfits.teardown() if @wfits?
+    
     @wfits = new astro.WebFITS(@el, @dimension)
 
     unless @wfits.ctx?
