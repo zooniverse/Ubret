@@ -51,8 +51,14 @@ class SpacewarpViewer extends Ubret.BaseTool
   defaultQ: 1
   defaultScales: [0.4, 0.6, 1.7]
   
+  events:
+    'next' : 'nextPage getNextSubject'
+    'prev' : 'prevPage getNextSubject'
+  
   
   constructor: (selector) ->
+    _.extend @, Ubret.Sequential
+    
     super selector
     
     # Set parameters
@@ -89,10 +95,23 @@ class SpacewarpViewer extends Ubret.BaseTool
       @dfs.webfits.resolve()
     )
   
-  # Request FITS files for each channel
-  requestChannels: =>
+  getNextSubject: =>
+    console.log 'getNextSubject'
     
-    subject = @opts.data[0]
+    @requestChannels()
+  
+  # Request FITS files for each channel
+  requestChannels: ->
+    
+    # Set various deferred objects to handle asynchronous requests.
+    @dfs =
+      u: new $.Deferred()
+      g: new $.Deferred()
+      r: new $.Deferred()
+      i: new $.Deferred()
+      z: new $.Deferred()
+    
+    subject = @currentPageData()[0]
     prefix  = subject.metadata.id
     
     # Set callback for when all channels and WebFITS Api received
