@@ -98,8 +98,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
   
   getNextSubject: =>
-    console.log 'getNextSubject'
-    
     @requestChannels()
   
   # Request FITS files for each channel
@@ -132,6 +130,7 @@ class SpacewarpViewer extends Ubret.BaseTool
           
           # Get image data
           dataunit.getFrameAsync(0, (arr) =>
+            
             # Compute extent
             [min, max] = dataunit.getExtent(arr)
 
@@ -147,12 +146,16 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Initialize a WebFITS object
   initWebFITS: =>
-    @wfits.teardown() if @wfits?
+    @wfits?.teardown()
     
     @wfits = new astro.WebFITS(@el, @dimension)
-
+    
     unless @wfits.ctx?
       alert 'Something went wrong initializing the context'
+    
+    # Load offsets if they exists
+    @wfits.xOffset = @opts.xOffset or @wfits.xOffset
+    @wfits.yOffset = @opts.yOffset or @wfits.yOffset
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
@@ -163,16 +166,20 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     @wfits.setCalibrations(1, 1, 1)
     @wfits.setScales.apply(@wfits, @defaultScales)
-    @wfits.setAlpha(@defaultAlpha)
-    @wfits.setQ(@defaultQ)
+    @wfits.setAlpha(@opts.alpha or @defaultAlpha)
+    @wfits.setQ(@opts.q or @defaultQ)
+    
+    # Enable mouse controls
+    @wfits.setupControls({
+      onmousemove: (e) =>
+        @settings({
+          xOffset: @wfits.getXOffset()
+          yOffset: @wfits.getYOffset()
+        })
+    })
     
     # Default to color composite
     @wfits.drawColor('i', 'r', 'g')
-    
-    # Enable mouse controls
-    @wfits.setupControls()
-    
-    @trigger 'swviewer:loaded'
   
   start: =>
     console.log 'start'
@@ -195,10 +202,10 @@ class SpacewarpViewer extends Ubret.BaseTool
       @wfits.setStretch(@stretch)
   
   updateAlpha: =>
-    @wfits.setAlpha(@opts.alpha)
+    @wfits?.setAlpha(@opts.alpha)
     
   updateQ: =>
-    @wfits.setQ(@opts.q)
+    @wfits?.setQ(@opts.q)
     
   updateScale: =>
     band = @opts.scale.band
