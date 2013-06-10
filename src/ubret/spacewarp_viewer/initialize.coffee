@@ -54,7 +54,10 @@ class SpacewarpViewer extends Ubret.BaseTool
   events:
     'next' : 'nextPage getNextSubject'
     'prev' : 'prevPage getNextSubject'
-  
+    'setting:alpha' : 'updateAlpha'
+    'setting:q' : 'updateQ'
+    'setting:scale' : 'updateScale'
+    'setting:extent' : 'updateExtent'
   
   constructor: (selector) ->
     _.extend @, Ubret.Sequential
@@ -174,7 +177,8 @@ class SpacewarpViewer extends Ubret.BaseTool
   start: =>
     console.log 'start'
 
-  setBand: (band) =>
+  setBand: =>
+    band = @opts.band
     if band is 'gri'
       @wfits.drawColor('i', 'r', 'g')
     else
@@ -190,28 +194,31 @@ class SpacewarpViewer extends Ubret.BaseTool
       @wfits.setImage(band)
       @wfits.setStretch(@stretch)
   
-  updateAlpha: (value) =>
-    @wfits.setAlpha(value)
+  updateAlpha: =>
+    @wfits.setAlpha(@opts.alpha)
     
-  updateQ: (value) =>
-    @wfits.setQ(value)
+  updateQ: =>
+    @wfits.setQ(@opts.q)
     
-  updateScale: (band, value) =>
+  updateScale: =>
+    band = @opts.scale.band
+    value = @opts.scale.value
+
     scales = @collection.getColorScales()
     index = if band is 'i' then 0 else if band is 'g' then 1 else 2
     scales[index] = value
     @wfits.setScales.apply(@wfits, scales)
   
-  updateStretch: (value) =>
-    @stretch = value
-    @wfits.setStretch(value)
+  updateStretch: =>
+    @stretch = @opts.stretch
+    @wfits.setStretch(@stretch)
 
   getExtent: (value) ->
     return (@max - @min) * value / 1000
 
-  updateExtent: (min, max) =>
-    min = @getExtent(min)
-    max = @getExtent(max)
+  updateExtent: =>
+    min = @opts.extent.min
+    max = @opts.extent.max
     @wfits.setExtent(min, max)
 
 
