@@ -198,8 +198,8 @@ class SpacewarpViewer extends Ubret.BaseTool
         @wfits.setExtent(@min, @max)
         @collection.hasExtent = true
       
-      @wfits.setImage(band)
-      @wfits.setStretch(@stretch)
+      @wfits?.setImage(band)
+      @wfits?.setStretch(@stretch)
   
   updateAlpha: =>
     @wfits?.setAlpha(@opts.alpha)
@@ -214,11 +214,11 @@ class SpacewarpViewer extends Ubret.BaseTool
     scales = @collection.getColorScales()
     index = if band is 'i' then 0 else if band is 'g' then 1 else 2
     scales[index] = value
-    @wfits.setScales.apply(@wfits, scales)
+    @wfits?.setScales.apply(@wfits, scales)
   
   updateStretch: =>
     @stretch = @opts.stretch
-    @wfits.setStretch(@stretch)
+    @wfits?.setStretch(@stretch)
 
   getExtent: (value) ->
     return (@max - @min) * value / 1000
@@ -226,7 +226,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   updateExtent: =>
     min = @opts.extent.min
     max = @opts.extent.max
-    @wfits.setExtent(min, max)
+    @wfits?.setExtent(min, max)
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
