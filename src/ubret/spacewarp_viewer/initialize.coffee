@@ -181,9 +181,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Default to color composite
     @wfits.drawColor('i', 'r', 'g')
   
-  start: =>
-    console.log 'start'
-
   setBand: =>
     band = @opts.band
     if band is 'gri'
