@@ -178,7 +178,8 @@ class SpacewarpViewer extends Ubret.BaseTool
     scales = @collection.getColorScales()
     
     @wfits.setCalibrations(1, 1, 1)
-    @wfits.setScales.apply(@wfits, @defaultScales)
+    scales = @opts.scales or @defaultScales
+    @wfits.setScales.apply(@wfits, scales)
     @wfits.setAlpha(@opts.alpha or @defaultAlpha)
     @wfits.setQ(@opts.q or @defaultQ)
     
