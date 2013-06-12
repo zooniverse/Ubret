@@ -13,7 +13,7 @@
 
   FITS = {};
 
-  FITS.version = '0.4.0';
+  FITS.version = '0.4.1';
 
   this.astro.FITS = FITS;
 
@@ -576,25 +576,33 @@
     Image.prototype.start = function(callback, context, args) {
       var buffer, chunk, i, lastChunkSize, nChunks, reader,
         _this = this;
-      console.log('start');
+      if (this.blob == null) {
+        context = context != null ? context : this;
+        if (callback != null) {
+          callback.apply(context, [args]);
+        }
+        return;
+      }
       reader = new FileReader();
       i = 1;
       nChunks = Math.floor(this.blob.size / this.chunkSize) - 1;
       lastChunkSize = this.blob.size - this.chunkSize * nChunks;
       buffer = [];
       reader.onloadend = function(e) {
-        var begin, end, _results;
+        var begin, end;
         console.log('onloadend');
         buffer.push(e.target.result);
         console.log(buffer);
-        _results = [];
         while (nChunks--) {
           begin = _this.chunkSize * i;
           end = begin + _this.chunkSize;
           console.log(begin, end);
-          _results.push(i += 1);
+          i += 1;
         }
-        return _results;
+        context = context != null ? context : _this;
+        if (callback != null) {
+          return callback.apply(context, [args]);
+        }
       };
       console.log(0, this.chunkSize);
       chunk = this.blob.slice(0, this.chunkSize);
@@ -965,12 +973,27 @@
     __extends(BinaryTable, _super);
 
     function BinaryTable(header, view, offset) {
-      var tblCols;
+      var reader, tblCols,
+        _this = this;
       BinaryTable.__super__.constructor.apply(this, arguments);
-      this.tableLength = this.length;
-      this.columnNames = {};
-      tblCols = this.getTableColumns(header);
-      this.setAccessors(tblCols, view);
+      if (arguments[1] instanceof Blob) {
+        reader = new FileReader();
+        reader.onloadend = function(e) {
+          var tblCols;
+          _this.offset = _this.begin = 0;
+          _this.view = e.target.result;
+          _this.tableLength = _this.length;
+          _this.columnNames = {};
+          tblCols = _this.getTableColumns(header);
+          return _this.setAccessors(tblCols, view);
+        };
+        reader.readAsArrayBuffer(arguments[1]);
+      } else {
+        this.tableLength = this.length;
+        this.columnNames = {};
+        tblCols = this.getTableColumns(header);
+        this.setAccessors(tblCols, view);
+      }
     }
 
     BinaryTable.prototype.getTableColumns = function(header) {
@@ -1139,44 +1162,37 @@
     RiceSetup: {
       1: function(array) {
         var fsbits, fsmax, lastpix, pointer;
-        pointer = 0;
+        pointer = 1;
         fsbits = 3;
         fsmax = 6;
-        lastpix = array[pointer];
-        pointer += 1;
+        lastpix = array[0];
         return [fsbits, fsmax, lastpix, pointer];
       },
       2: function(array) {
         var bytevalue, fsbits, fsmax, lastpix, pointer;
-        pointer = 0;
+        pointer = 2;
         fsbits = 4;
         fsmax = 14;
         lastpix = 0;
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[0];
         lastpix = lastpix | (bytevalue << 8);
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[1];
         lastpix = lastpix | bytevalue;
         return [fsbits, fsmax, lastpix, pointer];
       },
       4: function(array) {
         var bytevalue, fsbits, fsmax, lastpix, pointer;
-        pointer = 0;
+        pointer = 4;
         fsbits = 5;
         fsmax = 25;
         lastpix = 0;
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[0];
         lastpix = lastpix | (bytevalue << 24);
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[1];
         lastpix = lastpix | (bytevalue << 16);
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[2];
         lastpix = lastpix | (bytevalue << 8);
-        bytevalue = array[pointer];
-        pointer += 1;
+        bytevalue = array[3];
         lastpix = lastpix | bytevalue;
         return [fsbits, fsmax, lastpix, pointer];
       }
@@ -1197,15 +1213,13 @@
         nzero -= 1;
       }
       nonzeroCount[0] = 0;
-      b = array[pointer];
-      pointer += 1;
+      b = array[pointer++];
       nbits = 8;
       i = 0;
       while (i < nx) {
         nbits -= fsbits;
         while (nbits < 0) {
-          b = (b << 8) | array[pointer];
-          pointer += 1;
+          b = (b << 8) | array[pointer++];
           nbits += 8;
         }
         fs = (b >> nbits) - 1;
@@ -1216,8 +1230,8 @@
         }
         if (fs < 0) {
           while (i < imax) {
-            array[i] = lastpix;
-            i++;
+            pixels[i] = lastpix;
+            i += 1;
           }
         } else if (fs === fsmax) {
           while (i < imax) {
@@ -1225,14 +1239,12 @@
             diff = b << k;
             k -= 8;
             while (k >= 0) {
-              b = array[pointer];
-              pointer += 1;
+              b = array[pointer++];
               diff |= b << k;
               k -= 8;
             }
             if (nbits > 0) {
-              b = array[pointer];
-              pointer += 1;
+              b = array[pointer++];
               diff |= b >> (-k);
               b &= (1 << nbits) - 1;
             } else {
@@ -1243,24 +1255,22 @@
             } else {
               diff = ~(diff >> 1);
             }
-            array[i] = diff + lastpix;
-            lastpix = array[i];
+            pixels[i] = diff + lastpix;
+            lastpix = pixels[i];
             i++;
           }
         } else {
           while (i < imax) {
             while (b === 0) {
               nbits += 8;
-              b = array[pointer];
-              pointer += 1;
+              b = array[pointer++];
             }
             nzero = nbits - nonzeroCount[b];
             nbits -= nzero + 1;
             b ^= 1 << nbits;
             nbits -= fs;
             while (nbits < 0) {
-              b = (b << 8) | array[pointer];
-              pointer += 1;
+              b = (b << 8) | array[pointer++];
               nbits += 8;
             }
             diff = (nzero << fs) | (b >> nbits);
@@ -1299,7 +1309,7 @@
       this.znaxis = header.get("ZNAXIS");
       this.zblank = this.getValue(header, "ZBLANK", void 0);
       this.blank = this.getValue(header, "BLANK", void 0);
-      this.ditherOffset = header.get('ZDITHER0') || 0;
+      this.zdither = header.get('ZDITHER0') || 0;
       this.ztile = [];
       for (i = _i = 1, _ref = this.znaxis; 1 <= _ref ? _i <= _ref : _i >= _ref; i = 1 <= _ref ? ++_i : --_i) {
         ztile = header.contains("ZTILE" + i) ? header.get("ZTILE" + i) : i === 1 ? header.get("ZNAXIS1") : 1;
@@ -1328,7 +1338,7 @@
       this.tableColumns = this.getTableColumns(header);
       this.setAccessors(this.tableColumns, view);
       this.defGetRow();
-      this.random = this.randomGenerator();
+      this.randomSeq = this.randomGenerator();
     }
 
     CompressedImage.prototype.getValue = function(header, key, defaultValue) {
@@ -1371,16 +1381,30 @@
     };
 
     CompressedImage.prototype.getRowNoBlanks = function(arr) {
-      var blank, data, i, index, nTile, offset, r, scale, value, width, zero, _i, _len, _ref;
+      var blank, data, i, index, offset, rIndex, scale, seed0, seed1, value, zero, _i, _len, _ref;
       _ref = this.getTableRow(), data = _ref[0], blank = _ref[1], scale = _ref[2], zero = _ref[3];
-      width = this.width;
-      offset = this.rowsRead * width;
+      seed0 = this.rowsRead + this.zdither - 1;
+      seed1 = (seed0 - 1) % 10000;
+      rIndex = parseInt(this.randomSeq[seed1] * 500);
+      offset = this.rowsRead * this.width;
       for (index = _i = 0, _len = data.length; _i < _len; index = ++_i) {
         value = data[index];
         i = offset + index;
-        nTile = parseInt(index / width);
-        r = this.getRandom(nTile);
-        arr[i] = (value - r + 0.5) * scale + zero;
+        if (value === -2147483647) {
+          arr[i] = NaN;
+        } else if (value === -2147483646) {
+          arr[i] = 0;
+        } else {
+          if (this.rowsRead === 0) {
+            console.log(this.randomSeq[rIndex]);
+          }
+          arr[i] = (value - this.randomSeq[rIndex] + 0.5) * scale + zero;
+        }
+        rIndex += 1;
+        if (rIndex === 10000) {
+          seed1 = (seed1 + 1) % 10000;
+          rIndex = parseInt(this.randomSeq[seed1] * 500);
+        }
       }
       return this.rowsRead += 1;
     };
