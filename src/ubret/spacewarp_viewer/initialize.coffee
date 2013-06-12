@@ -51,13 +51,15 @@ class SpacewarpViewer extends Ubret.BaseTool
   defaultQ: 1
   defaultScales: [0.4, 0.6, 1.7]
   
+  
   events:
-    'next' : 'nextPage getNextSubject'
-    'prev' : 'prevPage getNextSubject'
-    'setting:alpha' : 'updateAlpha'
-    'setting:q' : 'updateQ'
-    'setting:scale' : 'updateScale'
-    'setting:extent' : 'updateExtent'
+    'next'            : 'nextPage getNextSubject'
+    'prev'            : 'prevPage getNextSubject'
+    'setting:alpha'   : 'updateAlpha'
+    'setting:q'       : 'updateQ'
+    'setting:scales'  : 'updateScale'
+    'setting:extent'  : 'updateExtent'
+  
   
   constructor: (selector) ->
     _.extend @, Ubret.Sequential
@@ -81,17 +83,28 @@ class SpacewarpViewer extends Ubret.BaseTool
     @on 'data', @requestChannels
   
   # Request the appropriate WebFITS API (WebGL or Canvas)
-  getApi: =>
+  getApi: ->
+    
     unless DataView?
       alert 'Sorry, your browser does not support features needed for this tool.'
+      return
     
     # Determine if WebGL is supported, otherwise fall back to canvas
     canvas  = document.createElement('canvas')
-    context = canvas.getContext('webgl')
-    context = canvas.getContext('experimental-webgl') unless context?
-
-    # Load appropriate WebFITS library asynchronously
+    for name in ['webgl', 'experimental-webgl']
+      try
+        context = canvas.getContext(name)
+        ext = context.getExtension('OES_texture_float')
+        
+      catch error
+        continue
+      break if context?
+    
+    # Check context and floating point texture extension on platform
     lib = if context? then 'gl' else 'canvas'
+    lib = if ext? then 'gl' else 'canvas'
+    
+    # Load appropriate WebFITS library asynchronously
     url = "javascripts/webfits-#{lib}.js"
     $.getScript(url, =>
       @dfs.webfits.resolve()
@@ -205,13 +218,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits?.setQ(@opts.q)
     
   updateScale: =>
-    band = @opts.scale.band
-    value = @opts.scale.value
-
-    scales = @collection.getColorScales()
-    index = if band is 'i' then 0 else if band is 'g' then 1 else 2
-    scales[index] = value
-    @wfits?.setScales.apply(@wfits, scales)
+    @wfits?.setScales.apply(@wfits, @opts.scales)
   
   updateStretch: =>
     @stretch = @opts.stretch
