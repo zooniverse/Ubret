@@ -65,7 +65,7 @@ Ubret.Dependencies =
     source: "lib/ubret/spectra.js"
     deps: ["Sequential", "Graph", "Ajax"]
   "SpacewarpViewer":
-    source: "lib/ubret/spacewarp_viewer/initialize.js"
+    source: "lib/ubret/sw_viewer.js"
     deps: ["Backbone", "fits", "BaseTool", "Sequential"]
   "ImageGallery":
     source: "lib/ubret/image_gallery.js"

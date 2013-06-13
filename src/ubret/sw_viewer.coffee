@@ -172,7 +172,6 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
-    console.log 'allChannelsReceived'
     @dfs = undefined
     
     scales = @collection.getColorScales()
