@@ -170,9 +170,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits.xOffset = @opts.xOffset or @wfits.xOffset
     @wfits.yOffset = @opts.yOffset or @wfits.yOffset
     @wfits.zoom = @opts.zoom or @wfits.zoom
-    
-    # Get DOM elements
-    
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
@@ -201,6 +198,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     # Default to color composite
     @wfits.drawColor('i', 'r', 'g')
+    @trigger 'swviewer:loaded'
   
   setBand: =>
     band = @opts.band
