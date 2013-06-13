@@ -169,6 +169,10 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Load offsets if they exists
     @wfits.xOffset = @opts.xOffset or @wfits.xOffset
     @wfits.yOffset = @opts.yOffset or @wfits.yOffset
+    @wfits.zoom = @opts.zoom or @wfits.zoom
+    
+    # Get DOM elements
+    
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
@@ -188,6 +192,10 @@ class SpacewarpViewer extends Ubret.BaseTool
         @settings({
           xOffset: @wfits.getXOffset()
           yOffset: @wfits.getYOffset()
+        })
+      onzoom: (e) =>
+        @settings({
+          zoom: @wfits.zoom
         })
     })
     
