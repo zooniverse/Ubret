@@ -8,7 +8,7 @@ class BaseTool
     @unitsFormatter = d3.units 'astro'
     @bindEvents @events
     
-    if options.selector
+    if options?.selector
       @selector options.selector
       delete options.selector
     @[key](value) for key, value of options when _.isFunction(@[key])
@@ -47,11 +47,15 @@ class BaseTool
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
+    console.log ids, @opts.selectedIds
     if _.isArray ids
       @opts.selectedIds = ids
+    else if ids in @opts.selectedIds
+      @opts.selectedIds = _.without @opts.selectedIds, ids
     else
-      @opts.selectedIds.push ids unless _.isUndefined ids
-    @trigger 'selection', ids if triggerEvent
+      @opts.selectedIds.unshift ids unless _.isUndefined ids
+    console.log @opts.selectedIds, @name
+    @trigger 'selection', @opts.selectedIds if triggerEvent
     @
 
   filters: (filters=[], triggerEvent=true) =>
