@@ -66,7 +66,7 @@ Ubret.Dependencies =
     deps: ["Sequential", "Graph", "Ajax"]
   "SpacewarpViewer":
     source: "lib/ubret/sw_viewer.js"
-    deps: ["Backbone", "fits", "BaseTool", "Sequential"]
+    deps: ["Backbone", "BaseTool", "Sequential", "fits"]
   "ImageGallery":
     source: "lib/ubret/image_gallery.js"
     deps: ["MultiImageView", "Sequential", "BaseTool"]

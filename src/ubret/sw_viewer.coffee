@@ -17,10 +17,6 @@ class Layers extends Backbone.Collection
     layers.push @where({band: 'r'})[0]
     layers.push @where({band: 'g'})[0]
     return layers
-    
-  getColorScales: ->
-    colors = @getColorLayers()
-    return colors.map( (d) -> d.get('nscale'))
 
 
 # Model representing a single FITS image.  Used to store computed and state parameters
@@ -36,19 +32,9 @@ class SpacewarpViewer extends Ubret.BaseTool
   bands:  ['u', 'g', 'r', 'i', 'z']
   source: 'http://spacewarps.org.s3.amazonaws.com/subjects/raw/'
   
-  # Look up table for filter to wavelength conversion (CFHTLS specific)
-  # CFHT MegaCam (from http://www.cfht.hawaii.edu/Instruments/Imaging/Megacam/specsinformation.html)
-  wavelengths:
-    'u.MP9301': 3740
-    'g.MP9401': 4870
-    'r.MP9601': 6250
-    'i.MP9701': 7700
-    'i.MP9702': 7700
-    'z.MP9801': 9000
-  
   # Default parameters
   defaultAlpha: 0.09
-  defaultQ: 1
+  defaultQ: 1.0
   defaultScales: [0.4, 0.6, 1.7]
   
   
@@ -59,6 +45,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     'setting:q'       : 'updateQ'
     'setting:scales'  : 'updateScale'
     'setting:extent'  : 'updateExtent'
+    'setting:band'    : 'updateBand'
   
   
   constructor: (selector) ->
@@ -92,16 +79,17 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Determine if WebGL is supported, otherwise fall back to canvas
     canvas  = document.createElement('canvas')
     for name in ['webgl', 'experimental-webgl']
+      
       try
         context = canvas.getContext(name)
         ext = context.getExtension('OES_texture_float')
-        
+      
       catch error
         continue
+      
       break if context?
     
     # Check context and floating point texture extension on platform
-    lib = if context? then 'gl' else 'canvas'
     lib = if ext? then 'gl' else 'canvas'
     
     # Load appropriate WebFITS library asynchronously
@@ -146,11 +134,11 @@ class SpacewarpViewer extends Ubret.BaseTool
             
             # Compute extent
             [min, max] = dataunit.getExtent(arr)
-
+            
             # Initialize a model and push to collection
             layer = new Layer({band: band, fits: fits, minimum: min, maximum: max})
             @collection.add(layer)
-
+            
             # Load texture
             @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
             @dfs[band].resolve()
@@ -173,15 +161,24 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
-    @dfs = undefined
     
-    scales = @collection.getColorScales()
+    # Get extent for each layer and add to settings
+    mins = @collection.map( (d) -> return d.get('minimum') )
+    maxs = @collection.map( (d) -> return d.get('maximum') )
+    gMin = Math.min.apply(Math, mins)
+    gMax = Math.min.apply(Math, maxs)
+    
+    @opts.gMin = gMin
+    @opts.gMax = gMax
+    
+    @dfs = undefined
     
     @wfits.setCalibrations(1, 1, 1)
     scales = @opts.scales or @defaultScales
     @wfits.setScales.apply(@wfits, scales)
     @wfits.setAlpha(@opts.alpha or @defaultAlpha)
     @wfits.setQ(@opts.q or @defaultQ)
+    @wfits.setExtent(gMin, gMax)
     
     # Enable mouse controls
     @wfits.setupControls({
@@ -200,22 +197,24 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits.drawColor('i', 'r', 'g')
     @trigger 'swviewer:loaded'
   
-  setBand: =>
-    band = @opts.band
-    if band is 'gri'
-      @wfits.drawColor('i', 'r', 'g')
-    else
-      # Compute the min/max of the image set
-      unless @collection.hasExtent
-        mins = @collection.map( (l) -> return l.get('minimum'))
-        maxs = @collection.map( (l) -> return l.get('maximum'))
-        @min = Math.min.apply(Math, mins)
-        @max = Math.max.apply(Math, maxs)
-        @wfits.setExtent(@min, @max)
-        @collection.hasExtent = true
-      
-      @wfits?.setImage(band)
-      @wfits?.setStretch(@stretch)
+  updateBand: =>
+    console.log 'updateBand'
+    if @wfits?
+      band = @opts.band
+      if band is 'gri'
+        @wfits.drawColor('i', 'r', 'g')
+      else
+        # Compute the min/max of the image set
+        unless @collection.hasExtent
+          mins = @collection.map( (l) -> return l.get('minimum'))
+          maxs = @collection.map( (l) -> return l.get('maximum'))
+          @min = Math.min.apply(Math, mins)
+          @max = Math.max.apply(Math, maxs)
+          @wfits.setExtent(@min, @max)
+          @collection.hasExtent = true
+        
+        @wfits.setImage(band)
+        @wfits.setStretch(@opts.stretch)
   
   updateAlpha: =>
     @wfits?.setAlpha(@opts.alpha)
@@ -230,10 +229,8 @@ class SpacewarpViewer extends Ubret.BaseTool
     @stretch = @opts.stretch
     @wfits?.setStretch(@stretch)
 
-  getExtent: (value) ->
-    return (@max - @min) * value / 1000
-
   updateExtent: =>
+    console.log 'updateExtent'
     min = @opts.extent.min
     max = @opts.extent.max
     @wfits?.setExtent(min, max)
