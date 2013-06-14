@@ -180,8 +180,8 @@ class SpacewarpViewer extends Ubret.BaseTool
     scales  = @opts.scales or @defaultScales
     alpha   = @opts.alpha or @defaultAlpha
     Q       = @opts.q or @defaultQ
-    min     = @opts.extent.min or gMin
-    max     = @opts.extent.max or gMax
+    min     = @opts.extent?.min or gMin
+    max     = @opts.extent?.max or gMax
     
     @wfits.setScales.apply(@wfits, scales)
     @wfits.setAlpha(alpha)
@@ -202,6 +202,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     })
     
     band = @opts.band
+    console.log band
     if band?
       if band is 'gri'
         @wfits.drawColor('i', 'r', 'g')
