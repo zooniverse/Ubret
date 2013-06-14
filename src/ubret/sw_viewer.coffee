@@ -175,11 +175,18 @@ class SpacewarpViewer extends Ubret.BaseTool
     @dfs = undefined
     
     @wfits.setCalibrations(1, 1, 1)
-    scales = @opts.scales or @defaultScales
+    
+    # Get settings or fallback to defaults
+    scales  = @opts.scales or @defaultScales
+    alpha   = @opts.alpha or @defaultAlpha
+    Q       = @opts.q or @defaultQ
+    min     = @opts.extent.min or gMin
+    max     = @opts.extent.max or gMax
+    
     @wfits.setScales.apply(@wfits, scales)
-    @wfits.setAlpha(@opts.alpha or @defaultAlpha)
-    @wfits.setQ(@opts.q or @defaultQ)
-    @wfits.setExtent(gMin, gMax)
+    @wfits.setAlpha(alpha)
+    @wfits.setQ(Q)
+    @wfits.setExtent(min, max)
     
     # Enable mouse controls
     @wfits.setupControls({
@@ -194,26 +201,26 @@ class SpacewarpViewer extends Ubret.BaseTool
         })
     })
     
-    # Default to color composite
-    @wfits.drawColor('i', 'r', 'g')
-    @trigger 'swviewer:loaded'
-  
-  updateBand: =>
-    console.log 'updateBand'
-    if @wfits?
-      band = @opts.band
+    band = @opts.band
+    if band?
       if band is 'gri'
         @wfits.drawColor('i', 'r', 'g')
       else
-        # Compute the min/max of the image set
-        unless @collection.hasExtent
-          mins = @collection.map( (l) -> return l.get('minimum'))
-          maxs = @collection.map( (l) -> return l.get('maximum'))
-          @min = Math.min.apply(Math, mins)
-          @max = Math.max.apply(Math, maxs)
-          @wfits.setExtent(@min, @max)
-          @collection.hasExtent = true
-        
+        @wfits.setImage(band)
+        @wfits.setStretch(@opts.stretch or 'linear')
+    else
+      # Default to color composite
+      @wfits.drawColor('i', 'r', 'g')
+    
+    @trigger 'swviewer:loaded'
+  
+  updateBand: =>
+    band = @opts.band
+    
+    if @wfits?
+      if band is 'gri'
+        @wfits.drawColor('i', 'r', 'g')
+      else
         @wfits.setImage(band)
         @wfits.setStretch(@opts.stretch)
   
@@ -231,10 +238,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits?.setStretch(@stretch)
 
   updateExtent: =>
-    console.log 'updateExtent'
-    min = @opts.extent.min
-    max = @opts.extent.max
-    @wfits?.setExtent(min, max)
+    @wfits?.setExtent(@opts.extent.min, @opts.extent.max)
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
