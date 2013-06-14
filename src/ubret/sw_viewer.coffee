@@ -46,6 +46,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     'setting:scales'  : 'updateScale'
     'setting:extent'  : 'updateExtent'
     'setting:band'    : 'updateBand'
+    'setting:stretch' : 'updateStretch'
   
   
   constructor: (selector) ->
