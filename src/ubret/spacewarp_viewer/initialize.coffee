@@ -52,6 +52,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   defaultScales: [0.4, 0.6, 1.7]
   
   events:
+    'data' : 'requestChannels'
     'next' : 'nextPage getNextSubject'
     'prev' : 'prevPage getNextSubject'
     'setting:alpha' : 'updateAlpha'
@@ -78,7 +79,6 @@ class SpacewarpViewer extends Ubret.BaseTool
       z: new $.Deferred()
     
     @getApi()
-    @on 'data', @requestChannels
   
   # Request the appropriate WebFITS API (WebGL or Canvas)
   getApi: =>
@@ -111,7 +111,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       r: new $.Deferred()
       i: new $.Deferred()
       z: new $.Deferred()
-    
+   
     subject = @currentPageData()[0]
     prefix  = subject.metadata.id
     
@@ -159,7 +159,6 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
-    console.log 'allChannelsReceived'
     @dfs = undefined
     
     scales = @collection.getColorScales()

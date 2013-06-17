@@ -47,14 +47,12 @@ class BaseTool
     @
     
   selectIds: (ids=[], triggerEvent = true) =>
-    console.log ids, @opts.selectedIds
     if _.isArray ids
       @opts.selectedIds = ids
     else if ids in @opts.selectedIds
       @opts.selectedIds = _.without @opts.selectedIds, ids
     else
       @opts.selectedIds.unshift ids unless _.isUndefined ids
-    console.log @opts.selectedIds, @name
     @trigger 'selection', @opts.selectedIds if triggerEvent
     @
 

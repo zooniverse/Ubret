@@ -2,7 +2,7 @@ Sequential =
   perPage: 1
 
   pageSort: (data) -> 
-    if _.isEmpty @opts.selectedIds
+    if _.isEmpty(@opts.selectedIds) or _.isNull(@opts.selectedIds)
       data
     else
       _.filter data, (d) => 
