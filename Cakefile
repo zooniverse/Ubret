@@ -1,7 +1,7 @@
 fs = require 'fs'
 {spawn, exec} = require 'child_process' 
 {print} = require 'util'
-Ubret = require './lib/index'
+Ubret = require './src/index'
 
 Toolsets =   
   galaxy_zoo: [ "Spectra", 

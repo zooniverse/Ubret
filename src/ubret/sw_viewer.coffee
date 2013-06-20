@@ -1,4 +1,3 @@
-
 #
 # Define collection and model used in viewer
 #
@@ -18,13 +17,11 @@ class Layers extends Backbone.Collection
     layers.push @where({band: 'g'})[0]
     return layers
 
-
 # Model representing a single FITS image.  Used to store computed and state parameters
 class Layer extends Backbone.Model
 
   getData: ->
     return @get('fits').getDataUnit().getFrame()
-
 
 class SpacewarpViewer extends Ubret.BaseTool
   name: 'SpacewarpViewer'
@@ -60,12 +57,14 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     # Set various deferred objects to handle asynchronous requests.
     @dfs =
-      webfits: new $.Deferred()
       u: new $.Deferred()
       g: new $.Deferred()
       r: new $.Deferred()
       i: new $.Deferred()
       z: new $.Deferred()
+
+
+    @dfsWebfits = new $.Deferred()
     
     @getApi()
     @on 'data', @requestChannels
@@ -96,7 +95,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Load appropriate WebFITS library asynchronously
     url = "javascripts/webfits-#{lib}.js"
     $.getScript(url, =>
-      @dfs.webfits.resolve()
+      @dfsWebfits.resolve()
     )
   
   getNextSubject: =>
@@ -104,48 +103,49 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Request FITS files for each channel
   requestChannels: ->
-    @initWebFITS()
-    
-    # Set various deferred objects to handle asynchronous requests.
-    @dfs =
-      u: new $.Deferred()
-      g: new $.Deferred()
-      r: new $.Deferred()
-      i: new $.Deferred()
-      z: new $.Deferred()
-    
-    subject = @currentPageData()[0]
-    prefix  = subject.metadata.id
-    
-    # Set callback for when all channels and WebFITS Api received
-    $.when.apply(null, _.values(@dfs))
-      .done(@allChannelsReceived)
-    
-    for band, index in @bands
-      do (band, index) =>
-        path = "#{@source}#{prefix}_#{band}.fits.fz"
-        
-        new astro.FITS.File(path, (fits) =>
-          hdu = fits.getHDU()
-          header = hdu.header
-          dataunit = hdu.data
+    @dfsWebfits.then =>
+      @initWebFITS()
+      
+      # Set various deferred objects to handle asynchronous requests.
+      @dfs =
+        u: new $.Deferred()
+        g: new $.Deferred()
+        r: new $.Deferred()
+        i: new $.Deferred()
+        z: new $.Deferred()
+      
+      subject = @currentPageData()[0]
+      prefix  = subject.metadata.id
+      
+      # Set callback for when all channels and WebFITS Api received
+      $.when.apply(null, _.values(@dfs))
+        .done(@allChannelsReceived)
+      
+      for band, index in @bands
+        do (band, index) =>
+          path = "#{@source}#{prefix}_#{band}.fits.fz"
           
-          # Get image data
-          dataunit.getFrameAsync(0, (arr) =>
+          new astro.FITS.File(path, (fits) =>
+            hdu = fits.getHDU()
+            header = hdu.header
+            dataunit = hdu.data
             
-            # Compute extent
-            [min, max] = dataunit.getExtent(arr)
-            
-            # Initialize a model and push to collection
-            layer = new Layer({band: band, fits: fits, minimum: min, maximum: max})
-            @collection.add(layer)
-            
-            # Load texture
-            @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
-            @dfs[band].resolve()
+            # Get image data
+            dataunit.getFrameAsync(0, (arr) =>
+              
+              # Compute extent
+              [min, max] = dataunit.getExtent(arr)
+              
+              # Initialize a model and push to collection
+              layer = new Layer({band: band, fits: fits, minimum: min, maximum: max})
+              @collection.add(layer)
+              
+              # Load texture
+              @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
+              @dfs[band].resolve()
+            )
           )
-        )
-  
+    
   # Initialize a WebFITS object
   initWebFITS: =>
     @wfits?.teardown()
