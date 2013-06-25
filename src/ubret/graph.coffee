@@ -16,8 +16,6 @@ class Graph extends Ubret.BaseTool
   setupGraph: =>
     return unless @opts.width? and @opts.height?
 
-    console.log "Here in: #{@name}"
-
     unless @svg?
       @svg = @d3el.append('svg')
         .attr('width', @opts.width - 10)

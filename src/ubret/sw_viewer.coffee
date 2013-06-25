@@ -202,7 +202,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     })
     
     band = @opts.band
-    console.log band
     if band?
       if band is 'gri'
         @wfits.drawColor('i', 'r', 'g')
