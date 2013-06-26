@@ -99,6 +99,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     )
   
   getNextSubject: =>
+    console.log 'getNextSubject', @currentPageData()
     @requestChannels()
   
   # Request FITS files for each channel
@@ -123,6 +124,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       
       for band, index in @bands
         do (band, index) =>
+          console.log @currentPageData()[0] 
           path = "#{@source}#{prefix}_#{band}.fits.fz"
           
           new astro.FITS.File(path, (fits) =>
@@ -184,6 +186,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     max     = @opts.extent?.max or gMax
     
     @wfits.setScales.apply(@wfits, scales)
+    console.log scales
     @wfits.setAlpha(alpha)
     @wfits.setQ(Q)
     @wfits.setExtent(min, max)
