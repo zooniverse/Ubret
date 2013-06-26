@@ -50,9 +50,6 @@ class Scatterplot extends Ubret.Graph
     d = d3.event.target.extent()
     x = d.map( (x) -> return x[0])
     y = d.map( (x) -> return x[1])
-    
-    # Select all items within the range
-    # TODO: Pass these data down the chain
     top = _.chain(@graphData())
       .filter( (d) =>
         (d[@opts.axis1] > x[0]) and (d[@opts.axis1] < x[1]))

@@ -74,7 +74,7 @@ class Table extends Ubret.BaseTool
   perPage: -> 
     # Assumes top margin + bottom margins = 130px,
     # and table cells are 27px high.
-    Math.floor((@opts.height - 130 )/ 27) 
+    Math.floor((@opts.height - 90 )/ 27) 
 
   pageSort: (data) ->
     sorted = _.sortBy(data, (d) => d[@opts.sortColumn])
