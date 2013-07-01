@@ -36,6 +36,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   
   events:
+    'data'            : 'requestChannels'
     'next'            : 'nextPage getNextSubject'
     'prev'            : 'prevPage getNextSubject'
     'setting:alpha'   : 'updateAlpha'
@@ -67,7 +68,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     @dfsWebfits = new $.Deferred()
     
     @getApi()
-    @on 'data', @requestChannels
   
   # Request the appropriate WebFITS API (WebGL or Canvas)
   getApi: ->
