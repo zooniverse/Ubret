@@ -1,1 +1,0 @@
-/Users/akapadia/astrojs/webfits/lib/webfits-gl.js
