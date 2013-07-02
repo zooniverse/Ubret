@@ -45,6 +45,7 @@ class Spectra extends Ubret.Graph
     d3.extent @spectra.flux
 
   drawSorry: =>
+    @svg.selectAll('g.sorry').remove()
     @svg.append('g').attr('class', 'sorry')
       .append('text')
       .attr('text-anchor', 'middle')
