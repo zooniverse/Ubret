@@ -55,6 +55,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Set parameters
     @stretch = 'linear'
     @collection = new Layers()
+    @ready = false
     
     # Set various deferred objects to handle asynchronous requests.
     @dfs =
@@ -63,10 +64,7 @@ class SpacewarpViewer extends Ubret.BaseTool
       r: new $.Deferred()
       i: new $.Deferred()
       z: new $.Deferred()
-
-
     @dfsWebfits = new $.Deferred()
-    
     @getApi()
   
   # Request the appropriate WebFITS API (WebGL or Canvas)
@@ -103,6 +101,8 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Request FITS files for each channel
   requestChannels: ->
+    @ready = false
+    
     @dfsWebfits.then =>
       @initWebFITS()
       
@@ -149,9 +149,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   # Initialize a WebFITS object
   initWebFITS: =>
     @wfits?.teardown()
-    
     @wfits = new astro.WebFITS(@el, @dimension)
-    
     unless @wfits.ctx?
       alert 'Something went wrong initializing the context'
     
@@ -162,6 +160,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
+    @ready = true
     
     # Get extent for each layer and add to settings
     mins = @collection.map( (d) -> return d.get('minimum') )
@@ -225,20 +224,20 @@ class SpacewarpViewer extends Ubret.BaseTool
         @wfits.setStretch(@opts.stretch)
   
   updateAlpha: =>
-    @wfits?.setAlpha(@opts.alpha)
+    @wfits?.setAlpha(@opts.alpha) if @ready
     
   updateQ: =>
-    @wfits?.setQ(@opts.q)
+    @wfits?.setQ(@opts.q) if @ready
     
   updateScale: =>
-    @wfits?.setScales.apply(@wfits, @opts.scales)
+    @wfits?.setScales.apply(@wfits, @opts.scales) if @ready
   
   updateStretch: =>
     @stretch = @opts.stretch
-    @wfits?.setStretch(@stretch)
+    @wfits?.setStretch(@stretch) if @ready
 
   updateExtent: =>
-    @wfits?.setExtent(@opts.extent.min, @opts.extent.max)
+    @wfits?.setExtent(@opts.extent.min, @opts.extent.max) if @ready
 
 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
