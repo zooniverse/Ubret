@@ -8,7 +8,7 @@ class Promise
   then: (onFulfilled=null, onRejected=null) =>
     child = new Promise()
     @onFulfilledQueue.push {func: onFulfilled, promise: child} if onFulfilled
-    @onRejectedQueue.push {func: onRejected, promsie: child} if onRejected
+    @onRejectedQueue.push {func: onRejected, promise: child} if onRejected
     if @state isnt 'pending'
       _.defer if @state is 'fulfilled' then @onFulfill else @onReject
     child
@@ -28,15 +28,21 @@ class Promise
   onFulfill: =>
     return unless @state is 'fulfilled' and not _.isEmpty(@onFulfilledQueue)
     thenable = @onFulfilledQueue.shift()
-    value = thenable.func(@value)
-    @resolveChild(thenable.promise, value)
+    try
+      value = thenable.func(@reason)
+      @resolveChild(thenable.promise, value)
+    catch e
+      @resolveChild(thenable.promise, e)
     @onFulfill()
 
   onReject: =>
     return unless @state is 'rejected' and not _.isEmpty(@onRejectedQueue)
     thenable = @onRejectedQueue.shift()
-    value = thenable.func(@reason)
-    @resolveChild(thenable.pomise, value)
+    try
+      value = thenable.func(@reason)
+      @resolveChild(thenable.promise, value)
+    catch e
+      @resolveChild(thenable.promise, e)
     @onReject()
 
   resolveChild: (child, value) =>
