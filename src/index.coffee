@@ -89,7 +89,7 @@ Ubret.Loader = (tools, cb) ->
 
   isScriptLoaded = (script) ->
     return false unless window?
-    return (window[script]? or Ubret[script]?)
+    return (window[script]? or window.Ubret[script]?)
     
   loadScripts = ->
     if tools.length is 0 
@@ -128,6 +128,17 @@ Ubret.DependencyResolver = (tools) ->
       return findDeps((unique dependencies), accum.concat(dependencies))
 
   tools.concat findDeps(tools, [])
+
+Ubret.Reset = ->
+  keepers = 
+    "Dependencies" : Ubret.Dependencies
+    "DependencyResolver" : Ubret.DependencyResolver
+    "Loader" : Ubret.Loader
+    "ToolsetLoader" : Ubret.ToolsetLoader
+    "BaseUrl" : Ubret.BaseUrl
+    "Reset" : Ubret.Reset
+  delete window.Ubret
+  window.Ubret = keepers
 
 window?.Ubret = Ubret
 module?.exports = Ubret
