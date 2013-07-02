@@ -20,8 +20,13 @@ class Spectra extends Ubret.Graph
   apiURL: "http://api.sdss3.org/spectrum"
 
   loadSpectra: (subject) =>
-    url = "#{@apiURL}?mjd=#{subject.mjd}&plate=#{subject.plate}&fiber=#{subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
-    Ubret.Get(url).then(@loadSpectralLines)
+    if subject.mjd? and subject.plate? and subject.fiberID?
+      url = "#{@apiURL}?mjd=#{subject.mjd}&plate=#{subject.plate}&fiber=#{subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
+      Ubret.Get(url).then(@loadSpectralLines)
+    else
+      promise = new Ubret.Promise()
+      promise.reject('No Info')
+      promise
 
   loadSpectralLines: (subject) =>
     url = "#{@apiURL}Lines?id=#{subject.spectrumID}"
@@ -39,16 +44,26 @@ class Spectra extends Ubret.Graph
     return unless @spectra
     d3.extent @spectra.flux
 
-  drawGraph: =>
-    return if _.isEmpty(@preparedData()) or _.isUndefined(@svg)
-    [subject] = @currentPageData()
-    @loadSpectra(subject).then (specData) =>
+  drawSorry: =>
+    @svg.append('g').attr('class', 'sorry')
+      .append('text')
+      .attr('text-anchor', 'middle')
+      .attr('y', @graphHeight() / 2)
+      .attr('x', @graphWidth() / 2)
+      .text("Sorry not enough information to retrieve SDSS Spectra")
+
+  drawData: (specData) =>
       {@spectra, @lines} = specData
       @drawAxis1() 
       @drawAxis2() 
       @fluxLineDraw()
       @bestFitLineDraw()
       @emissionLinesDraw()
+
+  drawGraph: =>
+    return if _.isEmpty(@preparedData()) or not @svg?
+    [subject] = @currentPageData()
+    @loadSpectra(subject).then @drawData, @drawSorry
 
   fluxLineDraw: =>
     @svg.selectAll("path.fluxes").remove() if @svg?
