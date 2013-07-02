@@ -29,11 +29,6 @@ class SpacewarpViewer extends Ubret.BaseTool
   bands:  ['u', 'g', 'r', 'i', 'z']
   source: 'http://spacewarps.org.s3.amazonaws.com/subjects/raw/'
   
-  # Default parameters
-  defaultAlpha: 0.09
-  defaultQ: 1.0
-  defaultScales: [0.4, 0.6, 1.7]
-  
   
   events:
     'data'            : 'requestChannels'
@@ -51,9 +46,6 @@ class SpacewarpViewer extends Ubret.BaseTool
     _.extend @, Ubret.Sequential
     
     super selector
-    
-    # Set parameters
-    @stretch = 'linear'
     @collection = new Layers()
     @ready = false
     
@@ -152,6 +144,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits = new astro.WebFITS(@el, @dimension)
     unless @wfits.ctx?
       alert 'Something went wrong initializing the context'
+      return
     
     # Load offsets if they exists
     @wfits.xOffset = @opts.xOffset or @wfits.xOffset
@@ -160,6 +153,7 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
+    @dfs = undefined
     @ready = true
     
     # Get extent for each layer and add to settings
@@ -171,20 +165,15 @@ class SpacewarpViewer extends Ubret.BaseTool
     @opts.gMin = gMin
     @opts.gMax = gMax
     
-    @dfs = undefined
-    
     @wfits.setCalibrations(1, 1, 1)
     
     # Get settings or fallback to defaults
-    scales  = @opts.scales or @defaultScales
-    alpha   = @opts.alpha or @defaultAlpha
-    Q       = @opts.q or @defaultQ
-    min     = @opts.extent?.min or gMin
-    max     = @opts.extent?.max or gMax
+    min = @opts.extent?.min or gMin
+    max = @opts.extent?.max or gMax
     
-    @wfits.setScales.apply(@wfits, scales)
-    @wfits.setAlpha(alpha)
-    @wfits.setQ(Q)
+    @wfits.setScales.apply(@wfits, @opts.scales)
+    @wfits.setAlpha(@opts.alpha)
+    @wfits.setQ(@opts.q)
     @wfits.setExtent(min, max)
     
     # Enable mouse controls
@@ -200,28 +189,18 @@ class SpacewarpViewer extends Ubret.BaseTool
         })
     })
     
-    band = @opts.band
-    if band?
-      if band is 'gri'
-        @wfits.drawColor('i', 'r', 'g')
-      else
-        @wfits.setImage(band)
-        @wfits.setStretch(@opts.stretch or 'linear')
-    else
-      # Default to color composite
-      @wfits.drawColor('i', 'r', 'g')
-    
+    @updateBand()
     @trigger 'swviewer:loaded'
   
   updateBand: =>
-    band = @opts.band
-    
-    if @wfits?
-      if band is 'gri'
-        @wfits.drawColor('i', 'r', 'g')
-      else
-        @wfits.setImage(band)
-        @wfits.setStretch(@opts.stretch)
+    if @ready
+      band = @opts.band
+      if @wfits?
+        if band is 'gri'
+          @wfits.drawColor('i', 'r', 'g')
+        else
+          @wfits.setImage(band)
+          @wfits.setStretch(@opts.stretch)
   
   updateAlpha: =>
     @wfits?.setAlpha(@opts.alpha) if @ready
@@ -233,8 +212,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits?.setScales.apply(@wfits, @opts.scales) if @ready
   
   updateStretch: =>
-    @stretch = @opts.stretch
-    @wfits?.setStretch(@stretch) if @ready
+    @wfits?.setStretch(@opts.stretch) if @ready
 
   updateExtent: =>
     @wfits?.setExtent(@opts.extent.min, @opts.extent.max) if @ready
