@@ -56,24 +56,34 @@ class BaseTool
     @trigger 'selection', @opts.selectedIds if triggerEvent
     @
 
-  filters: (filters=[], triggerEvent=true) =>
+  filters: (filters=[], triggerEvent=true, replace=false) =>
     if _.isArray filters
-      @opts.filters = @opts.filters.concat filters
+      unless replace
+        @opts.filters = @opts.filters.concat filters
+      else
+        @opts.filters = filters
+        @trigger 'data', @preparedData() 
     else
       @opts.filters.push filters
-    @trigger 'add-filters', filters if triggerEvent
-    if triggerEvent and not _.isEmpty(@opts.data) and not _.isEmpty(filters)
-      @trigger 'data', @preparedData() 
+    if triggerEvent
+      @trigger 'add-filters', filters 
+      if not _.isEmpty(@opts.data) and ((not _.isEmpty(filters)) or _.isFunction(filters))
+        @trigger 'data', @preparedData() 
     @
 
-  fields: (fields=[], triggerEvent=true) =>
+  fields: (fields=[], triggerEvent=true, replace=false) =>
     if _.isArray fields 
-      @opts.fields = @opts.fields.concat fields 
+      unless replace
+        @opts.fields = @opts.fields.concat fields 
+      else
+        @opts.fields = fields
+        @trigger 'data', @preparedData() 
     else
       @opts.fields.push fields
-    @trigger 'add-fields', fields if triggerEvent
-    if triggerEvent and not _.isEmpty(@opts.data) and not _.isEmpty(fields)
-      @trigger 'data', @preparedData() 
+    if triggerEvent
+      @trigger 'add-fields', fields
+      if not _.isEmpty(@opts.data) and ((not _.isEmpty(fields)) or _.isObject(fields))
+        @trigger 'data', @preparedData() 
     @
 
   settings: (settings, triggerEvent=true) =>
