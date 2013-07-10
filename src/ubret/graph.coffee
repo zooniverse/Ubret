@@ -19,7 +19,8 @@ class Graph extends Ubret.BaseTool
     unless @svg?
       @svg = @d3el.append('svg')
         .attr('width', @opts.width - 10)
-        .attr('height', @opts.height - 10)
+        .attr('height', @opts.height - 20)
+        .attr('style', 'position: relative; top: 15px; left: -15px;')
         .append('g')
           .attr('class', 'chart')
           .attr('transform', 

@@ -75,6 +75,11 @@ Ubret.Dependencies =
   "BarGraph":
     source: "lib/ubret/bar_graph.js"
     deps: ["Graph"]
+  "GalaxyProbabilities":
+    source: "lib/ubret/gal_probs.js"
+  "ColorMagnitudeChart":
+    source: "lib/ubret/color_magnitude_chart.js"
+    deps: ["Scatterplot", "GalaxyProbabilities"]
 
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'

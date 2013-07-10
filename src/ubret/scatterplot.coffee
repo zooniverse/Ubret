@@ -1,5 +1,6 @@
 class Scatterplot extends Ubret.Graph
   name: 'Scatterplot'
+  brushEnabled: true
   
   constructor: ->
     @events['selection'] = @drawData
@@ -26,12 +27,9 @@ class Scatterplot extends Ubret.Graph
         if d.uid in @opts.selectedIds
           @opts.selectedColor
         else
-          @opts.color
-      )
-      .on('mouseover', @displayTooltip)
-      .on('mouseout', @removeTooltip)
+          @opts.color)
 
-    @drawBrush()
+    @drawBrush() if @brushEnabled
   
   drawBrush: =>
     @brush.remove() unless !@brush
@@ -44,7 +42,6 @@ class Scatterplot extends Ubret.Graph
       .attr('height', @graphHeight())
       .attr('opacity', 0.5)
       .attr('fill', '#CD3E20')
-        
   
   brushend: =>
     d = d3.event.target.extent()
