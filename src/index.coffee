@@ -77,9 +77,11 @@ Ubret.Dependencies =
     deps: ["Graph"]
   "GalaxyProbabilities":
     source: "lib/ubret/gal_probs.js"
+  "GalaxyImages":
+    source: "lib/ubret/galaxy_images.js"
   "ColorMagnitudeChart":
     source: "lib/ubret/color_magnitude_chart.js"
-    deps: ["Scatterplot", "GalaxyProbabilities"]
+    deps: ["Scatterplot", "GalaxyProbabilities", "GalaxyImages"]
   "ImagePlayer":
     source: "lib/ubret/image_player.js"
     deps: ["BaseTool", "MultiImageView"]

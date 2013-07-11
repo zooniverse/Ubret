@@ -2,15 +2,17 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
   name: "Color Magnitude"
 
   probabilities: _(Ubret.GalaxyProbabilities.split('\n')).chain()
-    .map((i) -> i.split(' ')).flatten()
+    .map((d) -> d.split(' ')).flatten()
     .reduce(((m, v, i) -> 
       unless v is "0.0"
-        y = if i > 150 then Math.floor(i / 150) else 0
+        y = if i > 80 then Math.floor(i / 80) else 0
         m.push
-          x: if i > 150 then i - (150 * y) else i 
+          x: if i > 80 then i - (80 * y) else i 
           y: y
           v: parseFloat(v) * 1000000
       m), [])
+    .sortBy((d) -> -d.v)
+    .map((d, i) -> d.r = i; d)
     .value()
 
   constructor: (options) ->
@@ -20,24 +22,35 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
     @opts.axis1 = 'abs_r'
     @opts.axis2 = 'color'
 
+  graphWidth: =>
+    super - 150 
+
   yDomain: =>
-    [-2, 4]
+    if @graphData()?
+      [min, max] = super
+      [(if min < -2 then min else -2), (if max > 4 then max else 4)]
+    else
+      [-2, 4]
 
   xDomain: =>
-    [-18, -23]
+    if @graphData()?
+      [max, min] = super
+      [(if min > -18 then min else -18), (if max < -23 then max else -23)]
+    else
+      [-18, -23]
 
-  setupGraph: =>
-    super
+  drawData: =>
     return unless @svg?
     blockWidth = @probXScale()(1) - @probXScale()(0)
     blockHeight = @probYScale()(0) - @probYScale()(1)
 
     colorScale = @colorScale()
-    opacityScale = @opacityScale()
     xScale = @probXScale()
     yScale = @probYScale()
 
     @svg.selectAll('rect.prob-sq').remove()
+
+    console.log @probabilities.length
 
     blocks = @svg.selectAll('rect.prob-sq')
      .data(@probabilities)
@@ -49,32 +62,30 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
       .attr('height', blockHeight)
       .attr('width', blockWidth)
       .attr('fill', (d) => colorScale(d.v))
-      .attr('opacity', (d) => opacityScale(d.v))
       .on('mouseover', @displayTooltip)
-      .on('mouseout', @displayTooltip)
+
+    super
 
   colorScale: =>
     d3.scale.linear()
       .domain(d3.extent(_.pluck(@probabilities, 'v')))
-      .range(['blue', 'red'])
-
-  opacityScale: =>
-    d3.scale.linear()
-      .domain(d3.extent(_.pluck(@probabilities, 'v')))
-      .range([0.3, 1])
+      .range(['#bbbbff', 'red'])
 
   probXScale: =>
+    x = @x()
     d3.scale.linear()
-      .domain([0, 149])
-      .range([0, @graphWidth()])
+      .domain([0, 79])
+      .range([x(-18), x(-23)])
 
   probYScale: =>
+    y = @y()
     d3.scale.linear()
-      .domain([0, 149])
-      .range([@graphHeight(), 0])
+      .domain([0, 79])
+      .range([y(-2), y(4)])
 
   displayTooltip: (d) =>
-    value = if d.v? then d.v else 0
+    @value = if d.r? then d else @value
+    @lastEvent = d3.event
 
     @svg.selectAll('text.tooltip').remove()
     @svg.append('text')
@@ -82,6 +93,19 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth() / 2 + 150)
       .attr('y', @graphHeight() + 50)
-      .text("Distrubtion Porbability: #{@format(value)} x 10^-6")
+      .text("Distrubtion Rank: #{@value.r}")
+    @displayImages(@value)
+
+  displayImages: (d) =>
+    images = Ubret.GalaxyImages[d.x][d.y]
+    @d3el.selectAll('img.example').remove()
+    imageTags = @d3el.selectAll('img.example')
+      .data(images)
+
+    imageTags.enter().append('img')
+      .attr('class', 'example')
+      .attr('src', (d) -> "http://galaxyzoo.org/subjects/standard/" + d)
+      .attr('width', 120)
+      .attr('style', (d, i) -> "top: #{i * 125 + 30}px")
 
 window.Ubret.ColorMagnitudeChart = ColorMagnitudeChart
