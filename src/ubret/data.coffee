@@ -1,5 +1,5 @@
 class Data
-  constructor: (data) ->A
+  constructor: (data) ->
     if typeof data is 'Array'
       @wrappedData = Lazy(data)
     else
@@ -28,6 +28,4 @@ class Data
     unless keys[0] is '*'
       @wrappedData = @wrappedData.map((i) -> Lazy(i).pick.apply(@, keys).toObject())
     @wrappedData.toArray()
-
-  
     

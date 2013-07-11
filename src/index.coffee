@@ -80,6 +80,9 @@ Ubret.Dependencies =
   "ColorMagnitudeChart":
     source: "lib/ubret/color_magnitude_chart.js"
     deps: ["Scatterplot", "GalaxyProbabilities"]
+  "ImagePlayer":
+    source: "lib/ubret/image_player.js"
+    deps: ["BaseTool", "MultiImageView"]
 
 loadScript = (source, cb=null) ->
   script = document.createElement 'script'
