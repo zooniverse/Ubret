@@ -10,12 +10,13 @@ Toolsets =
                 "Mapper",
                 "SubjectViewer",
                 "Scatterplot",
-                "Histogram"]
+                "Histogram",
+                "ColorMagnitudeChart"]
               
   spacewarp: [ "SpacewarpViewer" ]
 
   serengeti: [ "Table", "Statistics", "Mapper", 
-    "SubjectViewer", "BarGraph", "ImageGallery"]
+    "SubjectViewer", "BarGraph", "ImageGallery", "ImagePlayer"]
   
   navigator: ["Histogram", "Scatterplot"]
 
