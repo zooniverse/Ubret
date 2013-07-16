@@ -19,7 +19,7 @@ class InteractiveSubject extends Spine.Model
 
     limit = parseInt(limit) + 5
     if limit isnt 0
-      url = url + "?limit=#{limit}"
+      url = url + "?limit=#{limit}&project_id=galaxy_zoo"
 
     return url
 
