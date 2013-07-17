@@ -29,7 +29,7 @@ class Promise
     return unless @state is 'fulfilled' and not _.isEmpty(@onFulfilledQueue)
     thenable = @onFulfilledQueue.shift()
     try
-      value = thenable.func(@reason)
+      value = thenable.func(@value)
       @resolveChild(thenable.promise, value)
     catch e
       @resolveChild(thenable.promise, e)
