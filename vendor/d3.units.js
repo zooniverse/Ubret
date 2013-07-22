@@ -63,12 +63,12 @@ d3.units.lookup = {
       label: "PetroR90 z",
       unit: 'arcsec'
     },
-    "Absolute Size" : 'mag',
+    "Absolute Size" : 'kpc',
     "PetroR50 R" : {
       label: "PetroR50 r",
       unit: 'arcsec'
     },
-    "Abs R" : 'kpc',
+    "Abs R" : 'mpg',
     "Petrorad Flux" : '?'
   }
 };
