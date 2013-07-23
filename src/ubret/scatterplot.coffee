@@ -8,11 +8,15 @@ class Scatterplot extends Ubret.Graph
   
   graphData: =>
     return if _.isEmpty(@preparedData()) or !@opts.axis1 or !@opts.axis2
-    _.map(@preparedData(), (d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
+    _.chain(@preparedData())#.shuffle().take(500)
+      .map((d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
+      .value()
 
   drawData: =>
     data = @graphData()
     return if _.isUndefined(data)
+    xScale = @x()
+    yScale = @y()
     @points.remove() if @points?
 
     @points = @svg.append('g').selectAll('circle')
@@ -21,9 +25,10 @@ class Scatterplot extends Ubret.Graph
     @points.enter().append('circle')
       .attr('class', 'dot')
       .attr('r', 2)
-      .attr('cx', (d) => @x()(d[@opts.axis1]))
-      .attr('cy', (d) => @y()(d[@opts.axis2]))
+      .attr('cx', (d) => xScale(d[@opts.axis1]))
+      .attr('cy', (d) => yScale(d[@opts.axis2]))
       .attr('fill', (d) => 
+        return @opts.color if _.isEmpty(@opts.selectedIds)
         if d.uid in @opts.selectedIds
           @opts.selectedColor
         else
