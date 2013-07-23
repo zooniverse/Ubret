@@ -139,7 +139,9 @@ class BaseTool
 
   # Private
   @_memoizeHash: -> 
-    btoa(JSON.stringify(arguments))
+    data = _.take(arguments[0], 50)
+    other = arguments[1]
+    btoa(JSON.stringify([data, other]))
 
   @_filter: (data, filters) ->
     data = _.chain(data)
