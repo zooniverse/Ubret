@@ -62,13 +62,13 @@ class BaseTool
         @opts.filters = @opts.filters.concat filters
       else
         @opts.filters = filters
-        @trigger 'data', @preparedData() 
+        @trigger 'data', @childData() 
     else
       @opts.filters.push filters
     if triggerEvent
       @trigger 'add-filters', filters 
       if not _.isEmpty(@opts.data) and ((not _.isEmpty(filters)) or _.isFunction(filters))
-        @trigger 'data', @preparedData() 
+        @trigger 'data', @childData() 
     @
 
   fields: (fields=[], triggerEvent=true, replace=false) =>
@@ -77,13 +77,13 @@ class BaseTool
         @opts.fields = @opts.fields.concat fields 
       else
         @opts.fields = fields
-        @trigger 'data', @preparedData() 
+        @trigger 'data', @childData() 
     else
       @opts.fields.push fields
     if triggerEvent
       @trigger 'add-fields', fields
       if not _.isEmpty(@opts.data) and ((not _.isEmpty(fields)) or _.isObject(fields))
-        @trigger 'data', @preparedData() 
+        @trigger 'data', @childData() 
     @
 
   settings: (settings, triggerEvent=true) =>
@@ -125,11 +125,11 @@ class BaseTool
       delete @opts.parentTool
     @
 
-  childData: ->
+  childData: =>
     @preparedData()
 
   preparedData: =>
-    data = @_mAddFields(@_mFilter(@opts.data, @opts.filters), @opts.fields).value()
+    data = @_addFields(@_filter(@opts.data, @opts.filters), @opts.fields).value()
     @keys @_dataKeys(data[0])
     data
 
@@ -138,18 +138,13 @@ class BaseTool
       char.toUpperCase()
 
   # Private
-  @_memoizeHash: -> 
-    data = _.take(arguments[0], 50)
-    other = arguments[1]
-    btoa(JSON.stringify([data, other]))
-
-  @_filter: (data, filters) ->
+  _filter: (data, filters) ->
     data = _.chain(data)
     for filter in filters
       data = data.filter(filter)
     data
 
-  @_addFields: (data, fields) ->
+  _addFields: (data, fields) ->
     for field in fields
       data = data.map (i) ->
         i[field.field] = field.func(i); i
@@ -159,8 +154,5 @@ class BaseTool
     keys = new Array
     keys.push key for key, value of datum when not(key in @nonDisplayKeys)
     keys
-
-  _mFilter: _.memoize @_filter, @_memoizeHash
-  _mAddFields: _.memoize @_addFields, @_memoizeHash
 
 window.Ubret.BaseTool = BaseTool
