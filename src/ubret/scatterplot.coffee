@@ -7,8 +7,9 @@ class Scatterplot extends Ubret.Graph
     super 
   
   graphData: =>
-    return if _.isEmpty(@preparedData()) or !@opts.axis1 or !@opts.axis2
-    _.chain(@preparedData())#.shuffle().take(500)
+    data = @preparedData()
+    return if _.isEmpty(data) or !@opts.axis1 or !@opts.axis2
+    _.chain(data).shuffle().take(300)
       .map((d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
       .value()
 
