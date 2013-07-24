@@ -12,6 +12,15 @@ Toolsets =
                 "Scatterplot",
                 "Histogram",
                 "ColorMagnitudeChart"]
+
+  galaxy_zoo_starburst: [ "Spectra", 
+                          "Table",
+                          "Statistics",
+                          "Mapper",
+                          "SubjectViewer",
+                          "Scatterplot",
+                          "Histogram",
+                          "ColorMagnitudeChart"]
               
   spacewarp: [ "SpacewarpViewer" ]
 
