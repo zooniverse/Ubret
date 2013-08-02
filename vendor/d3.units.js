@@ -68,7 +68,7 @@ d3.units.lookup = {
       label: "PetroR50 r",
       unit: 'arcsec'
     },
-    "Abs R" : 'mpg',
+    "Abs R" : 'mag',
     "Petrorad Flux" : '?'
   }
 };
