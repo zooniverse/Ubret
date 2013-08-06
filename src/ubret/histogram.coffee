@@ -11,7 +11,12 @@ class Histogram extends Ubret.Graph
       d3.layout.histogram().bins(parseInt(@opts.bins)) 
     else 
       d3.layout.histogram()
-    data = _(@preparedData()).pluck @opts.axis1
+    xDomain = @xDomain()
+    data = _.chain(@preparedData())
+      .filter((d) => 
+        d[@opts.axis1] >= xDomain[0] and d[@opts.axis1] <= xDomain[1])
+      .pluck(@opts.axis1)
+      .value()
     @binFunc data
 
   yDomain: =>

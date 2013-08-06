@@ -9,7 +9,14 @@ class Scatterplot extends Ubret.Graph
   graphData: =>
     data = @preparedData()
     return if _.isEmpty(data) or !@opts.axis1 or !@opts.axis2
-    _.map(data, (d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
+    xDomain = @xDomain()
+    yDomain = @yDomain()
+    _.chain(data).filter((d) => 
+        x = (d[@opts.axis1] >= xDomain[0] and d[@opts.axis1] <= xDomain[1]) 
+        y = (d[@opts.axis2] >= yDomain[0] and d[@opts.axis2] <= yDomain[1])
+        x and y)
+      .map((d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
+      .value()
 
   drawData: =>
     data = @graphData()

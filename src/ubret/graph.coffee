@@ -42,11 +42,23 @@ class Graph extends Ubret.BaseTool
 
   xDomain: =>
     return unless @opts.axis1?
-    d3.extent _(@preparedData()).pluck(@opts.axis1)
+    domain = d3.extent _(@preparedData()).pluck(@opts.axis1)
+    console.log @opts
+    if @opts['x-min']
+      domain[0] = @opts['x-min']
+    if @opts['x-max']
+      domain[1] = @opts['x-max']
+    domain
+      
 
   yDomain: =>
     return unless @opts.axis2?
-    d3.extent _(@preparedData()).pluck(@opts.axis2)
+    domain = d3.extent _(@preparedData()).pluck(@opts.axis2)
+    if @opts['y-min']
+      domain[0] = @opts['y-min']
+    if @opts['y-max']
+      domain[1] = @opts['y-max']
+    domain
 
   x: =>
     domain = @xDomain()
