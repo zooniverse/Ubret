@@ -93,7 +93,7 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth() / 2 + 150)
       .attr('y', @graphHeight() + 50)
-      .text("Distrubtion Rank: #{@value.r}")
+      .text("Distribution Rank: #{@value.r}")
     @displayImages(@value)
 
   displayImages: (d) =>
