@@ -43,7 +43,6 @@ class Graph extends Ubret.BaseTool
   xDomain: =>
     return unless @opts.axis1?
     domain = d3.extent _(@preparedData()).pluck(@opts.axis1)
-    console.trace()
     if @opts['x-min']
       domain[0] = @opts['x-min']
     if @opts['x-max']

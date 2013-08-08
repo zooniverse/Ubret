@@ -12,8 +12,8 @@ class Scatterplot extends Ubret.Graph
     xDomain = @xDomain()
     yDomain = @yDomain()
     _.chain(data).filter((d) => 
-        x = (d[@opts.axis1] >= xDomain[0] and d[@opts.axis1] <= xDomain[1]) 
-        y = (d[@opts.axis2] >= yDomain[0] and d[@opts.axis2] <= yDomain[1])
+        x = (d[@opts.axis1] >= _.min(xDomain) and d[@opts.axis1] <= _.max(xDomain))
+        y = (d[@opts.axis2] >= _.min(yDomain) and d[@opts.axis2] <= _.max(yDomain))
         x and y)
       .map((d) => _(d).pick(@opts.axis1, @opts.axis2, 'uid'))
       .value()

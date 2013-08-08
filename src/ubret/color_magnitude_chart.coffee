@@ -26,15 +26,17 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
     super - 150 
 
   yDomain: =>
-    if @graphData()?
-      [min, max] = super
+    domain = super
+    if domain
+      [min, max] = domain
       [(if min < -2 then min else -2), (if max > 4 then max else 4)]
     else
       [-2, 4]
 
   xDomain: =>
-    if @graphData()?
-      [max, min] = super
+    domain = super
+    if domain
+      [min, max] = domain
       [(if min > -18 then min else -18), (if max < -23 then max else -23)]
     else
       [-18, -23]
