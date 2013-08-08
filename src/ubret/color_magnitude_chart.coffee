@@ -50,8 +50,6 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
 
     @svg.selectAll('rect.prob-sq').remove()
 
-    console.log @probabilities.length
-
     blocks = @svg.selectAll('rect.prob-sq')
      .data(@probabilities)
         
@@ -86,6 +84,9 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
   displayTooltip: (d) =>
     @value = if d.r? then d else @value
     @lastEvent = d3.event
+    count = @probabilities.length
+    percentile = ((1 - @value.r / count) * 100).toFixed(2)
+    text = "Distribution Rank: #{@value.r}/#{count} (#{percentile}th percentile)"
 
     @svg.selectAll('text.tooltip').remove()
     @svg.append('text')
@@ -93,7 +94,7 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
       .attr('text-anchor', 'middle')
       .attr('x', @graphWidth() / 2 + 150)
       .attr('y', @graphHeight() + 50)
-      .text("Distribution Rank: #{@value.r}")
+      .text(text)
     @displayImages(@value)
 
   displayImages: (d) =>
