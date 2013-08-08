@@ -88,7 +88,7 @@ class ColorMagnitudeChart extends Ubret.Scatterplot
     @lastEvent = d3.event
     count = @probabilities.length
     percentile = ((1 - @value.r / count) * 100).toFixed(2)
-    text = "Distribution Rank: #{@value.r}/#{count} (#{percentile}th percentile)"
+    text = "Rank: #{@value.r}/#{count} (#{percentile}th percentile)"
 
     @svg.selectAll('text.tooltip').remove()
     @svg.append('text')
