@@ -46,6 +46,9 @@ class Spectra extends Ubret.Graph
 
   drawSorry: =>
     @svg.selectAll('g.sorry').remove()
+    @svg.selectAll('path').remove()
+    @svg.selectAll('line').remove()
+    @svg.selectAll('.axis').remove()
     @svg.append('g').attr('class', 'sorry')
       .append('text')
       .attr('text-anchor', 'middle')
@@ -54,12 +57,13 @@ class Spectra extends Ubret.Graph
       .text("Sorry not enough information to retrieve SDSS Spectra")
 
   drawData: (specData) =>
-      {@spectra, @lines} = specData
-      @drawAxis1() 
-      @drawAxis2() 
-      @fluxLineDraw()
-      @bestFitLineDraw()
-      @emissionLinesDraw()
+    @svg.selectAll('g.sorry').remove()
+    {@spectra, @lines} = specData
+    @drawAxis1() 
+    @drawAxis2() 
+    @fluxLineDraw()
+    @bestFitLineDraw()
+    @emissionLinesDraw()
 
   drawGraph: =>
     return if _.isEmpty(@preparedData()) or not @svg?

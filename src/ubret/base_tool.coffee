@@ -100,11 +100,12 @@ class BaseTool
     # Only bother checking sameness if parentTool is set.
     if @opts.parentTool?
       # Don't re-assign events if parentTool is the same
-      if tool.selector is @opts.parentTool.selector
+      if _.isEqual(tool, @opts.parentTool.selector)
         return @
       else
         # Unbind events first if parentTool is different.
-        @opts.parentTool.unbind()
+        @opts.parentTool.unbind('data', @data)
+        @opts.parentTool.unbind('selection', @selection)
 
     @opts.parentTool = tool
 
@@ -112,10 +113,9 @@ class BaseTool
       .selectIds(tool.opts.selectedIds)
 
     @opts.parentTool.on 
-      'keys': @keys
       'data': @data 
       'selection': @selectIds
-      'add-filter': @filters
+
     @trigger 'bound-to', tool if triggerEvent
     @
 
