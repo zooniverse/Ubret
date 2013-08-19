@@ -15,6 +15,7 @@ Toolsets =
 
   galaxy_zoo_starburst: [ "Spectra", 
                           "Table",
+                          "BarGraph",
                           "Statistics",
                           "Mapper",
                           "SubjectViewer",

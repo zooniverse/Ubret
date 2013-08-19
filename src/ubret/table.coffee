@@ -63,12 +63,13 @@ class Table extends Ubret.BaseTool
         .text((d) -> return d)
 
   drawPages: ->
-    return if _.isEmpty @preparedData()
+    data = @preparedData()
+    return if _.isEmpty(data)
     @p.remove() if @p
     @p = @d3el
       .append('p')
       .attr('class', 'pages')
-      .text("Page: #{parseInt(@opts.currentPage) + 1} of #{@pages()}")
+      .text("Page: #{parseInt(@opts.currentPage) + 1} of #{@pages()} - #{data.length} total items")
 
   # Pagination
   perPage: -> 
