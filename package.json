@@ -21,7 +21,7 @@
     "clean-css": "~1.0.12",
     "uglifyjs": "~2.3.6",
     "mocha": "~1.12.0",
-    "static": "~2.0.0"
+    "node-static": "~0.7.1"
   },
   "keywords": [
     "Ubret",
