@@ -1,0 +1,28 @@
+{
+  "name": "Ubret",
+  "version": "0.2.0",
+  "homepage": "https://github.com/zooniverse/Ubret",
+  "authors": [
+    "Edward Paget <ed.paget@gmail.com>"
+  ],
+  "description": "Library of ZooTools Dashboard tools",
+  "main": "lib/index.js",
+  "license": "APL",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.3.2",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.1",
+    "mocha": "~1.12.0",
+    "chai": "~1.7.2",
+    "sinon": "~1.7.3",
+    "leaflet": "~0.6.4"
+  }
+}
