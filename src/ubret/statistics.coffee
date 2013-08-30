@@ -25,7 +25,7 @@ class Statistics extends Ubret.BaseTool
   displayStats: => 
     return unless @ul? and @opts.statKey? and !(_.isEmpty(@preparedData()))
 
-    @statData = _.pluck @preparedData(), @opts.statKey
+    @statData = _.chain(@preparedData()).pluck(@opts.statKey).sort().value()
     @count = @statData.length
     @sum = _.foldl @statData, ((memo, num) -> memo + num), 0
 
@@ -49,6 +49,7 @@ class Statistics extends Ubret.BaseTool
     @sum / @count
 
   median: =>
+    console.log(@statData)
     midpoint = (@count / 2) - 1
     if midpoint % 1 is 0
       return @statData[midpoint]
