@@ -3,7 +3,7 @@ describe("U.Data", function() {
     this.data = new U.Data(
       [{a: 1, b: 2, c: 3},
        {a: 2, b: 7, c: 9},
-       {a: 1, b: 10, c: 12}]);
+       {a: 1, b: 10, c: 12}], ['id']);
   });
   it('should exist', function() {
     expect(this.data).to.be.ok;

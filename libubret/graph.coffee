@@ -1,4 +1,4 @@
-class @.U.Graph 
+class U.Graph 
 
   constructor: ->
     @format = d3.format(',.02f')
