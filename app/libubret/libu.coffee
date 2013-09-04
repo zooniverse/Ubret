@@ -124,7 +124,7 @@ class @.U.State extends U.EventEmitter
     ), @state)
     [finalKey, stateRef]
 
-class @.U.Data
+class @.U.LazyData
   constructor: (@data, @omittedKeys) ->
     @_invoked = []
     @_perPage = 0
@@ -134,7 +134,6 @@ class @.U.Data
     @keys = _.chain(@data).map((d) ->
       _.keys(_.omit(d, @omittedKeys...)))
       .flatten().uniq().value()
-
 
 class BaseTool
   nonDisplayKeys: ['id', 'uid', 'image', 'thumb', 'plate', 'mjd', 'fiberID']
@@ -328,7 +327,7 @@ U.Paginated =
     @settings
 
  # Abstract class for plots.  All plots should inherit from this object
-class Graph 
+class @.U.Graph 
 
   constructor: ->
     @format = d3.format(',.02f')
@@ -446,5 +445,3 @@ class Graph
       .attr('x', -(@graphHeight() / 2))
       .attr('transform', "rotate(-90)")
       .text(@unitsFormatter(@formatKey(@opts.axis2)))
-  
-window.U.Graph = Graph      currentPage: parseInt(@opts.currentPage) - 1

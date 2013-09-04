@@ -5,3 +5,4 @@ lib/
 build/
 npm-debug.log
 bower_components/
+public/

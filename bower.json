@@ -24,7 +24,26 @@
     "chai": "~1.7.2",
     "leaflet": "~0.6.4",
     "sinon-chai": "~2.4.0",
-    "sinon.js": "~1.7.3",
     "sinonjs": "~1.7.1"
+  },
+  "overrides": {
+    "underscore": {
+      "main" : "underscore.js"
+    },
+    "leaflet" : {
+      "main" : "leaflet.js"
+    },
+    "sinon-chai" : {
+      "main" : "sinon-chai.js"
+    },
+    "sinonjs" : {
+      "main" : "sinon.js"
+    },
+    "mocha" : {
+      "main" : [
+        "mocha.js", 
+        "mocha.css"
+      ]
+    }
   }
 }
