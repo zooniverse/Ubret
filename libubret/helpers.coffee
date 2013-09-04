@@ -1,5 +1,3 @@
-U = window.U || 
-
 U._bindContext = (fns, ctx) ->
   return _.map(fns, (fn) -> _.bind(fn, ctx))
 
@@ -22,5 +20,3 @@ U.pipeline = (fns...) ->
     _.reduce(fns, ((m, fn) -> 
       fn.apply(_this, [m].concat(args))
     ), seed)
-
-

@@ -1,0 +1,56 @@
+class @.U.State extends U.EventEmitter
+  constructor: (@state = {} , @ctx = null, listeners) ->
+    super listeners, @ctx
+
+  # Public Methods
+  get: (states...) ->
+    if _.isEmpty(states)
+      return _.clone(@state)
+    _.chain(states)
+      .map(@_parseStateStrToObj, @)
+      .map(([key, deepState]) ->
+        if key is "*"
+          _.clone(deepState)
+        else
+          _.clone(deepState[key]))
+      .value()
+
+  set: (state, value) ->
+    [key, deepState] = @_parseStateStrToObj(state)
+    unless _.isEqual(deepState[key], value)
+      deepState[key] = value
+      @trigger(state, value)
+
+  withState: (state, fn, ctx=null) ->
+    if ctx?
+      _.bind(fn, ctx)
+    return (=> fn(@get(state...)...))
+
+  whenState: (reqState, optState, fn, ctx) ->
+    allState = reqState.concat(optState)
+    withState = @withState(allState, fn, ctx)
+    checkStateAndExecute = () => 
+      if _.every(@get(reqState...), ((s) -> s?), @)
+        withState()
+    _.each(allState, ((state) -> @on(state, checkStateAndExecute)), @)
+
+  # Private Methods
+  
+  _parseStateStrToObj: (str) ->
+    toAccessor = (a) ->
+      array = a.match(/\[([0-9]+)\]/);
+      return unless _.isNull(array) then parseInt(array[1]) else a
+
+    state = str.split('.')
+    finalKey = toAccessor(state.pop())
+
+    stateRef = _.reduce(state, ((m, a, i) ->
+      a = toAccessor(a)
+      # Check if the key is defined. If not create it
+      if (m[a]?)
+        nextKey = if (state.length is i + 1) then finalKey else state[i + 1]
+        if (_.isNumber(nextKey)) then m[a] = [] else m[a] = {}
+      else
+        m[a]
+    ), @state)
+    [finalKey, stateRef]
