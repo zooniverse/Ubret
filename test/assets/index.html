@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ubret Test</title>
+  <link rel="stylesheet" href="../css/vendor.css" type="text/css" media="screen">
+  <script src="../js/vendor.js"></script>
+  <script>
+    mocha.setup('bdd');
+    window.expect = chai.expect;
+  </script>
+  <script src="../js/test.js"></script>
+  <script src="../js/libubret.js"></script>
+</head>
+<body>
+  <div id="mocha"></div>
+  <script>
+    mocha.checkLeaks();
+    mocha.globals(['navigator', 'constructor', 'top', 'Ubret', '_', 'd3']);
+    mocha.run();
+  </script>
+</body>
+</html>

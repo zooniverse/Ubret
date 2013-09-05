@@ -1,0 +1,3 @@
+<h2>Page Setting</h2>
+<button data-page="<%- @currentPage + 1 %>" class="next btn">Next Page</button>
+<button data-page="<%- @currentPage - 1 %>" class="prev btn">Prev Page</button>

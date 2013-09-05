@@ -1,5 +1,4 @@
-# Abstract class for plots.  All plots should inherit from this object
-class Graph extends Ubret.BaseTool
+class U.Graph 
 
   constructor: ->
     @format = d3.format(',.02f')
@@ -117,5 +116,3 @@ class Graph extends Ubret.BaseTool
       .attr('x', -(@graphHeight() / 2))
       .attr('transform', "rotate(-90)")
       .text(@unitsFormatter(@formatKey(@opts.axis2)))
-  
-window.Ubret.Graph = Graph
