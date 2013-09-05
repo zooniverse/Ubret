@@ -1,6 +1,6 @@
 {
   "name": "libubret",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Ubret",
   "main": "lib/index.js",
   "scripts": {
@@ -17,11 +17,6 @@
   "gitHead": "54bc83544cee8d22d4c832c9666793b2e6903451",
   "dependencies": {
     "bower": "~1.2.4",
-    "coffee-script": "~1.6.3",
-    "clean-css": "~1.0.12",
-    "uglifyjs": "~2.3.6",
-    "mocha": "~1.12.0",
-    "node-static": "~0.7.1",
     "css-brunch": "~1.6.0",
     "javascript-brunch": "~1.6.0",
     "coffee-script-brunch": "~1.7.2",
