@@ -1,16 +1,8 @@
-class U.Graph 
-
+class Graph 
   constructor: ->
     @format = d3.format(',.02f')
     @margin = {left: 70, top: 20, bottom: 80, right: 20}
     super
-
-  events: 
-    'height' : 'setupGraph drawAxis1 drawAxis2 drawData'
-    'width' : 'setupGraph drawAxis1 drawAxis2 drawData'
-    'settings' : 'drawAxis1 drawAxis2 drawData'
-    'data' : 'drawAxis1 drawAxis2 drawData'
-    'selector ' : 'setupGraph'
 
   setupGraph: =>
     return unless @opts.width? and @opts.height?
@@ -116,3 +108,5 @@ class U.Graph
       .attr('x', -(@graphHeight() / 2))
       .attr('transform', "rotate(-90)")
       .text(@unitsFormatter(@formatKey(@opts.axis2)))
+
+module.exports = Graph
