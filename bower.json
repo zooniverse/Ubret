@@ -34,7 +34,7 @@
       "main" : "leaflet.js"
     },
     "sinon-chai" : {
-      "main" : "sinon-chai.js"
+      "main" : "lib/sinon-chai.js"
     },
     "sinonjs" : {
       "main" : "sinon.js"

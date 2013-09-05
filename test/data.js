@@ -30,7 +30,6 @@ describe("U.Data", function() {
     it('should return filtered results', function() {
       var filtered = this.data
         .filter(function(d) { return d.a === 2;});
-      console.log(filtered);
       expect(filtered.toArray()).to.have.length(1);
       expect(filtered.toArray())
         .to.have.deep.property('[0].a').and.equal(2);
@@ -53,10 +52,6 @@ describe("U.Data", function() {
   });
 
   describe("addField", function() {
-    it('should throw an error when field object isn\'t valid', function() {
-      expect(this.data.addField).to.throw(Error);
-    });
-
     it('should add a field to the dataset', function() {
       expect(this.data.addField({
         name: 'color', fn: function(d) { return d.a + d.b;}}).toArray())
