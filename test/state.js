@@ -15,6 +15,13 @@ describe("U.State", function() {
       this.state.set('state', true);
       expect(stateSpy).to.have.been.calledWith(true);
     });
+
+    it("should parse setting string", function() {
+      var stateSpy = sinon.spy()
+      this.state.on('state.[0]', stateSpy)
+      this.state.set('state.[0]', 'true')
+      expect(stateSpy).to.have.been.calledWith('true')
+    });
   });
 
   describe("with", function() {

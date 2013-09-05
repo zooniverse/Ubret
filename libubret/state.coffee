@@ -25,7 +25,7 @@ class U.State extends U.EventEmitter
 
   with: (state, fn, ctx=null) ->
     if ctx?
-      _.bind(fn, ctx)
+      fn = _.bind(fn, ctx)
     return (=> fn(_.object(state, @get(state...))))
 
   when: (reqState, optState, fn, ctx) ->
@@ -38,14 +38,14 @@ class U.State extends U.EventEmitter
 
   # Private Methods
   _setStateObj: (obj) ->
-    _.each(@_parseStateToStrs(null, obj), _partial(@set.apply, @)) 
+    _.each(@_parseStateObjToStrs(null, obj), (pair) => @set(pair...))
 
   _parseStateObjToStrs: (prefix, obj) ->
     _.reduce(obj, ((m, v, k) =>
       k = if _.isNumber(k) then "[" + k + "]" else k
       _prefix = if prefix? then prefix + "." + k else k
       if (_.isObject(v) || _.isArray(v))
-        m.concat(@_parseObjToState(_prefix, v))
+        m.concat(@_parseStateObjToStrs(_prefix, v))
       else
         m.concat([[_prefix, v]])
     ), [])
@@ -61,10 +61,9 @@ class U.State extends U.EventEmitter
     stateRef = _.reduce(state, ((m, a, i) ->
       a = toAccessor(a)
       # Check if the key is defined. If not create it
-      if (m[a]?)
+      unless (m[a]?)
         nextKey = if (state.length is i + 1) then finalKey else state[i + 1]
         if (_.isNumber(nextKey)) then m[a] = [] else m[a] = {}
-      else
-        m[a]
+      m[a]
     ), @state)
     [finalKey, stateRef]

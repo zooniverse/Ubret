@@ -5,6 +5,7 @@ U.identity = (a) -> a
 
 U.dispatch = (dispatchFn, obj, ctx) ->
   dispatch = _.map(obj, (fns, dispatchVal) ->
+    dispatchVal = dispatchVal.replace("[", "\\[").replace("]", "\\]")
     [new RegExp("^" + dispatchVal + "$"), fns])
 
   (value, args...) -> 

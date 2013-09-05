@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ubret Test</title>
+  <script src="../js/vendor.js"></script>
+  <script src="../js/libubret.js"></script>
+  <script src="../js/tools.js"></script>
+</head>
+<body>
+  <div id="tools"></div>
+  <script>
+    Table = require('tools/table');
+    data = [{uid: 1, a: 2, b: 3, c: 41},
+            {uid: 2, a: 4, b: 3, c: 42},
+            {uid: 3, a: 6, b: 8, c: 43},
+            {uid: 4, a: 8, b: 0, c: 46},
+            {uid: 5, a: 1, b: 8, c: 45},
+            {uid: 6, a: 12, b: 1, c: 45},
+            {uid: 7, a: 20, b: 3, c: 43},
+            {uid: 8, a: 24, b: 3, c: 42},
+            {uid: 9, a: 21, b: 3, c: 41},
+            {uid: 10, a: 2, b: 2, c: 42}]
+    table = new Table({
+      currentPage: 0,
+      sortOrder: 'a',
+      sortColumn: 'uid',
+      height: 200,
+      selection: [1]
+    });
+    table.setData(new U.Data(data, ['uid']))
+    tools = document.getElementById('tools')
+    console.log(tools, table)
+    tools.appendChild(table.el)
+    _.each(table.settingViews, function(setting) {
+      tools.appendChild(setting.el);
+    });
+  </script>
+</body>
+</html>

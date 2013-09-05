@@ -2,26 +2,28 @@ class U.Tool
   nonDisplayKeys: ['id', 'uid', 'image', 'thumb']
 
   defaultEventHandlers: {
-    'data' : 'childData',
-    'selection' : 'childSelection'
+    'data' : ['childData'],
+    'selection' : ['childSelection']
   }
 
-  mixin: []
+  mixins: []
 
   settings: []
 
   constructor: (settings, parent=null) ->
     # Mixins
-    _.each(@mixins, (mixin) => _.extend(@prototype, mixin))
+    _.each(@mixins, (mixin) => 
+      _.extend(@constructor::, mixin))
 
     # Initialize Element
     @el = document.createElement('div')
+    @el.className = "tool " + @className
     @d3el = d3.select(@el)
     @$el = $(@el)
 
     # Initialize State Watchers
     defaultEvents = _.chain(@defaultEventHandlers)
-      .pairs().map(([ev, fn]) => [ev, @_strToMethod(fn)])
+      .map((fns, ev) => [ev, _.map(fns, @_strToMethod, @)])
       .object().value()
     @state = new U.State({}, @, defaultEvents)
     @_setEvents()
@@ -50,6 +52,7 @@ class U.Tool
     if _.isFunction(@[setting])
       value = @[setting](value)
     @state.set(setting, value)
+    value
 
   childData: (data) ->
     @state.set('child-data', data)

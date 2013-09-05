@@ -19,7 +19,7 @@ exports.config =
         """
       else if (path is"public/js/tools.js")
         """
-          function(/*! Brunch !*/) {
+          (function(/*! Brunch !*/) {
             'use strict';
 
             var globals = typeof window !== 'undefined' ? window : global;
@@ -34,7 +34,7 @@ exports.config =
 
             var expand = function(root, name) {
               var results = [], parts, part;
-              if (/^\.\.?(\/|$)/.test(name)) {
+              if (/^\\.\\.?(\\/|$)/.test(name)) {
                 parts = [root, name].join('/').split('/');
               } else {
                 parts = name.split('/');
@@ -118,7 +118,7 @@ exports.config =
     wrapper: (path, data) ->
       if (path.split('/')[0] is 'tools')
         """
-        require.define({"#{path}": function(exports, require, module) {
+        require.define({"#{path.split('.')[0]}": function(exports, require, module) {
           #{data}
         }});\n\n
         """
@@ -144,4 +144,4 @@ exports.config =
 
     templates:
       joinTo:
-        'js/tools.js' : /^app\/tools/
+        'js/tools.js' : /^tools/

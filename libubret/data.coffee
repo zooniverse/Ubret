@@ -126,6 +126,7 @@ class U.Data
 
   _applyPaginate: (data, take=null) ->
     return data if @_perPage is 0
+    return [data] if @_perPage is 1
     _.reduce(data, ((m, d, i) =>
       return m if m.length is take
       if (i % @_perPage) is 0
