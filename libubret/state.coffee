@@ -26,7 +26,7 @@ class U.State extends U.EventEmitter
   with: (state, fn, ctx=null) ->
     if ctx?
       _.bind(fn, ctx)
-    return (=> fn(@get(state...)...))
+    return (=> fn(_.object(state, @get(state...))))
 
   when: (reqState, optState, fn, ctx) ->
     allState = reqState.concat(optState)

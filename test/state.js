@@ -29,7 +29,7 @@ describe("U.State", function() {
       this.state.set('state1', true);
       this.state.set('state2', true);
       withState();
-      expect(spy1).to.have.been.calledWith(true, true);
+      expect(spy1).to.have.been.calledWith({state1: true, state2: true});
     });
   });
 
@@ -48,17 +48,17 @@ describe("U.State", function() {
       this.state.when(['state1'], ['state2'], stateSpy);
       this.state.set('state2', true);
       this.state.set('state1', true);
-      expect(stateSpy).to.have.been.calledWith(true, true);
+      expect(stateSpy).to.have.been.calledWith({state1: true, state2: true});
     });
 
     it('should call the callback when optional state is set', function() {
       var stateSpy = sinon.spy();
       this.state.when(['state1'], ['state2'], stateSpy);
       this.state.set('state1', true);
-      expect(stateSpy).to.have.been.calledWith(true);
+      expect(stateSpy).to.have.been.calledWith({state1: true, state2: undefined});
       stateSpy.reset();
       this.state.set('state2', true);
-      expect(stateSpy).to.have.been.calledWith(true, true);
+      expect(stateSpy).to.have.been.calledWith({state1: true, state2: true});
     });
   });
 });
