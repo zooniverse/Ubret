@@ -1,4 +1,4 @@
-class @.U.State extends U.EventEmitter
+class U.State extends U.EventEmitter
   constructor: (@state = {} , @ctx = null, listeners) ->
     super listeners, @ctx
 
@@ -16,25 +16,39 @@ class @.U.State extends U.EventEmitter
       .value()
 
   set: (state, value) ->
+    if _.isObject(state)
+      return @_setStateObj(state)
     [key, deepState] = @_parseStateStrToObj(state)
     unless _.isEqual(deepState[key], value)
       deepState[key] = value
       @trigger(state, value)
 
-  withState: (state, fn, ctx=null) ->
+  with: (state, fn, ctx=null) ->
     if ctx?
       _.bind(fn, ctx)
     return (=> fn(@get(state...)...))
 
-  whenState: (reqState, optState, fn, ctx) ->
+  when: (reqState, optState, fn, ctx) ->
     allState = reqState.concat(optState)
-    withState = @withState(allState, fn, ctx)
+    withState = @with(allState, fn, ctx)
     checkStateAndExecute = () => 
       if _.every(@get(reqState...), ((s) -> s?), @)
         withState()
     _.each(allState, ((state) -> @on(state, checkStateAndExecute)), @)
 
   # Private Methods
+  _setStateObj: (obj) ->
+    _.each(@_parseStateToStrs(null, obj), _partial(@set.apply, @)) 
+
+  _parseStateObjToStrs: (prefix, obj) ->
+    _.reduce(obj, ((m, v, k) =>
+      k = if _.isNumber(k) then "[" + k + "]" else k
+      _prefix = if prefix? then prefix + "." + k else k
+      if (_.isObject(v) || _.isArray(v))
+        m.concat(@_parseObjToState(_prefix, v))
+      else
+        m.concat([[_prefix, v]])
+    ), [])
   
   _parseStateStrToObj: (str) ->
     toAccessor = (a) ->

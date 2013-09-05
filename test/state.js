@@ -17,15 +17,15 @@ describe("U.State", function() {
     });
   });
 
-  describe("withState", function() {
+  describe("with", function() {
     it('should create a function', function() {
-      var withState = this.state.withState(['state1', 'state2'], U.identity)
+      var withState = this.state.with(['state1', 'state2'], U.identity)
       expect(withState).to.be.a('function');
     });
 
     it('should call functions with the given state', function() {
       var spy1 = sinon.spy();
-      var withState = this.state.withState(['state1', 'state2'], spy1);
+      var withState = this.state.with(['state1', 'state2'], spy1);
       this.state.set('state1', true);
       this.state.set('state2', true);
       withState();
@@ -33,10 +33,10 @@ describe("U.State", function() {
     });
   });
 
-  describe("whenState", function() {
+  describe("when", function() {
     it('should call a function when all the required state is set', function() {
       var stateSpy = sinon.spy();
-      this.state.whenState(['state1', 'state2'], [], stateSpy);
+      this.state.when(['state1', 'state2'], [], stateSpy);
       this.state.set('state1', true);
       expect(stateSpy).to.not.have.been.called;
       this.state.set('state2', true);
@@ -45,7 +45,7 @@ describe("U.State", function() {
 
     it('should pass optional state to the callback function', function() {
       var stateSpy = sinon.spy();
-      this.state.whenState(['state1'], ['state2'], stateSpy);
+      this.state.when(['state1'], ['state2'], stateSpy);
       this.state.set('state2', true);
       this.state.set('state1', true);
       expect(stateSpy).to.have.been.calledWith(true, true);
@@ -53,7 +53,7 @@ describe("U.State", function() {
 
     it('should call the callback when optional state is set', function() {
       var stateSpy = sinon.spy();
-      this.state.whenState(['state1'], ['state2'], stateSpy);
+      this.state.when(['state1'], ['state2'], stateSpy);
       this.state.set('state1', true);
       expect(stateSpy).to.have.been.calledWith(true);
       stateSpy.reset();
