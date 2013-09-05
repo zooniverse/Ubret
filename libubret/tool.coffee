@@ -6,7 +6,14 @@ class U.Tool
     'selection' : 'childSelection'
   }
 
+  mixin: []
+
+  settings: []
+
   constructor: (settings, parent=null) ->
+    # Mixins
+    _.each(@mixins, (mixin) => _.extend(@prototype, mixin))
+
     # Initialize Element
     @el = document.createElement('div')
     @d3el = d3.select(@el)
@@ -18,6 +25,9 @@ class U.Tool
       .object().value()
     @state = new U.State({}, @, defaultEvents)
     @_setEvents()
+
+    # Initialize Settings
+    @settingViews = _.map(@settings, (setting) => new setting(@state))
 
     # Set Current State
     @setParent(parent) if parent
