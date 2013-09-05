@@ -11,6 +11,7 @@
   <div id="tools"></div>
   <script>
     Table = require('tools/table');
+    ToolChain = require('tools/tool_chain');
     data = [{uid: 1, a: 2, b: 3, c: 41},
             {uid: 2, a: 4, b: 3, c: 42},
             {uid: 3, a: 6, b: 8, c: 43},
@@ -28,6 +29,11 @@
       height: 200,
       selection: [1]
     });
+
+    toolChain = new ToolChain({
+      title: 'A New Toolchain',
+      annotation: 'this is something you could right about'
+    });
     table.setData(new U.Data(data, ['uid']))
     tools = document.getElementById('tools')
     console.log(tools, table)
@@ -35,6 +41,7 @@
     _.each(table.settingViews, function(setting) {
       tools.appendChild(setting.el);
     });
+    tools.appendChild(toolChain.el);
   </script>
 </body>
 </html>

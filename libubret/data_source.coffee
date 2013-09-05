@@ -2,7 +2,7 @@ class U.DataSource
   constructor: (@state, @url, @omittedKeys=[]) ->
     @state.when(["params.*"], [], @put, @)
     @state.when(["params.status"], [], @getData, @)
-    @get() if @state.get('params.id')
+    @get(@state.get('params.id')[0]?) if @state.get('params.id')[0]?
 
   update: (response) =>
     status = reponse.status

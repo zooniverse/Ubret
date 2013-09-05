@@ -33,7 +33,7 @@ class U.Tool
 
     # Set Current State
     @setParent(parent) if parent
-    @state.set(settings)
+    @state.set(settings) if settings
 
   setParent: (parent) ->
     if @parent?
