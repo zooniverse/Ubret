@@ -1,14 +1,11 @@
 class U.DataSource 
   constructor: (@state, @url, @omittedKeys=[]) ->
-    @state.when(["params.*"], [], @put, @)
-    @state.when(["params.status"], [], @getData, @)
-    @get(@state.get('params.id')[0]?) if @state.get('params.id')[0]?
+    @state.when(["id", "params.*"], [], @put, @)
+    @get(@state.get('id')[0]) unless _.isEmpty(@state.get('id'))
 
   update: (response) =>
-    status = reponse.status
-    delete response.status
-    @state.set('params', response)
-    @state.set('params.status', status)
+    @state.set('params', response.params)
+    @getData(response.id)
 
   get: (id) ->
     fetcher = $.ajax({
@@ -18,8 +15,7 @@ class U.DataSource
     })
     fetcher.then(@update)
 
-  put: (params) ->
-    id = params.id
+  put: (id, params) ->
     return @post unless id?
     putter = $.ajax({
       type: "PUT",
@@ -50,13 +46,17 @@ class U.DataSource
     })
     delete @
 
-  getData: (status) ->
-    return setTimeout(_.bind(@get, @) 5000) unless status is 'ready'
-    id = @stat.get('params.id')
+  getData: (id) ->
+    id = id || @state.get('id')[0]
     fetcher = $.ajax({
       type: 'GET',
       url: _.result(@, 'url') + id + "/data",
       crossDomain: true
     })
-    fetcher.then((response) => 
-      @state.set('data', new U.Data(response, @omittedKeys)))
+    fetcher.then(
+      ((response) => 
+        @state.set('data', new U.Data(response, @omittedKeys))),
+      ((error) =>
+        @state.get('dataError', error))
+    )
+

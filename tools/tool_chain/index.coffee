@@ -1,11 +1,10 @@
 class ToolChain extends U.Tool
-  url: "http://localhost:3002/zoo_data/"
   template: require("./templates/tool_chain")
 
   events: [
     {
       req: ["title", "annotation"],
-      opt: ["data", "params.ready"],
+      opt: ["data", "dataError"],
       fn: 'render'
     }
   ]
@@ -14,13 +13,19 @@ class ToolChain extends U.Tool
     super
     @dataSource = new U.DataSource(@state, @url, @nonDisplayKeys)
 
-  render: ({title, annotation, ready, data}) ->
+  url: ->
+    user = @state.get('user')
+    project = @state.get('project')
+    "http://localhost:3002/user/#{user}/project/#{project}/collection/" 
+
+  render: ({title, annotation, data, dataError}) ->
     @$el.off()
     @$el.html(@template({
       title: title,
       annotation: annotation,
-      ready: ready?,
       thumbnail: data?.project('thumb').first()
+      data: data
+      dataError: dataError
     }))
     @$el.on('dblclick', '.title', _.bind(@editTitle, @))
     @$el.on('dblclick', '.annotation', _.bind(@editAnnotation, @))

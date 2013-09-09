@@ -22,26 +22,31 @@
             {uid: 8, a: 24, b: 3, c: 42},
             {uid: 9, a: 21, b: 3, c: 41},
             {uid: 10, a: 2, b: 2, c: 42}]
+    toolChain = new ToolChain({
+      title: 'A New Toolchain',
+      annotation: 'this is something you could write about',
+      user: 1,
+      project: 'galaxy_zoo_starburst',
+      id: 17,
+      params: {
+        type: "talk-collection",
+        "talk-collection": "CGSS00005b"
+      }
+    });
+
     table = new Table({
       currentPage: 0,
       sortOrder: 'a',
       sortColumn: 'uid',
-      height: 200,
+      height: 600,
       selection: [1]
-    });
-
-    toolChain = new ToolChain({
-      title: 'A New Toolchain',
-      annotation: 'this is something you could right about'
-    });
-    table.setData(new U.Data(data, ['uid']))
+    }, toolChain);
     tools = document.getElementById('tools')
-    console.log(tools, table)
+    tools.appendChild(toolChain.el);
     tools.appendChild(table.el)
     _.each(table.settingViews, function(setting) {
       tools.appendChild(setting.el);
     });
-    tools.appendChild(toolChain.el);
   </script>
 </body>
 </html>

@@ -39,14 +39,15 @@ class U.Tool
     if @parent?
       _.each([['data', @setData], ['selection', @setSelection]], 
         ([ev, fn] => @state.off(ev, fn, @)))
-    parent.state.when(['child-data'], [], @setData, @)
-    parent.state.when(['child-selection'], [], @setSelection, @)
+    parent.state.when(['childData'], [], @setData, @)
+    parent.state.when(['childSelection'], [], @setSelection, @)
 
-  setSelection: (selection) ->
-    @state.set('selection', selection)
+  setSelection: ({childSelection}) ->
+    @state.set('selection', childSelection)
 
-  setData: (data) ->
-    @state.set('data', data)
+  setData: ({childData}) ->
+    console.log(@name, data)
+    @state.set('data', childData) 
 
   setSetting: (setting, value) ->
     if _.isFunction(@[setting])
@@ -55,10 +56,10 @@ class U.Tool
     value
 
   childData: (data) ->
-    @state.set('child-data', data)
+    @state.set('childData', data)
 
   childSelection: (selection) ->
-    @state.set('child-selection', selection)
+    @state.set('childSelection', selection)
 
   # Private
 
