@@ -6,5 +6,5 @@
   <p><%- @annotation %></p>
   <textarea><%- @annotation %></textarea>
 </div>
-<button class=".finish-edit">Finish Edit</button>
+<button class="finish-edit">Finish Edit</button>
 <img src="<%- @thumbnail %>" alt="thumbnail">

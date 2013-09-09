@@ -15,15 +15,17 @@ class U.DataSource
     })
     fetcher.then(@update)
 
-  put: (id, params) ->
-    return @post unless id?
+  put: (state) ->
+    id = state.id
+    params = state['params.*']
     putter = $.ajax({
       type: "PUT",
       url: _.result(@, 'url') + id,
       crossDomain: true
-      data: JSON.stringify(params)
+      data: JSON.stringify({params: params})
       contentType: 'application/json'
     })
+    console.log(putter)
     putter.then(@update)
 
   post: (params=null) ->
@@ -55,6 +57,8 @@ class U.DataSource
     })
     fetcher.then(
       ((response) => 
+        if _.isEmpty(response)
+          throw new Error ("No Data")
         @state.set('data', new U.Data(response, @omittedKeys))),
       ((error) =>
         @state.get('dataError', error))

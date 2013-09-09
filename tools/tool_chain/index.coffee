@@ -1,5 +1,9 @@
 class ToolChain extends U.Tool
+  className: "tool-chain"
+
   template: require("./templates/tool_chain")
+
+  settings: [require("tools/settings/data_source")]
 
   events: [
     {
@@ -23,7 +27,7 @@ class ToolChain extends U.Tool
     @$el.html(@template({
       title: title,
       annotation: annotation,
-      thumbnail: data?.project('thumb').first()
+      thumbnail: data?.project('thumb').first()[0].thumb
       data: data
       dataError: dataError
     }))
@@ -45,12 +49,12 @@ class ToolChain extends U.Tool
   finishEdit: ->
     @$el.find(".finish-edit").hide().off()
 
-  finishAnnotationEdit: ->
+  finishAnnotationEdit: =>
     @finishEdit()
     annotation = @$el.find('.annotation textarea').val()
     @state.set('annotation', annotation)
 
-  finishTitleEdit: ->
+  finishTitleEdit: =>
     @finishEdit()
     title = @$el.find(".title input").val()
     @state.set('title', title)

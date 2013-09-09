@@ -139,7 +139,7 @@ exports.config =
 
     stylesheets:
       joinTo: 
-        'css/tools.css': /^app\/tools\/style/
+        'css/tools.css': /^tools/
         'css/vendor.css': /^(bower_components|vendor)/
 
     templates:

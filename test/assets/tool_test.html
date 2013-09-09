@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Ubret Test</title>
+  <link rel="stylesheet" href="../css/tools.css" type="text/css" media="screen">
   <script src="../js/vendor.js"></script>
   <script src="../js/libubret.js"></script>
   <script src="../js/tools.js"></script>
@@ -10,24 +11,24 @@
 <body>
   <div id="tools"></div>
   <script>
+    tools = document.getElementById('tools')
+
+    appendSettings = function(setting) {
+      tools.appendChild(setting.el);
+    };
+
     Table = require('tools/table');
     ToolChain = require('tools/tool_chain');
-    data = [{uid: 1, a: 2, b: 3, c: 41},
-            {uid: 2, a: 4, b: 3, c: 42},
-            {uid: 3, a: 6, b: 8, c: 43},
-            {uid: 4, a: 8, b: 0, c: 46},
-            {uid: 5, a: 1, b: 8, c: 45},
-            {uid: 6, a: 12, b: 1, c: 45},
-            {uid: 7, a: 20, b: 3, c: 43},
-            {uid: 8, a: 24, b: 3, c: 42},
-            {uid: 9, a: 21, b: 3, c: 41},
-            {uid: 10, a: 2, b: 2, c: 42}]
     toolChain = new ToolChain({
       title: 'A New Toolchain',
       annotation: 'this is something you could write about',
       user: 1,
       project: 'galaxy_zoo_starburst',
-      id: 17,
+      id: 18,
+      "talk-collections" : {
+        "CGSL00000d" : "Merging Galaxies", 
+        "CGSS00005b" : "My Favorites"
+      },
       params: {
         type: "talk-collection",
         "talk-collection": "CGSS00005b"
@@ -41,12 +42,11 @@
       height: 600,
       selection: [1]
     }, toolChain);
-    tools = document.getElementById('tools')
+
     tools.appendChild(toolChain.el);
-    tools.appendChild(table.el)
-    _.each(table.settingViews, function(setting) {
-      tools.appendChild(setting.el);
-    });
+    _.each(toolChain.settingViews, appendSettings);
+    tools.appendChild(table.el);
+    _.each(table.settingViews, appendSettings);
   </script>
 </body>
 </html>

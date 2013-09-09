@@ -21,7 +21,8 @@
     "javascript-brunch": "~1.6.0",
     "coffee-script-brunch": "~1.7.2",
     "eco-brunch": "~1.7.1",
-    "brunch": "~1.7.4"
+    "brunch": "~1.7.4",
+    "stylus-brunch": "~1.7.0"
   },
   "keywords": [
     "Ubret",
