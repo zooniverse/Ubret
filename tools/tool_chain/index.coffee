@@ -59,4 +59,11 @@ class ToolChain extends U.Tool
     title = @$el.find(".title input").val()
     @state.set('title', title)
 
+  setTalkCollections: (cols) ->
+    @state.set('talk-collections', cols)
+
+  setUser: (id) ->
+    unless @state.get('user')[0]?
+      @state.set('user', id);
+
 module.exports = ToolChain

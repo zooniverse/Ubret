@@ -1,11 +1,12 @@
 class U.DataSource 
   constructor: (@state, @url, @omittedKeys=[]) ->
     @state.when(["id", "params.*"], [], @put, @)
-    @get(@state.get('id')[0]) unless _.isEmpty(@state.get('id'))
+    @get(@state.get('id')[0]) if @state.get('id')[0]?
 
   update: (response) =>
     @state.set('params', response.params)
-    @getData(response.id)
+    if response.id?
+      @getData(response.id)
 
   get: (id) ->
     fetcher = $.ajax({

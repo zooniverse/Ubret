@@ -1,7 +1,8 @@
 class DataSourceSetting extends U.Setting
   className: "data-source-setting"
   template: require('./templates/data_source')
-  reqState: ['talk-collections', 'params.talk-collection']
+  reqState: ['talk-collections'] 
+  optState: ['params.talk-collection']
 
   events: {
     'change select' : 'changeCollection'
