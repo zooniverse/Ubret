@@ -1,3 +1,4 @@
+<h2>Data Source</h2>
 <select>
     <option value="">Select a Data Source</option>
   <% for id, name of @['talk-collections']: %>
