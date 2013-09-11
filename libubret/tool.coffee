@@ -10,6 +10,10 @@ class U.Tool
 
   settings: []
 
+  events: []
+
+  domEvents: {}
+
   constructor: (settings, parent=null) ->
     # Mixins
     _.each(@mixins, (mixin) => 
@@ -50,6 +54,9 @@ class U.Tool
   setData: ({childData}) ->
     @state.set('data', childData) 
 
+  setHeight: (height) ->
+    @state.set('height', height)
+
   setSetting: (setting, value) ->
     if _.isFunction(@[setting])
       value = @[setting](value)
@@ -61,6 +68,13 @@ class U.Tool
 
   childSelection: (selection) ->
     @state.set('childSelection', selection)
+
+  delegateEvents: ->
+    _.each(@domEvents, (fn, ev) =>
+      ev = ev.split(' ')
+      selector = _.rest(ev).join(' ')
+      ev = _.first(ev)
+      @$el.on(ev, selector, _.bind(@[fn], @)))
 
   # Private
 

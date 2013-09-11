@@ -1,4 +1,5 @@
 <select>
+    <option value="">Select a Data Source</option>
   <% for id, name of @['talk-collections']: %>
     <option value="<%- id %>" <% if id is @['params.talk-collection']: %>selected<% end %>> <%- name %></option>
   <% end %>

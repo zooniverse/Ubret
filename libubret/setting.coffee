@@ -7,12 +7,11 @@ class U.Setting
     @el.className = "setting " + @className
     @$el = $(@el)
     @state.when(@reqState, @optState, @render, @)
-    @listenTo()
 
   render: (state) ->
     @$el.html(@template(state))
 
-  listenTo: ->
+  delegateEvents: ->
     _.each(@events, (fn, ev) =>
       ev = ev.split(' ')
       selector = _.rest(ev).join(' ')

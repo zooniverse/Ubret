@@ -9,6 +9,6 @@ class DataSourceSetting extends U.Setting
   }
 
   changeCollection: (ev) ->
-    @state.set('params.talk-collection', ev.target.value)
+    @state.set('params.talk-collection', ev.target.value) 
 
 module.exports = DataSourceSetting

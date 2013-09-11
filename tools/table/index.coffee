@@ -55,7 +55,6 @@ class Table extends U.Tool
   drawBody: ({data, currentPage, sortOrder, sortColumn, selection}) -> 
     @initEl()
 
-
     data = @currentPageData(data, sortColumn, sortOrder, currentPage)
 
     tr = @tbody.selectAll('tr')
@@ -64,7 +63,7 @@ class Table extends U.Tool
     tr.enter().append('tr')
 
     tr.attr('data-id', (d) -> d.uid)
-      .attr('class', (d) -> if d.uid in selection then 'selected' else '')
+      .attr('class', (d) -> if d.uid in (selection || []) then 'selected' else '')
       .on('click', @selection)
 
     tr.exit().remove()

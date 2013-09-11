@@ -13,9 +13,17 @@ class ToolChain extends U.Tool
     }
   ]
 
-  constructor: ->
-    super
-    @dataSource = new U.DataSource(@state, @url, @nonDisplayKeys)
+  domEvents: {
+    'dblclick .title' : 'editTitle'
+    'dblclick .annotation' : 'editAnnotation'
+    'click .finish-edit' : 'finishEdit'
+  }
+
+  constructor: (settings, parent=null) ->
+    super settings, parent
+    @state.set('params.type', 'talk-collection')
+    unless parent
+      @dataSource = new U.DataSource(@state, @url, @nonDisplayKeys)
 
   url: ->
     user = @state.get('user')
@@ -23,7 +31,7 @@ class ToolChain extends U.Tool
     "http://localhost:3002/user/#{user}/project/#{project}/collection/" 
 
   render: ({title, annotation, data, dataError}) ->
-    @$el.off()
+    @$el.off('dblclick')
     @$el.html(@template({
       title: title,
       annotation: annotation,
@@ -38,24 +46,16 @@ class ToolChain extends U.Tool
     @$el.find('.title h2').hide()
     @$el.find('.title input').show().focus()
     @$el.find(".finish-edit").show()
-      .on('click', @finishTitleEdit)
 
   editAnnotation: (ev) ->
     @$el.find('.annotation p').hide()
     @$el.find('.annotation textarea').show().focus()
     @$el.find(".finish-edit").show()
-      .on('click', @finishAnnotationEdit)
 
   finishEdit: ->
     @$el.find(".finish-edit").hide().off()
-
-  finishAnnotationEdit: =>
-    @finishEdit()
     annotation = @$el.find('.annotation textarea').val()
     @state.set('annotation', annotation)
-
-  finishTitleEdit: =>
-    @finishEdit()
     title = @$el.find(".title input").val()
     @state.set('title', title)
 
@@ -65,5 +65,4 @@ class ToolChain extends U.Tool
   setUser: (id) ->
     unless @state.get('user')[0]?
       @state.set('user', id);
-
 module.exports = ToolChain

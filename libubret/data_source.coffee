@@ -1,7 +1,10 @@
 class U.DataSource 
   constructor: (@state, @url, @omittedKeys=[]) ->
     @state.when(["id", "params.*"], [], @put, @)
-    @get(@state.get('id')[0]) if @state.get('id')[0]?
+    if @state.get('id')[0]?
+      @get(@state.get('id')[0]) 
+    else
+      @state.when(["params.*"], [], @post, @)
 
   update: (response) =>
     @state.set('params', response.params)
@@ -26,16 +29,15 @@ class U.DataSource
       data: JSON.stringify({params: params})
       contentType: 'application/json'
     })
-    console.log(putter)
     putter.then(@update)
 
-  post: (params=null) ->
-    data = params || @state.get('params')
+  post: ->
+    data = @state.get('params')[0]
     poster = $.ajax({
       type: 'POST',
       url: _.result(@, 'url'),
       crossDomain: true,
-      data: JSON.stringify(data)
+      data: JSON.stringify({params: data})
       contentType: 'application/json'
     })
     poster.then(@update)
