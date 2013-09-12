@@ -8,6 +8,7 @@ class U.DataSource
 
   update: (response) =>
     @state.set('params', response.params)
+    @state.set('id', response.id)
     if response.id?
       @getData(response.id)
 

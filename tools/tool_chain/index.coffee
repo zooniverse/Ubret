@@ -65,4 +65,5 @@ class ToolChain extends U.Tool
   setUser: (id) ->
     unless @state.get('user')[0]?
       @state.set('user', id);
+
 module.exports = ToolChain
