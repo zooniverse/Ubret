@@ -29,7 +29,7 @@ class U.State extends U.EventEmitter
     return (=> fn(_.object(state, @get(state...))))
 
   when: (reqState, optState, fn, ctx) ->
-    allState = reqState.concat(optState)
+    allState = _.flatten(reqState.concat(optState))
     withState = @with(allState, fn, ctx)
     checkStateAndExecute = () => 
       if _.every(@get(reqState...), ((s) -> s?), @)
