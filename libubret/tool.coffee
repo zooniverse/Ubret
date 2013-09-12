@@ -44,9 +44,12 @@ class U.Tool
       _.each([['data', @setData], ['selection', @setSelection]], 
         ([ev, fn] => @state.off(ev, fn, @)))
     @parent = parent
+    [childData, childSelection] = @parent.state.get('childData', 'childSelection')
+    @state.set('data', childData) if childData?
+    @state.set('selection', childSelection) if childSelection?
+
     @parent.state.when(['childData'], [], @setData, @)
     @parent.state.when(['childSelection'], [], @setSelection, @)
-
 
   setSelection: ({childSelection}) ->
     @state.set('selection', childSelection)
