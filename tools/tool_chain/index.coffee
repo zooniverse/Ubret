@@ -28,7 +28,11 @@ class ToolChain extends U.Tool
   url: ->
     user = @state.get('user')
     project = @state.get('project')
-    "http://localhost:3002/user/#{user}/project/#{project}/collection/" 
+    base = if location.port isnt ''
+      "http://localhost:3002/"
+    else
+      "https://zoo-data.herokuapp.com"
+    "#{base}/user/#{user}/project/#{project}/collection/" 
 
   render: ({title, annotation, data, dataError}) ->
     @$el.off('dblclick')
