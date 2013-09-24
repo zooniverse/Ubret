@@ -1,7 +1,7 @@
-<h2>Data Source</h2>
+<h2>Import Talk Collection</h2>
 <select>
-    <option value="">Select a Data Source</option>
-  <% for id, name of @['talk-collections']: %>
+    <option value="">Import Talk Collection</option>
+  <% for id, name of @talkCollections: %>
     <option value="<%- id %>" <% if id is @['params.talk-collection']: %>selected<% end %>> <%- name %></option>
   <% end %>
 </select>

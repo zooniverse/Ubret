@@ -3,7 +3,7 @@ class ToolChain extends U.Tool
 
   template: require("./templates/tool_chain")
 
-  settings: [require("tools/settings/data_source")]
+  settings: [require("tools/settings/zoo_data_source"), require("tools/settings/talk_data_source")]
 
   events: [
     {

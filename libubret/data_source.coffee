@@ -1,16 +1,12 @@
 class U.DataSource 
   constructor: (@state, @url, @omittedKeys=[]) ->
-    @state.when(["id", "params.*"], [], @put, @)
-    if @state.get('id')[0]?
-      @get(@state.get('id')[0]) 
-    else
-      @state.when(["params.*"], [], @post, @)
+    @state.when(["id"], [], @getData, @)
+    @state.when(["params.*"], [], @post, @)
+    @get(@state.get('id')[0]) if @state.get('id')[0]?
 
   update: (response) =>
     @state.set('params', response.params)
     @state.set('id', response.id)
-    if response.id?
-      @getData(response.id)
 
   get: (id) ->
     fetcher = $.ajax({
@@ -19,18 +15,6 @@ class U.DataSource
       crossDomain: true
     })
     fetcher.then(@update)
-
-  put: (state) ->
-    id = state.id
-    params = state['params.*']
-    putter = $.ajax({
-      type: "PUT",
-      url: _.result(@, 'url') + id,
-      crossDomain: true
-      data: JSON.stringify({params: params})
-      contentType: 'application/json'
-    })
-    putter.then(@update)
 
   post: ->
     data = @state.get('params')[0]
@@ -52,8 +36,7 @@ class U.DataSource
     })
     delete @
 
-  getData: (id) ->
-    id = id || @state.get('id')[0]
+  getData: ({id}) ->
     fetcher = $.ajax({
       type: 'GET',
       url: _.result(@, 'url') + id + "/data",
