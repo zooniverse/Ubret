@@ -9,6 +9,9 @@ class ZooDataSourceSetting extends U.Setting
   }
 
   changeId: (ev) ->
-    @state.set('id', parseInt(ev.target.value))
+    id = parseInt(ev.target.value)
+    collection = @state.get('zooDataCollections')[0][id]
+    @state.set('user', collection.user)
+    @state.set('id', id)
 
 module.exports = ZooDataSourceSetting

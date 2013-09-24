@@ -29,7 +29,7 @@ class ToolChain extends U.Tool
     user = @state.get('user')
     project = @state.get('project')
     base = if location.port isnt ''
-      "http://localhost:3002/"
+      "http://localhost:3002"
     else
       "https://zoo-data.herokuapp.com"
     "#{base}/user/#{user}/project/#{project}/collection/" 
@@ -64,7 +64,10 @@ class ToolChain extends U.Tool
     @state.set('title', title)
 
   setTalkCollections: (cols) ->
-    @state.set('talk-collections', cols)
+    @state.set('talkCollections', cols)
+
+  setZooDataCollections: (cols) ->
+    @state.set('zooDataCollections', cols)
 
   setUser: (id) ->
     unless @state.get('user')[0]?

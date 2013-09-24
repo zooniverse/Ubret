@@ -1,6 +1,6 @@
 Paginated = 
-  totalPages: ({data}) ->
-    @state.set('pages', Math.ceil(data.toArray().length / _.result(@, 'perPage')))
+  totalPages: ({pagedData}) ->
+    @state.set('pages', pagedData.length) 
 
   currentPage: (page) ->
     return page unless @state.get('pages')
@@ -14,10 +14,10 @@ Paginated =
     else
       page
 
-  currentPageData: (data, sortColumn, sortOrder, currentPage) ->
-    currentPage = @setSetting('currentPage', currentPage)
-    data.sort(sortColumn, sortOrder)
+  pageData: ({data, sortColumn, sortOrder}) ->
+    paged = data.sort(sortColumn, sortOrder)
       .paginate(_.result(@, 'perPage'))
-      .toArray()[currentPage]
+      .toArray()
+    @state.set('pagedData', paged)
 
 module.exports = Paginated

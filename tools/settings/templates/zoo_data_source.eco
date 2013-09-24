@@ -1,7 +1,7 @@
 <h2>Zoo Data Source</h2>
 <select>
     <option value="">Select a Data Source</option>
-  <% for id, name of @zooDataCollections: %>
-    <option value="<%- id %>" <% if id is @id: %>selected<% end %><%- name %></option>
+  <% for id, info of @zooDataCollections: %>
+    <option value="<%- id %>" <% if id is @id: %>selected<% end %>><%- info.name %></option>
   <% end %>
 </select>

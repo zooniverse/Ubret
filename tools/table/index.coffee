@@ -17,12 +17,17 @@ class Table extends U.Tool
 
   events: [ 
     {
-      req: ['data', 'height']
+      req: ['pagedData']
       opt: []
       fn: 'totalPages'
     },
     {
-      req: ['data', 'currentPage', 'sortOrder', 'sortColumn', 'height']
+      req: ['data', 'sortOrder', 'sortColumn', 'height']
+      opt: []
+      fn: 'pageData'
+    }  
+    {
+      req: ['pagedData', 'currentPage', 'pages']
       opt: ['selection']
       fn: 'drawBody'
     },
@@ -52,10 +57,11 @@ class Table extends U.Tool
 
     th.exit().remove()
 
-  drawBody: ({data, currentPage, sortOrder, sortColumn, selection}) -> 
+  drawBody: ({pagedData, currentPage, selection}) ->
+    currentPage = @currentPage(currentPage)
     @initEl()
 
-    data = @currentPageData(data, sortColumn, sortOrder, currentPage)
+    data = pagedData[currentPage] 
 
     tr = @tbody.selectAll('tr')
       .data(data, (d, i) -> "#{i}-#{d.uid}")
