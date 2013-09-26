@@ -25,7 +25,7 @@ class Table extends U.Tool
       req: ['data', 'sortOrder', 'sortColumn', 'height']
       opt: []
       fn: 'pageData'
-    }  
+    },
     {
       req: ['pagedData', 'currentPage', 'pages']
       opt: ['selection']
@@ -58,6 +58,7 @@ class Table extends U.Tool
     th.exit().remove()
 
   drawBody: ({pagedData, currentPage, selection}) ->
+    console.log(selection)
     currentPage = @currentPage(currentPage)
     @initEl()
 
@@ -79,7 +80,11 @@ class Table extends U.Tool
             ((d) -> "#{d[0]}-#{d[1]}"))
 
     td.enter().append('td')
-      .text(([key, val]) -> val)
+      .text(([key, val]) -> 
+        if typeof val isnt 'string'
+          d3.format(',.02f')(val)
+        else
+          val)
 
     td.exit().remove()
 
@@ -106,17 +111,19 @@ class Table extends U.Tool
       @setSetting('sortColumn', key)
 
   selection: (d, i) =>
-    ids = @state.get('selection')
-    if d3.event.shiftKey
+    ids = @state.get('selection')[0]
+    unless ids
+      ids = [d.uid]
+    else if d3.event.shiftKey
       unless d.uid in ids
         ids.push d.uid
       else
         ids = _.without(ids, d.uid )
     else if d.uid in ids
       ids = _.without(ids, d.uid)
-    else
+    else 
       ids = [d.uid]
-    @setSelection(ids)
+    @state.set('selection', ids)
 
   # Templating
   pageTemplate: (pages, current) ->
