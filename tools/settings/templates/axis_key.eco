@@ -1,0 +1,11 @@
+<h2><%- @axis %> Key</h2>
+
+<select class="axis">
+  <option value="">Choose <%- @axis %> key</option>
+  <% for key in @axisKeys: %>
+    <% if key is @selKey: %>
+      <option value="<%- key %>" selected><%- key %></option>
+    <% end %>
+    <option value="<%- key %>"><%- key %></option>
+  <% end %>
+</select>

@@ -1,0 +1,4 @@
+<h2><%- @axis %> Min Max</h2>
+
+<label>Min: <input class="min" type="text" value="<%- @min %>"></label>
+<label>Max: <input class="max" type="text" value="<%- @max %>"></label>

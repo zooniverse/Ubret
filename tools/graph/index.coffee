@@ -1,112 +1,132 @@
-class Graph 
+class Graph extends U.Tool
+  events: [
+    {
+      req: ['height', 'width']
+      opt: []
+      fn: 'setupGraph'
+    },
+    {
+      req: ['data', 'xAxis', 'yAxis', 'xScale', 'yScale', 'height', 'width']
+      opt: ['selection', 'xMin', 'xMax', 'yMin', 'yMax']
+      fn: 'drawGraph'
+    },
+    {
+      req: ['data', 'xAxis', 'width','height']
+      opt: ['xMin', 'xMax']
+      fn: 'xScale'
+    },
+    {
+      req: ['data', 'yAxis', 'height', 'width']
+      opt: ['yMin', 'yMax']
+      fn: 'yScale'
+    },
+    {
+      req: ['xScale', 'height', 'width']
+      opt: []
+      fn: 'drawXAxis'
+    },
+    {
+      req: ['yScale', 'height']
+      opt: []
+      fn: 'drawYAxis'
+    },
+    {
+      req: ['data']
+      opt: []
+      fn: 'setKeys'
+    }
+  ]
+
+  graphEvents: []
+
   constructor: ->
+    @events = @events.concat(@graphEvents)
     @format = d3.format(',.02f')
-    @margin = {left: 70, top: 20, bottom: 80, right: 20}
+    @marginLeft = 60
+    @marginTop = 50
     super
 
-  setupGraph: =>
-    return unless @opts.width? and @opts.height?
-
+  setupGraph: ({height, width}) =>
     unless @svg?
       @svg = @d3el.append('svg')
-        .attr('width', @opts.width - 10)
-        .attr('height', @opts.height - 20)
-        .attr('style', 'position: relative; top: 15px; left: -15px;')
-        .append('g')
-          .attr('class', 'chart')
-          .attr('transform', 
-            "translate(#{@margin.left}, #{@margin.top})")
+        .attr('width', width - @marginLeft)
+        .attr('height', height - @marginTop)
+        .attr('transform', "translate(0, 5)")
+
+      @chart = @svg.append('g')
+        .attr('class', 'chart')
+        .attr('transform', "translate(#{@marginLeft}, 0)")
+
     else
       @d3el.select('svg')
-        .attr('width', @opts.width - 10)
-        .attr('height', @opts.height - 10)
+        .attr('width', width - @marginLeft)
+        .attr('height', height - @marginTop)
 
-      @svg.select('g.chart')
-        .attr('width', @opts.width - 10)
-        .attr('height', @opts.height - 10)
+  xScale: ({data, xAxis, xMin, xMax, height, width}) =>
+    domain = @domain(data, xAxis, xMin, xMax)
+    scale = d3.scale.linear().range([0, width - @marginLeft]).domain(domain)
+    @state.set('xScale', scale)
+    
+  yScale: ({data, yAxis, yMin, yMax, height, width}) =>
+    domain = @domain(data, yAxis, yMin, yMax)
+    scale = d3.scale.linear().range([height - @marginTop, 0]).domain(domain)
+    @state.set('yScale', scale)
 
-  graphWidth: =>
-    @opts.width - (@margin.left + @margin.right)
-
-  graphHeight: =>
-    @opts.height - (@margin.top + @margin.bottom)
-
-  xDomain: =>
-    return unless @opts.axis1?
-    domain = d3.extent _(@preparedData()).pluck(@opts.axis1)
-    if @opts['x-min']
-      domain[0] = @opts['x-min']
-    if @opts['x-max']
-      domain[1] = @opts['x-max']
+  domain: (data, axis, min, max) =>
+    domain = d3.extent(_.pluck(data.project(axis).toArray(), axis))
+    domain[0] = min if min? 
+    domain[1] = max if max?
     domain
 
-  yDomain: =>
-    return unless @opts.axis2?
-    domain = d3.extent _(@preparedData()).pluck(@opts.axis2)
-    if @opts['y-min']
-      domain[0] = @opts['y-min']
-    if @opts['y-max']
-      domain[1] = @opts['y-max']
-    domain
-
-  x: =>
-    domain = @xDomain()
-    return unless domain?
-    d3.scale.linear()
-      .range([0, @graphWidth()])
-      .domain(domain)
-
-  y: =>
-    domain = @yDomain()
-    return unless domain?
-    d3.scale.linear()
-      .range([@graphHeight(), 0])
-      .domain(domain)
-
-  drawAxis1: =>
-    return unless @opts.axis1? and not (_.isEmpty @preparedData())
+  drawXAxis: ({xScale, width, height}) =>
     xAxis = d3.svg.axis()
-      .scale(@x())
+      .scale(xScale)
+      .tickFormat(@format)
       .orient('bottom')
    
     @svg.select("g.x").remove()
     axis = @svg.append('g')
       .attr('class', 'x axis')
-      .attr('transform', "translate(0, #{@graphHeight()})")
+      .attr('transform', "translate(#{@marginLeft}, #{height - @marginTop})")
       .call(xAxis)
 
-    @labelAxis1(axis)
+    @labelXAxis(axis, width)
 
-  labelAxis1: (axis) =>
+  labelXAxis: (axis, width) =>
+    xaxis = @state.get('xAxis')[0]
     axis.append('text')
       .attr('class', 'x label')
       .attr('text-anchor', 'middle')
-      .attr('x', @graphWidth() / 2)
-      .attr('y', 50)
-      .text(@unitsFormatter(@formatKey(@opts.axis1)))
+      .attr('x', (width - @marginLeft) / 2)
+      .attr('y', 40)
+      .text(xaxis)
    
-  drawAxis2: =>
-    return unless @opts.axis2? and not (_.isEmpty @preparedData())
+  drawYAxis: ({yScale, height}) =>
     yAxis = d3.svg.axis()
-      .scale(@y())
+      .tickFormat(@format)
+      .scale(yScale)
       .orient('left')
 
     axis = @svg.select('g.y').remove()
 
     axis = @svg.append('g')
       .attr('class', 'y axis')
-      .attr('transform', "translate(0, 0)")
+      .attr('transform', "translate(#{@marginLeft}, 0)")
       .call(yAxis)
 
-    @labelAxis2(axis)
+    @labelYAxis(axis, height)
 
-  labelAxis2: (axis) =>
+  labelYAxis: (axis, height) =>
+    yaxis = @state.get('yAxis')[0]
     axis.append('text')
       .attr('class', 'y label')
       .attr('text-anchor', 'middle')
-      .attr('y', -40)
-      .attr('x', -(@graphHeight() / 2))
+      .attr('y', -50)
+      .attr('x', -(height - @marginTop) / 2)
       .attr('transform', "rotate(-90)")
-      .text(@unitsFormatter(@formatKey(@opts.axis2)))
+      .text(yaxis)
+
+  setKeys: ({data}) ->
+    @state.set('axisKeys', data.keys())
 
 module.exports = Graph

@@ -57,8 +57,9 @@ class U.Tool
   setData: ({childData}) ->
     @state.set('data', childData) 
 
-  setHeight: (height) ->
+  setSize: (height, width) ->
     @state.set('height', height)
+    @state.set('width', width)
 
   setSetting: (setting, value) ->
     if _.isFunction(@[setting])

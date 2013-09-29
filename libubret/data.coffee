@@ -5,12 +5,11 @@ class U.Data
     @_projection = ['*']
     @_sortOrder = 'a'
     @_sortProp = 'uid'
-    @_keys = _.chain(@data).map((d) => _.keys(_.omit(d, @omittedKeys...)))
-      .flatten().uniq().value()
+    @_keys = _.without(_.keys(@data[0]), @omittedKeys...)
 
   clone: ->
     data = new U.Data(@data, @omittedKeys)
-    data._invoked = _.map(@invoked, _.clone)
+    data._invoked = _.map(@_invoked, _.clone)
     data._perPage = @_perPage
     data._projection = _.clone(@_projection)
     data._sortOrder = @_sortOrder

@@ -11,6 +11,8 @@ class U.State extends U.EventEmitter
       .map(([key, deepState]) ->
         if key is "*"
           _.clone(deepState)
+        else if _.isFunction(deepState[key])
+          deepState[key]
         else
           _.clone(deepState[key]))
       .value()
