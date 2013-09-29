@@ -58,7 +58,6 @@ class Table extends U.Tool
     th.exit().remove()
 
   drawBody: ({pagedData, currentPage, selection}) ->
-    console.log(selection)
     currentPage = @currentPage(currentPage)
     @initEl()
 
