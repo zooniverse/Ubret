@@ -1,0 +1,11 @@
+<h2>Select Key</h2>
+
+<select class="key">
+  <option value="">Choose Key</option>
+  <% for key in @keys: %>
+    <% if key is @selKey: %>
+      <option value="<%- key %>" selected><%- key %></option>
+    <% end %>
+    <option value="<%- key %>"><%- key %></option>
+  <% end %>
+</select>
