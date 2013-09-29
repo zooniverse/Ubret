@@ -1,0 +1,10 @@
+<h2>Dashboard Prompt</h2>
+<input type="text" class="statement"><button class="btn execute">Execute</button>
+
+<ul class="statements">
+  <% if @statements: %> 
+    <% for statement in @statements: %>
+      <li><%- statement %><span class="remove" data-string="<%- statement %>">X</span></li>
+    <% end %>
+  <% end %>
+</ul>
