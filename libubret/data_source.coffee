@@ -7,6 +7,7 @@ class U.DataSource
 
   update: (response) =>
     @state.set('params', response.params)
+    @state.set('name', response.name)
     @state.set('id', response.id)
 
   get: (id) ->

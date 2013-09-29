@@ -127,6 +127,6 @@ class Graph extends U.Tool
       .text(yaxis)
 
   setKeys: ({data}) ->
-    @state.set('axisKeys', data.keys())
+    @state.set('keys', data.keys())
 
 module.exports = Graph

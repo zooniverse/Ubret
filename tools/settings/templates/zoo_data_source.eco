@@ -2,6 +2,6 @@
 <select>
     <option value="">Select a Data Source</option>
   <% for id, info of @zooDataCollections: %>
-    <option value="<%- id %>" <% if id is @id: %>selected<% end %>><%- info.name %></option>
+    <option value="<%- id %>" <% if parseInt(id) is @id: %>selected<% end %>><%- info.name %></option>
   <% end %>
 </select>

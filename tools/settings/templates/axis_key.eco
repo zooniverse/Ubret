@@ -2,7 +2,7 @@
 
 <select class="axis">
   <option value="">Choose <%- @axis %> key</option>
-  <% for key in @axisKeys: %>
+  <% for key in @keys: %>
     <% if key is @selKey: %>
       <option value="<%- key %>" selected><%- key %></option>
     <% end %>
