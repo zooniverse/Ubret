@@ -34,7 +34,6 @@ class SubjectViewer extends U.Tool
       .html((d) => 
         value = if (typeof d[0] isnt 'string') then @format(d[0]) else d[0]
         value = if value is '' then '&nbsp' else value
-        console.log(value, d[0]) if d[1] is 'zmag'
         "<label>#{d[1]}:</label><span>#{value}</span>")
 
     attrList.exit().remove()
