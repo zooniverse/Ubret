@@ -6,17 +6,22 @@ class Graph extends U.Tool
       fn: 'setupGraph'
     },
     {
-      req: ['data', 'xAxis', 'yAxis', 'xScale', 'yScale', 'height', 'width']
-      opt: ['selection', 'xMin', 'xMax', 'yMin', 'yMax']
+      req: ['data', 'xAxis', 'yAxis']
+      opt: ['xMin', 'yMin', 'xMax', 'yMax']
+      fn: 'graphData'
+    },
+    {
+      req: ['graphData', 'xAxis', 'yAxis', 'xScale', 'yScale', 'height', 'width']
+      opt: ['selection']
       fn: 'drawGraph'
     },
     {
-      req: ['data', 'xAxis', 'width','height']
+      req: ['graphData', 'xAxis', 'width','height']
       opt: ['xMin', 'xMax']
       fn: 'xScale'
     },
     {
-      req: ['data', 'yAxis', 'height', 'width']
+      req: ['graphData', 'yAxis', 'height', 'width']
       opt: ['yMin', 'yMax']
       fn: 'yScale'
     },
@@ -46,7 +51,7 @@ class Graph extends U.Tool
     @marginTop = 50
     super
 
-  setupGraph: ({height, width}) =>
+  setupGraph: ({height, width}) ->
     unless @svg?
       @svg = @d3el.append('svg')
         .attr('width', width - @marginLeft)
@@ -62,23 +67,23 @@ class Graph extends U.Tool
         .attr('width', width - @marginLeft)
         .attr('height', height - @marginTop)
 
-  xScale: ({data, xAxis, xMin, xMax, height, width}) =>
-    domain = @domain(data, xAxis, xMin, xMax)
+  xScale: ({graphData, xAxis, xMin, xMax, height, width}) ->
+    domain = @domain(graphData, xAxis, xMin, xMax)
     scale = d3.scale.linear().range([0, width - @marginLeft]).domain(domain)
     @state.set('xScale', scale)
     
-  yScale: ({data, yAxis, yMin, yMax, height, width}) =>
-    domain = @domain(data, yAxis, yMin, yMax)
+  yScale: ({graphData, yAxis, yMin, yMax, height, width}) ->
+    domain = @domain(graphData, yAxis, yMin, yMax)
     scale = d3.scale.linear().range([height - @marginTop, 0]).domain(domain)
     @state.set('yScale', scale)
 
-  domain: (data, axis, min, max) =>
-    domain = d3.extent(_.pluck(data.project(axis).toArray(), axis))
+  domain: (data, axis, min, max) ->
+    domain = d3.extent(_.pluck(data, axis))
     domain[0] = min if min? 
     domain[1] = max if max?
     domain
 
-  drawXAxis: ({xScale, width, height}) =>
+  drawXAxis: ({xScale, width, height}) ->
     xAxis = d3.svg.axis()
       .scale(xScale)
       .tickFormat(@format)
@@ -92,7 +97,7 @@ class Graph extends U.Tool
 
     @labelXAxis(axis, width)
 
-  labelXAxis: (axis, width) =>
+  labelXAxis: (axis, width) ->
     xaxis = @state.get('xAxis')[0]
     axis.append('text')
       .attr('class', 'x label')
@@ -101,7 +106,7 @@ class Graph extends U.Tool
       .attr('y', 40)
       .text(xaxis)
    
-  drawYAxis: ({yScale, height}) =>
+  drawYAxis: ({yScale, height}) ->
     yAxis = d3.svg.axis()
       .tickFormat(@format)
       .scale(yScale)
@@ -116,7 +121,7 @@ class Graph extends U.Tool
 
     @labelYAxis(axis, height)
 
-  labelYAxis: (axis, height) =>
+  labelYAxis: (axis, height) ->
     yaxis = @state.get('yAxis')[0]
     axis.append('text')
       .attr('class', 'y label')

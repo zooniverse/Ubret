@@ -13,16 +13,17 @@ class Scatterplot extends Graph
   constructor: ->
     super
   
-  drawGraph: ({data, xAxis, yAxis, xScale, yScale, selection, xMin, xMax, yMin, yMax, height, width}) =>
+  graphData: ({data, xAxis, yAxis,  xMin, xMax, yMin, yMax}) ->
     data = data.project('uid', xAxis, yAxis)
-    data = data.filter((i) => i[xAxis] >= xMin) if xMin
-    data = data.filter((i) => i[xAxis] <= xMax) if xMax
-    data = data.filter((i) => i[yAxis] >= yMin) if yMin
-    data = data.filter((i) => i[yAxis] <= yMax) if yMax
-    data = data.toArray()
+    data = data.filter((i) -> i[xAxis] >= xMin) if xMin
+    data = data.filter((i) -> i[xAxis] <= xMax) if xMax
+    data = data.filter((i) -> i[yAxis] >= yMin) if yMin
+    data = data.filter((i) -> i[yAxis] <= yMax) if yMax
+    @state.set('graphData', data.toArray())
 
+  drawGraph: ({graphData, xAxis, yAxis, xScale, yScale, selection, height, width}) ->
     point = @chart.selectAll('circle')
-      .data(data, (d) -> d.uid)
+      .data(graphData, (d) -> d.uid)
 
     point.enter().append('circle')
       .attr('class', 'dot')
@@ -30,13 +31,13 @@ class Scatterplot extends Graph
 
     point.attr('class', (d) -> if d.uid in (selection || []) then 'selected' else '')
       .attr('cx', (d) -> xScale(d[xAxis]))
-      .attr('cy', (d) -> console.log(d) if _.isNaN(yScale(d[yAxis])); yScale(d[yAxis]))
+      .attr('cy', (d) -> yScale(d[yAxis]))
 
     point.exit().remove()
 
     @drawBrush(xScale, yScale, height, width) if @brushEnabled
   
-  drawBrush: (x, y, height, width) =>
+  drawBrush: (x, y, height, width) ->
     @brush.remove() unless !@brush
     @brush = @svg.append('g')
       .attr('class', 'brush')
@@ -54,8 +55,8 @@ class Scatterplot extends Graph
     x = d.map( (x) -> return x[0])
     y = d.map( (x) -> return x[1])
     selection = data.project('uid')
-      .filter( (d) => (d[xAxis] > x[0]) and (d[xAxis] < x[1]))
-      .filter( (d) => (d[yAxis] > y[0]) and (d[yAxis] < y[1]))
+      .filter( (d) -> (d[xAxis] > x[0]) and (d[xAxis] < x[1]))
+      .filter( (d) -> (d[yAxis] > y[0]) and (d[yAxis] < y[1]))
     @state.set('selection', _.pluck(selection.toArray(), 'uid'))
  
 module.exports = Scatterplot
