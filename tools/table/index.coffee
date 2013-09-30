@@ -3,7 +3,6 @@ class Table extends U.Tool
   className: 'table'
 
   mixins: [require('tools/mixins/paginated')]
-  settings: [require('tools/settings/page')]
   
   constructor: ->
     super 
@@ -14,6 +13,7 @@ class Table extends U.Tool
       @thead = @table.append('thead')
       @tbody = @table.append('tbody')
       @d3el.append('div').attr('class', 'legend')
+      @d3el.append('div').attr('class', 'page-controls')
 
   events: [ 
     {
@@ -40,6 +40,11 @@ class Table extends U.Tool
       req: ['pages', 'currentPage']
       opt: []
       fn: 'drawPages'
+    },
+    {
+      req: ['pages', 'currentPage']
+      opt: []
+      fn: 'drawButtons'
     }
   ]
 

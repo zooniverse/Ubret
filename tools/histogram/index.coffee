@@ -82,8 +82,6 @@ class Histogram extends Graph
       .orient('bottom')
       .tickValues(_.pluck(graphData, 'x'))
 
-    console.log(_.pluck(graphData, 'x'))
-
     @appendXAxis(xAxis)
 
   drawYAxis: ({yScale}) ->

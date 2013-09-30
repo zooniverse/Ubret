@@ -1,10 +1,11 @@
 Paginated = 
+  buttonTemplate: require('./templates/page')
+
   totalPages: ({pagedData}) ->
     @state.set('pages', pagedData.length) 
 
   currentPage: (page) ->
-    return page unless @state.get('pages')
-    pages = @state.get('pages')
+    [pages] = @state.get('pages')
     if page < 0
       pages - 1
     else if page >= pages
@@ -19,5 +20,12 @@ Paginated =
       .paginate(_.result(@, 'perPage'))
       .toArray()
     @state.set('pagedData', paged)
+
+  drawButtons: ({currentPage}) ->
+    @$el.find('.page-controls').html(@buttonTemplate({currentPage: currentPage}))
+    @$el.find('.page-controls').on('click', 'button', _.bind(@changePage, @))
+
+  changePage: (ev) ->
+    @state.set('currentPage', @currentPage(parseInt(ev.target.dataset.page)))
 
 module.exports = Paginated
