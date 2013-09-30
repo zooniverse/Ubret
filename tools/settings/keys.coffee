@@ -11,6 +11,7 @@ class KeysSettings extends U.Setting
     @state.set(@optState[0], ev.target.value)
 
   render: (state) ->
+    state.keys = state.keys.sort();
     state.selKey = state[@optState[0]]
     super state
 

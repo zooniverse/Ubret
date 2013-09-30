@@ -14,7 +14,7 @@ class U.Data
     data._projection = _.clone(@_projection)
     data._sortOrder = @_sortOrder
     data._sortProp = @_sortProp
-    data.keys = @keys
+    data._keys = _.clone(@_keys)
     return data
 
   keys: ->
