@@ -88,7 +88,11 @@ class Graph extends U.Tool
       .scale(xScale)
       .tickFormat(@format)
       .orient('bottom')
-   
+
+    @appendXAxis(xAxis)
+
+  appendXAxis: (xAxis) ->
+    [width, height] = @state.get('width', 'height')
     @svg.select("g.x").remove()
     axis = @svg.append('g')
       .attr('class', 'x axis')
@@ -112,6 +116,10 @@ class Graph extends U.Tool
       .scale(yScale)
       .orient('left')
 
+    @appendYAxis(yAxis)
+
+  appendYAxis: (yAxis) ->
+    [width, height] = @state.get('width', 'height')
     axis = @svg.select('g.y').remove()
 
     axis = @svg.append('g')

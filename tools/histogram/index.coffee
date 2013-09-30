@@ -34,7 +34,6 @@ class Histogram extends Graph
     state.graphData = data
     super state
 
-
   drawGraph: ({graphData, xAxis, xScale, yScale, selection, height, width}) ->
     barWidth = xScale(graphData[1].x) - xScale(graphData[0].x)
 
@@ -74,5 +73,26 @@ class Histogram extends Graph
     selected = data.project('uid')
       .filter( (d) -> (d[xAxis] > x[0]) and (d[xAxis] < x[1]))
     @state.set('selection', _.pluck(selected.toArray(), 'uid'))
+
+  drawXAxis: ({xScale}) ->
+    [graphData] = @state.get('graphData')
+    xAxis = d3.svg.axis()
+      .scale(xScale)
+      .tickFormat(@format)
+      .orient('bottom')
+      .tickValues(_.pluck(graphData, 'x'))
+
+    console.log(_.pluck(graphData, 'x'))
+
+    @appendXAxis(xAxis)
+
+  drawYAxis: ({yScale}) ->
+    yAxis = d3.svg.axis()
+      .tickFormat(d3.format('.,00f'))
+      .scale(yScale)
+      .orient('left')
+
+    @appendYAxis(yAxis)
+    
 
 module.exports = Histogram
