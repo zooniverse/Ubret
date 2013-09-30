@@ -1,4 +1,4 @@
-Paginated = require('mixins/paginated')
+Paginated = require('tools/mixins/paginated')
 
 Sequential = 
   events: [
@@ -14,13 +14,8 @@ Sequential =
     },
     {
       req: ['pagedData', 'currentPage']
-      opt: []
+      opt: ['width', 'height']
       fn: 'render'
-    },
-    {
-      req: ['pages', 'currentPage']
-      opt: []
-      fn: 'drawButtons'
     }
   ]
 

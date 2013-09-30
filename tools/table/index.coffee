@@ -4,6 +4,10 @@ class Table extends U.Tool
 
   mixins: [require('tools/mixins/paginated')]
   
+  domEvents: {
+    'click button' : 'changePage'
+  }
+  
   constructor: ->
     super 
 

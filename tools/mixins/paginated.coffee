@@ -23,7 +23,6 @@ Paginated =
 
   drawButtons: ({currentPage}) ->
     @$el.find('.page-controls').html(@buttonTemplate({currentPage: currentPage}))
-    @$el.find('.page-controls').on('click', 'button', _.bind(@changePage, @))
 
   changePage: (ev) ->
     @state.set('currentPage', @currentPage(parseInt(ev.target.dataset.page)))

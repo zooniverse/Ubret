@@ -1,0 +1,37 @@
+.subject-viewer
+  width: inherit
+
+  img
+    float: right
+    width: 150px
+    height: 150px
+
+  .subject
+    height: 90%
+    width: inherit
+    overflow-y: auto
+    float: left
+
+    ul
+      list-style-type: none
+      padding: 0
+
+      li
+        border-bottom: 1px solid #000
+        padding: 3px 0 3px 10px
+        font-size: 10px
+
+        &:last-child
+          border-bottom-color: transparent
+
+        &.heading
+          font-size: 1.1em
+          font-weight: 700
+
+        label 
+          float: left
+          width: 150px
+
+        span
+          display: block
+          margin-left: 105px
