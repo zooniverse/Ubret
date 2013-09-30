@@ -36,9 +36,7 @@ class Histogram extends Graph
 
 
   drawGraph: ({graphData, xAxis, xScale, yScale, selection, height, width}) ->
-    console.log(graphData)
     barWidth = xScale(graphData[1].x) - xScale(graphData[0].x)
-    console.log(barWidth);
 
     bars = @chart.selectAll('g.bar')
       .data(graphData, (d) -> d.x)
