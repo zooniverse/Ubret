@@ -15,6 +15,7 @@ class Scatterplot extends Graph
   
   graphData: ({data, xAxis, yAxis,  xMin, xMax, yMin, yMax}) ->
     data = data.project('uid', xAxis, yAxis)
+    data = data.filter((i) -> (isFinite(i[xAxis]) && (isFinite(i[yAxis]))))
     data = data.filter((i) -> i[xAxis] >= xMin) if xMin
     data = data.filter((i) -> i[xAxis] <= xMax) if xMax
     data = data.filter((i) -> i[yAxis] >= yMin) if yMin
