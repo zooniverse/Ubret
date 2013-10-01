@@ -54,7 +54,7 @@ class Histogram extends Graph
 
     @drawBrush(xScale, height, width)
 
-  drawBrush: (xScale, height, width)->
+  drawBrush: (xScale, height, width) ->
     @brush.remove() if @brush
     @brush = @svg.append('g')
       .attr('class', 'brush')

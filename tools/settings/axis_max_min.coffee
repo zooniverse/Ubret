@@ -10,10 +10,12 @@ class AxisMinMaxSetting extends U.Setting
   }
 
   setMin: (ev) -> 
-    @state.set(@optState[0], parseFloat(ev.target.value))
+    value = (parseFloat(ev.target.value))
+    @state.set(@optState[0], if isFinite(value) then value else null)
 
   setMax: (ev) ->
-    @state.set(@optState[1], parseFloat(ev.target.value))
+    value = (parseFloat(ev.target.value))
+    @state.set(@optState[1], if isFinite(value) then value else null)
 
   render: (state) ->
     state.axis = @axis
