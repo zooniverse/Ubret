@@ -1,6 +1,6 @@
 class AxisMinMaxSetting extends U.Setting
   template: require('./templates/axis_min_max')
-  reqState: ['axisKeys']
+  reqState: ['keys']
 
   axis: ''
 
