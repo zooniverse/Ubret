@@ -22,9 +22,15 @@ Paginated =
     @state.set('pagedData', paged)
 
   drawButtons: ({currentPage}) ->
-    @$el.find('.page-controls').html(@buttonTemplate({currentPage: currentPage}))
+    console.log(currentPage)
+    @d3el.select('.page-controls').remove()
+
+    @d3el.insert('div', ':first-child')
+      .attr('class', 'page-controls')
+      .html(@buttonTemplate({currentPage: currentPage}))
 
   changePage: (ev) ->
+    console.log(@currentPage(parseInt(ev.target.dataset.page)))
     @state.set('currentPage', @currentPage(parseInt(ev.target.dataset.page)))
 
 module.exports = Paginated

@@ -1,2 +1,2 @@
-<button data-page="<%- @currentPage - 1 %>" class="prev btn">Prev Page</button>
-<button data-page="<%- @currentPage + 1 %>" class="next btn">Next Page</button>
+<button data-page="<%- @currentPage - 1 %>" class="prev btn"><</button>
+<button data-page="<%- @currentPage + 1 %>" class="next btn">></button>
