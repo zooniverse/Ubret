@@ -42,6 +42,7 @@ class U.DataSource
     fetcher = $.ajax({
       type: 'GET',
       url: _.result(@, 'url') + id + "/data",
+      contentType: 'application/json'
       crossDomain: true
     })
     fetcher.then(
