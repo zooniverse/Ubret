@@ -1,25 +1,30 @@
 .subject-viewer
   width: inherit
 
-  img
-    float: right
-    width: 150px
-    height: 150px
-
   .subject
-    height: 90%
     width: inherit
+    height: inherit
     overflow-y: auto
     float: left
+    text-align: center
+
+    .img
+      margin: 0 auto
+      display: inline-block
 
     ul
       list-style-type: none
       padding: 0
+      display: inline-block
 
       li
         border-bottom: 1px solid #000
         padding: 3px 0 3px 10px
         font-size: 10px
+        text-align: left
+
+        &:nth-child(even)
+          background: #f3f3f3
 
         &:last-child
           border-bottom-color: transparent

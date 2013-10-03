@@ -36,8 +36,8 @@ class U.Tool
     @settingViews = _.map(@settings, (setting) => new setting(@state))
 
     # Set Current State
-    @setParent(parent) if parent
     @state.set(settings) if settings
+    @setParent(parent) if parent
 
   setParent: (parent) ->
     if @parent?
@@ -45,11 +45,11 @@ class U.Tool
         ([ev, fn] => @state.off(ev, fn, @)))
     @parent = parent
     [childData, childSelection] = @parent.state.get('childData', 'childSelection')
-    @state.set('data', childData) if childData?
     @state.set('selection', childSelection) if childSelection?
+    @state.set('data', childData) if childData?
 
-    @parent.state.when(['childData'], [], @setData, @)
     @parent.state.when(['childSelection'], [], @setSelection, @)
+    @parent.state.when(['childData'], [], @setData, @)
 
   setSelection: ({childSelection}) ->
     @state.set('selection', childSelection)

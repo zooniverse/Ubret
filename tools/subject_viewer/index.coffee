@@ -13,54 +13,50 @@ class SubjectViewer extends U.Tool
 
   setup: ->
     @format = @format || d3.format(',.02f')
-    @subject = @subject || @d3el.append('div').attr('class', 'subject')
+    @subjectDiv = @subjectDiv || @d3el.append('div').attr('class', 'subject')
     @pageControls = @pageControls || @d3el.append('div').attr('class', 'page-controls')
 
-  render: ({pagedData, currentPage, width}) ->
+  render: ({subject, width}) ->
     @setup()
-    @drawButtons({currentPage: currentPage})
 
-    subjectData = pagedData[currentPage]
-
-    attrList = @subject.selectAll('ul')
-      .data([subjectData], (d) -> d.uid)
+    attrList = @subjectDiv.selectAll('ul')
+      .data([subject], (d) -> d.uid)
       
     listItems = attrList.enter().append('ul')
+      .style('width', width - 100 + 'px')
       .selectAll('li')
       .data(@toArray, ((d) -> d[1]))
 
     listItems.enter().append('li')
       .attr('data-key', (d) -> d[1])
-      .html((d) => 
-        value = if (typeof d[0] isnt 'string') then @format(d[0]) else d[0]
-        value = if value is '' then '&nbsp' else value
-        "<label>#{d[1]}:</label><span>#{value}</span>")
+      .html(([value, key]) -> "<label>#{key}:</label><span>#{value}</span>")
 
     attrList.exit().remove()
 
-    @subject.select('.heading').remove()
+    @subjectDiv.select('.heading').remove()
 
-    @subject.selectAll('ul')
+    @subjectDiv.selectAll('ul')
       .insert('li', ':first-child')
         .attr('class', 'heading')
         .html('<label>Key</label> <span>Value</span>')
 
-    if _.isArray(subjectData.image)
+    if _.isArray(subject.image)
       images = subject.insert('div.images', ":first-child")
-      #new Ubret.MultiImageView(images[0][0], subjectData[0].image)
+      #new Ubret.MultiImageView(images[0][0], subject[0].image)
     else
-      @subject.selectAll('img').remove()
-      @subject.insert('img', ":first-child")
+      @subjectDiv.selectAll('img').remove()
+      @subjectDiv.insert('img', ":first-child")
         .attr('class', 'image')
-        .style('width', width - 300 + "px")
-        .style('height', width - 300 + "px")
-        .attr('src', subjectData.image)
+        .style('width', width - 200 + 'px')
+        .attr('src', subject.image)
 
   toArray: (d) =>
     [data] = @state.get('data')
     keys = data.keys()
 
-    _.chain(d).filter((v, k) -> (k in keys) and (v isnt '' and !_.isNaN(v)))
+    _.chain(d).filter((v, k) -> (k in keys) and v?)
+      .filter((v) -> if typeof v is 'string' then v isnt '' else isFinite(v))
+      .map(((v) -> if typeof v is 'string' then v else @format(v)), @)
       .zip(keys).value()
           
 
