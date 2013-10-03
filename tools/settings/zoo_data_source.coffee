@@ -1,5 +1,5 @@
 class ZooDataSourceSetting extends U.Setting
-  className: "data-source-setting"
+  className: "zoo-data-source-setting"
   template: require('./templates/zoo_data_source')
   reqState: ['zooDataCollections']
   optState: ['id']

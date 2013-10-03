@@ -1,6 +1,6 @@
 <h2><%- @statKey %></h2>
 
-<ul class="statistics">
+<ul class="stats">
   <% for stat, value of @stats: %>
     <li><span class="stat"><%- stat %></span><span class="value"><%- value %></span></li>
   <% end %>
