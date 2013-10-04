@@ -12,6 +12,7 @@ class Scatterplot extends Graph
 
   constructor: ->
     super
+    console.log(@events)
   
   graphData: ({data, xAxis, yAxis,  xMin, xMax, yMin, yMax}) ->
     data = data.project('uid', xAxis, yAxis)
