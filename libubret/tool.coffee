@@ -18,8 +18,7 @@ class U.Tool
     # Mixins
     _.each(@mixins, (mixin) => 
       @events = @events.concat(mixin.events) if mixin.events
-      delete mixin.events
-      _.extend(@constructor::, mixin))
+      _.extend(@constructor::, _.omit(mixin, 'events')))
 
     # Initialize Element
     @el = document.createElement('div')
