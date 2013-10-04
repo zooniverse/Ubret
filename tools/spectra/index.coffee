@@ -1,123 +1,123 @@
-class Spectra extends Ubret.Graph
+Graph = require('tools/graph')
+
+class Spectra extends Graph
   name: "Spectra"
 
-  constructor: ->
-    _.extend @, Ubret.Sequential
-    super 
-
-  events:
-    'next' : 'nextPage drawGraph'
-    'prev' : 'prevPage drawGraph'
-    'height' : 'setupGraph drawGraph'
-    'width' : 'setupGraph drawGraph'
-    'selector' : 'setupGraph'
-    'data': 'drawGraph'
-    'selection': 'drawGraph'
-    'setting:bestFitLine' : 'bestFitLineDraw'
-    'setting:fluxLine' : 'fluxLineDraw'
-    'setting:emissionLines' : 'emissionLinesDraw'
+  mixins: [require('tools/mixins/sequential')]
 
   apiURL: "http://api.sdss3.org/spectrum"
 
-  loadSpectra: (subject) =>
-    if subject.mjd? and subject.plate? and subject.fiberID?
-      url = "#{@apiURL}?mjd=#{subject.mjd}&plate=#{subject.plate}&fiber=#{subject.fiberID}&fields=best_fit,wavelengths,flux&format=json"
-      Ubret.Get(url).then(@loadSpectralLines)
-    else
-      promise = new Ubret.Promise()
-      promise.reject('No Info')
-      promise
+  format: d3.format('.0f')
 
-  loadSpectralLines: (subject) =>
+  constructor: (settings, parent) ->
+    # Create GraphData from Subject
+    @events[1].req = ['subject']
+
+    # Set Permanent Axes
+    settings.xAxis = 'wavelengths'
+    settings.yAxis = 'flux'
+
+    super settings, parent
+
+  loadSpectra: ({mjd, sdss_spec_id, plateid, plate, fiberID, fiberid}) ->
+    url = @apiURL + "?"
+    if sdss_spec_id?
+      url = url + "id=#{sdss_spec_id}"
+    else if mjd? and (plateid? or plate?) and (fiberID? or fiberid?)
+      url = url + "mjd=#{mjd}&"
+      url = url + "plate=#{plate or plateid}&"
+      url = url + "fiber=#{fiberID or fiberid}"
+    else
+      promise = new $.Promise()
+      promise.reject('No Info')
+      return promise
+    url = url + "&fields=best_fit,wavelengths,flux&format=json"
+    return $.get(url).then(_.bind(@loadSpectralLines, @))
+
+  loadSpectralLines: (subject) ->
     url = "#{@apiURL}Lines?id=#{subject.spectrumID}"
-    Ubret.Get(url).then (rawLines) ->
+    $.get(url).then (rawLines) ->
       lines = new Object
       for line in rawLines[subject.spectrumID]
         lines[line.name] = {wavelength: line.wavelength, redshift: line.linez} 
       {lines: lines, spectra: subject}
 
-  xDomain: =>
-    return unless @spectra
-    d3.extent @spectra.wavelengths
+  domain: (subject, axis) ->
+    d3.extent(subject[axis])
 
-  yDomain: =>
-    return unless @spectra
-    d3.extent @spectra.flux
+  graphData: ({subject}) ->
+    @loadSpectra(subject).then((({lines, spectra}) =>
+      @state.set('lines', lines)
+      @state.set('graphData', spectra)), _.bind(@drawSorry, @))
 
-  drawSorry: =>
-    @svg.selectAll('g.sorry').remove()
-    @svg.selectAll('path').remove()
-    @svg.selectAll('line').remove()
-    @svg.selectAll('.axis').remove()
-    @svg.append('g').attr('class', 'sorry')
+  render: ->
+    #noop until I can resolve this
+
+  drawSorry: ->
+    @chart.selectAll('g.sorry').remove()
+    @chart.selectAll('path').remove()
+    @chart.selectAll('line').remove()
+    @chart.selectAll('.axis').remove()
+    @chart.append('g').attr('class', 'sorry')
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('y', @graphHeight() / 2)
       .attr('x', @graphWidth() / 2)
       .text("Sorry not enough information to retrieve SDSS Spectra")
 
-  drawData: (specData) =>
-    @svg.selectAll('g.sorry').remove()
-    {@spectra, @lines} = specData
-    @drawAxis1() 
-    @drawAxis2() 
-    @fluxLineDraw()
-    @bestFitLineDraw()
-    @emissionLinesDraw()
+  drawGraph: ({graphData, xScale, yScale, height}) ->
+    @chart.selectAll('g.sorry').remove()
+    @fluxLineDraw(graphData, xScale, yScale)
+    @bestFitLineDraw(graphData, xScale, yScale)
+    @emissionLinesDraw(xScale, height)
 
-  drawGraph: =>
-    return if _.isEmpty(@preparedData()) or not @svg?
-    [subject] = @currentPageData()
-    @loadSpectra(subject).then @drawData, @drawSorry
+  fluxLineDraw: ({wavelengths, flux}, x, y)->
+    [fluxLine] = @state.get('fluxLine')
+    @chart.selectAll("path.fluxes").remove() if @chart?
+    return unless fluxLine if 'show'
 
-  fluxLineDraw: =>
-    @svg.selectAll("path.fluxes").remove() if @svg?
-    return unless @opts.fluxLine is 'show' and @spectra?
-    x = @x()
-    y = @y()
+    fluxSvgLine = d3.svg.line()
+      .x((d, i) -> x(wavelengths[i]))
+      .y((d, i) -> y(d))
 
-    flux = d3.svg.line()
-      .x((d, i) => x(@spectra.wavelengths[i]))
-      .y((d, i) => y(d))
-
-    @svg.insert("path", ":first-child")
-        .datum(@spectra.flux)
+    @chart.insert("path", ":first-child")
+        .datum(flux)
         .attr("class", "line fluxes")
-        .attr("d", flux)
+        .attr("d", fluxSvgLine)
         .attr('fill', 'none')
         .attr('stroke', 'black')
 
-  bestFitLineDraw: =>
-    @svg.selectAll("path.best-fit").remove() if @svg?
-    return unless @opts.bestFitLine is 'show' and @spectra?
-    x = @x()
-    y = @y()
+  bestFitLineDraw: ({wavelengths, best_fit}, x, y) ->
+    [bestFitLine] = @state.get('bestFitLine')
+    @chart.selectAll("path.best-fit").remove() if @chart?
+    return unless bestFitLine is 'show'
 
-    bestFit= d3.svg.line()
-      .x((d, i) => x(@spectra.wavelengths[i]))
-      .y((d, i) => y(d))
+    bestFit = d3.svg.line()
+      .x((d, i) -> x(wavelengths[i]))
+      .y((d, i) -> y(d))
 
-    @svg.insert("path", "path.flux")
-        .datum(@spectra.best_fit)
+    @chart.insert("path", "path.flux")
+        .datum(best_fit)
         .attr("class", "line best-fit")
         .attr("d", bestFit)
         .attr('stroke', "blue")
         .attr('fill', 'none')
 
-  emissionLinesDraw: (redshiftCorrected=true) =>
-    @svg.selectAll('line.emissions').remove() if @svg?
-    return unless @opts.emissionLines is 'show' and @lines?
-    x = @x()
+  emissionLinesDraw: (x, height, redshiftCorrected=true) ->
+    [lines, emissionLines] = @state.get('lines', 'emissionLines')
+    @chart.selectAll('line.emissions').remove()
+    return unless emissionLines is 'show'
 
-    for name, line of @lines
-      multiplier = if redshiftCorrected then (1 + line.redshift) else 1
-      @svg.append("line")
-        .attr('class', 'emissions')
-        .attr("x1", x(line.wavelength * multiplier))
-        .attr("x2", x(line.wavelength * multiplier))
-        .attr("y1", 0)
-        .attr("y2", @graphHeight())
-        .style("stroke", "rgb(255,0,0)")
-        .style("stroke-width", 0.5)
+    chartLines = @chart.selectAll("line").data(_.pairs(lines), ([name]) -> name)
 
-window.Ubret.Spectra = Spectra
+    chartLines.enter().append('line')
+      .attr('class', 'emissions')
+
+    chartLines.attr("x1", ([_, line]) -> x(line.wavelength * (1 + line.redshift)))
+      .attr("x2", ([_, line]) -> x(line.wavelength * (1 + line.redshift)))
+      .attr("y1", 0)
+      .attr("y2", height - @marginTop)
+      .style("stroke", "rgb(255,0,0)")
+      .style("stroke-width", 0.5)
+
+module.exports = Spectra

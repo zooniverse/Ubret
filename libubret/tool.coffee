@@ -17,6 +17,8 @@ class U.Tool
   constructor: (settings, parent=null) ->
     # Mixins
     _.each(@mixins, (mixin) => 
+      @events = @events.concat(mixin.events) if mixin.events
+      delete mixin.events
       _.extend(@constructor::, mixin))
 
     # Initialize Element

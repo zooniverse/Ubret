@@ -42,11 +42,11 @@ class Graph extends U.Tool
     }
   ]
 
+  format: d3.format(',.02f')
   graphEvents: []
 
   constructor: ->
     @events = @events.concat(@graphEvents)
-    @format = d3.format(',.02f')
     @marginLeft = 60
     @marginTop = 50
     super

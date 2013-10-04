@@ -1,4 +1,8 @@
 Paginated = 
+  domEvents: {
+    'click button' : 'changePage'
+  }
+
   buttonTemplate: require('./templates/page')
 
   totalPages: ({pagedData}) ->

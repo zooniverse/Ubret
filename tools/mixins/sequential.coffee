@@ -14,11 +14,6 @@ Sequential =
     },
     {
       req: ['subject']
-      opt: ['width', 'height']
-      fn: 'render'
-    },
-    {
-      req: ['subject']
       opt: []
       fn: 'childSelection'
     },
@@ -26,6 +21,11 @@ Sequential =
       req: ['currentPage']
       opt: []
       fn: 'drawButtons'
+    },
+    {
+      req: ['subject']
+      opt: ['width', 'height']
+      fn: 'render'
     }
   ]
 
