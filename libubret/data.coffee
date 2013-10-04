@@ -62,6 +62,9 @@ class U.Data
       @_take
       @_applyProjection)(@data, take)
 
+  select: (fn) ->
+    _.pluck(_.filter(@data, fn), 'uid')
+
   first: (take=1) ->
     @toArray(take)
 
