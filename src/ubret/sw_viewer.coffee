@@ -26,9 +26,7 @@ class Layer extends Backbone.Model
 class SpacewarpViewer extends Ubret.BaseTool
   name: 'SpacewarpViewer'
   dimension: 440
-  bands:  ['u', 'g', 'r', 'i', 'z']
   source: 'http://spacewarps.org.s3.amazonaws.com/subjects/raw/'
-  
   
   events:
     'data'            : 'requestChannels'
@@ -41,21 +39,17 @@ class SpacewarpViewer extends Ubret.BaseTool
     'setting:band'    : 'updateBand'
     'setting:stretch' : 'updateStretch'
   
-  
   constructor: (selector) ->
     _.extend @, Ubret.Sequential
     
     super selector
     @collection = new Layers()
     @ready = false
+    @calibrations = {}
     
     # Set various deferred objects to handle asynchronous requests.
-    @dfs =
-      u: new $.Deferred()
-      g: new $.Deferred()
-      r: new $.Deferred()
-      i: new $.Deferred()
-      z: new $.Deferred()
+
+    @dfs = {}
     @dfsWebfits = new $.Deferred()
     @getApi()
   
@@ -99,15 +93,11 @@ class SpacewarpViewer extends Ubret.BaseTool
       @initWebFITS()
       
       # Set various deferred objects to handle asynchronous requests.
-      @dfs =
-        u: new $.Deferred()
-        g: new $.Deferred()
-        r: new $.Deferred()
-        i: new $.Deferred()
-        z: new $.Deferred()
+      @subject = @currentPageData()[0]
+      @setBands()
+      @dfs[band] = new $.Deferred() for band in @bands
       
-      subject = @currentPageData()[0]
-      prefix  = subject.metadata.id
+      prefix  = @subject.metadata.id
       
       # Set callback for when all channels and WebFITS Api received
       $.when.apply(null, _.values(@dfs))
@@ -121,6 +111,7 @@ class SpacewarpViewer extends Ubret.BaseTool
             hdu = fits.getHDU()
             header = hdu.header
             dataunit = hdu.data
+            @calibrations[band] = @getCalibration(header)
             
             # Get image data
             dataunit.getFrameAsync(0, (arr) =>
@@ -134,6 +125,7 @@ class SpacewarpViewer extends Ubret.BaseTool
               
               # Load texture
               @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
+              console.log(band, @dfs[band], @dfs)
               @dfs[band].resolve()
             )
           )
@@ -164,15 +156,15 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     @opts.gMin = gMin
     @opts.gMax = gMax
-    
-    @wfits.setCalibrations(1, 1, 1)
+   
+    @wfits.setCalibrations(@calibrations['Ks'] or 1, @calibrations['J'] or 1 , @calibrations['i'] or 1)
     
     # Get settings or fallback to defaults
     min = @opts.extent?.min or gMin
     max = @opts.extent?.max or gMax
     
     @wfits.setScales.apply(@wfits, @opts.scales)
-    @wfits.setAlpha(@opts.alpha)
+    @settings({alpha: if @isCFHTLS() then @opts.alpha or 0.004})
     @wfits.setQ(@opts.q)
     @wfits.setExtent(min, max)
     
@@ -217,5 +209,16 @@ class SpacewarpViewer extends Ubret.BaseTool
   updateExtent: =>
     @wfits?.setExtent(@opts.extent.min, @opts.extent.max) if @ready
 
+  getCalibration: (header) ->
+    zeroPoint = header.get('MZP_AB')
+    return Math.pow(10, 0.4*(30.0 - zeroPoint)) if zeroPoint
 
+  setBands: ->
+    @bands = if @isCFHTLS()
+      ['u', 'g', 'r', 'i', 'z'] 
+    else 
+      ['i', 'J', 'Ks']
+
+  isCFHTLS: ->
+    @subject.metadata.id.split("_")[0] is "CFHTLS" 
 window.Ubret.SpacewarpViewer = SpacewarpViewer
