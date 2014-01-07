@@ -9,9 +9,7 @@ class Layers extends Backbone.Collection
   reset: =>
     super
     @hasExtent = false
-  
-  getColorLayers: ->
-    layers = []
+    getColorLayers: -> layers = []
     layers.push @where({band: 'i'})[0]
     layers.push @where({band: 'r'})[0]
     layers.push @where({band: 'g'})[0]
@@ -125,7 +123,6 @@ class SpacewarpViewer extends Ubret.BaseTool
               
               # Load texture
               @wfits.loadImage(band, arr, dataunit.width, dataunit.height)
-              console.log(band, @dfs[band], @dfs)
               @dfs[band].resolve()
             )
           )
@@ -145,7 +142,6 @@ class SpacewarpViewer extends Ubret.BaseTool
   
   # Call when all FITS received and WebFITS library is received
   allChannelsReceived: (e) =>
-    @dfs = undefined
     @ready = true
     
     # Get extent for each layer and add to settings
@@ -156,7 +152,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     
     @opts.gMin = gMin
     @opts.gMax = gMax
-   
+  
     @wfits.setCalibrations(@calibrations['Ks'] or 1, @calibrations['J'] or 1 , @calibrations['i'] or 1)
     
     # Get settings or fallback to defaults
@@ -164,7 +160,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     max = @opts.extent?.max or gMax
     
     @wfits.setScales.apply(@wfits, @opts.scales)
-    @settings({alpha: if @isCFHTLS() then @opts.alpha or 0.004})
+    @wfits.setAlpha(@opts.alpha)
     @wfits.setQ(@opts.q)
     @wfits.setExtent(min, max)
     
@@ -189,7 +185,8 @@ class SpacewarpViewer extends Ubret.BaseTool
       band = @opts.band
       if @wfits?
         if band is 'gri'
-          @wfits.drawColor('i', 'r', 'g')
+          bands = if 'Ks' in @bands then ['Ks', 'J', 'i'] else ['i', 'r', 'g']
+          @wfits.drawColor(bands...)
         else
           @wfits.setImage(band)
           @wfits.setStretch(@opts.stretch)
@@ -201,7 +198,7 @@ class SpacewarpViewer extends Ubret.BaseTool
     @wfits?.setQ(@opts.q) if @ready
     
   updateScale: =>
-    @wfits?.setScales.apply(@wfits, @opts.scales) if @ready
+    @wfits.setScales(@opts.scales...) if @ready
   
   updateStretch: =>
     @wfits?.setStretch(@opts.stretch) if @ready
@@ -221,4 +218,5 @@ class SpacewarpViewer extends Ubret.BaseTool
 
   isCFHTLS: ->
     @subject.metadata.id.split("_")[0] is "CFHTLS" 
+
 window.Ubret.SpacewarpViewer = SpacewarpViewer
