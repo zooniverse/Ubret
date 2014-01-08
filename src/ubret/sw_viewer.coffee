@@ -147,19 +147,17 @@ class SpacewarpViewer extends Ubret.BaseTool
     # Get extent for each layer and add to settings
     mins = @collection.map( (d) -> return d.get('minimum') )
     maxs = @collection.map( (d) -> return d.get('maximum') )
-    gMin = Math.min.apply(Math, mins)
-    gMax = Math.min.apply(Math, maxs)
+    @opts.gMin = Math.min.apply(Math, mins) 
+    #@opts.gMin = if @opts.gMin < 0 then 0 else @opts.gMin
+    @opts.gMax = Math.min.apply(Math, maxs)
     
-    @opts.gMin = gMin
-    @opts.gMax = gMax
-  
     @wfits.setCalibrations(@calibrations['Ks'] or 1, @calibrations['J'] or 1 , @calibrations['i'] or 1)
     
     # Get settings or fallback to defaults
-    min = @opts.extent?.min or gMin
-    max = @opts.extent?.max or gMax
+    min = @opts.extent?.min or @opts.gMin
+    max = @opts.extent?.max or @opts.gMax
     
-    @wfits.setScales.apply(@wfits, @opts.scales)
+    @wfits.setScales(@opts.scales...)
     @wfits.setAlpha(@opts.alpha)
     @wfits.setQ(@opts.q)
     @wfits.setExtent(min, max)
