@@ -13,14 +13,9 @@ Toolsets =
                 "Histogram",
                 "ColorMagnitudeChart"]
 
-  galaxy_zoo_starburst: [ "Spectra", 
-                          "Table",
-                          "Statistics",
-                          "Mapper",
-                          "SubjectViewer",
-                          "Scatterplot",
-                          "Histogram",
-                          "ColorMagnitudeChart"]
+  galaxy_zoo_starburst: ["BarGraph", "Histogram", "Scatterplot", "Mapper", "Statistics", "SubjectViewer", "Spectra", "Table", "ColorMagnitudeChart"]
+
+  clusters: ["BarGraph", "Histogram", "Scatterplot", "Mapper", "Statistics",  "Spectra", "Table", "ColorMagnitudeChart"]
               
   spacewarp: [ "SpacewarpViewer" ]
 
