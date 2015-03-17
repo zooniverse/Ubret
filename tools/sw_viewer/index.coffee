@@ -27,9 +27,9 @@ class SpacewarpViewer extends Ubret.BaseTool
   name: 'SpacewarpViewer'
   dimension: 440
   bands:  ['u', 'g', 'r', 'i', 'z']
-  source: 'http://spacewarps.org.s3.amazonaws.com/subjects/raw/'
-  
-  
+  source: 'http://spacewarps.org/subjects/raw/'
+
+
   events:
     'data'            : 'requestChannels'
     'next'            : 'nextPage getNextSubject'
