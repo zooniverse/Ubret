@@ -62,6 +62,6 @@ class InteractiveSubject extends Spine.Model
           color: result.recent.subjects[0].metadata.mag?.I - result.recent.subjects[0].metadata.mag?.Z
           absolute_radius: result.recent.subjects[0].metadata.absolute_size
 
-        @lastFetch.push item
+      @lastFetch.push item
 
 module.exports = InteractiveSubject
