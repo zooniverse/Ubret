@@ -38,7 +38,7 @@ class InteractiveSubject extends Spine.Model
           color: result.recent.subjects[0].metadata.mag?.u - result.recent.subjects[0].metadata.mag?.r
           absolute_radius: result.recent.subjects[0].metadata.absolute_size
 
-      if result.recent.subjects[0]?.metadata?.survey is 'candels_2epoch'
+      else if result.recent.subjects[0]?.metadata?.survey is 'candels_2epoch'
         item = @create
           counters: result.recent.subjects[0].metadata.counters
           classification: result.recent.user.classification
@@ -50,7 +50,7 @@ class InteractiveSubject extends Spine.Model
           color: result.recent.subjects[0].metadata.mag?.H - result.recent.subjects[0].metadata.mag?.J
           absolute_radius: result.recent.subjects[0].metadata.absolute_size
 
-      if result.recent.subjects[0]?.metadata?.survey is 'goods_full'
+      else if result.recent.subjects[0]?.metadata?.survey is 'goods_full'
         item = @create
           counters: result.recent.subjects[0].metadata.counters
           classification: result.recent.user.classification
