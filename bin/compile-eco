@@ -3,6 +3,8 @@
 var eco = require('eco');
 var fs  = require('fs');
 
+console.log(eco);
+
 fs.readdir(__dirname + '/../src/views', function(err, files) {
   if (err) {
     console.log(err);

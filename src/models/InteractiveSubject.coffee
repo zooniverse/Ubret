@@ -26,7 +26,7 @@ class InteractiveSubject extends Spine.Model
   @fromJSON: (json) =>
     @lastFetch = new Array
     for result in json
-      if result.recent.subjects[0]?.metadata?.survey in ('sloan','sloan_singleband','decals')
+      if result.recent.subjects[0]?.metadata?.survey in ['sloan','sloan_singleband','decals']
         item = @create
           counters: result.recent.subjects[0].metadata.counters
           classification: result.recent.user.classification

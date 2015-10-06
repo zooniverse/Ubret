@@ -30,6 +30,6 @@
   "devDependencies" : {
     "jasmine-phantom-node" :  "git://github.com/edpaget/jasmine-phantom-node.git",
     "sinon"                :  "*",
-    "eco" : "*"
+    "eco" : "1.1.0-rc-3"
   }
 }
